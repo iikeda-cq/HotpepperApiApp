@@ -12,7 +12,9 @@ class MainActivity : AppCompatActivity() {
 
             when (item.itemId) {
                 R.id.navigation_list -> {
-
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.frameLayout, StoreListFragment())
+                        .commit()
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.navigation_map -> {
