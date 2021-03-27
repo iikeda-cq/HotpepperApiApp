@@ -17,8 +17,11 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
+import kotlin.random.Random
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
     private val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
@@ -125,6 +128,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                         lastLocation = locationResult.lastLocation
                         val currentLatLng = LatLng(lastLocation.latitude, lastLocation.longitude)
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 14.0f))
+                        storeMapping()
                     }
                 }
             }
@@ -134,5 +138,24 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 null
             )
         }
+    }
+
+    private fun storeMapping() {
+        val testData = createTestData()
+
+        testData.mapIndexed { index, store ->
+            store.lat = lastLocation.latitude.plus((index.toDouble()/ 800 * index))
+            store.lng = lastLocation.longitude.plus((index.toDouble()/ 600 * index))
+            addMarker(store) }
+    }
+
+    private fun addMarker(store: Store) {
+        mMap.addMarker(
+            MarkerOptions()
+                .position(LatLng(store.lat, store.lng))
+                .title(store.name)
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+        ).showInfoWindow()
+
     }
 }

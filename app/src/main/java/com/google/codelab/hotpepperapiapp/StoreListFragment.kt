@@ -42,7 +42,7 @@ class StoreListFragment : Fragment() {
 
 }
 
-private fun createTestData(): List<Store> {
+fun createTestData(): List<Store> {
     val dataSet: MutableList<Store> = ArrayList()
     var i = 1
     while (i <= 10) {
