@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -21,7 +22,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
-import kotlin.random.Random
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
     private val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
@@ -50,6 +50,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         mapFragment?.getMapAsync(this)
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireContext())
+
+        binding.storePager.adapter = PagerStoreAdapter(createTestData())
+        binding.storePager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -144,9 +147,10 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         val testData = createTestData()
 
         testData.mapIndexed { index, store ->
-            store.lat = lastLocation.latitude.plus((index.toDouble()/ 800 * index))
-            store.lng = lastLocation.longitude.plus((index.toDouble()/ 600 * index))
-            addMarker(store) }
+            store.lat = lastLocation.latitude.plus((index.toDouble() / 800 * index))
+            store.lng = lastLocation.longitude.plus((index.toDouble() / 600 * index))
+            addMarker(store)
+        }
     }
 
     private fun addMarker(store: Store) {
