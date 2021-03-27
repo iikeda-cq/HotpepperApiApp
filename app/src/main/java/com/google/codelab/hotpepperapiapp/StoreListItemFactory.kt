@@ -2,7 +2,6 @@ package com.google.codelab.hotpepperapiapp
 
 import android.view.View
 import com.google.codelab.hotpepperapiapp.databinding.CellStoreBinding
-import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreListBinding
 import com.xwray.groupie.viewbinding.BindableItem
 
 class StoreItem(private val store: Store) : BindableItem<CellStoreBinding>() {
