@@ -6,4 +6,6 @@
     <string name="navigation_favorite">お気に入り</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="store_name">店舗名</string>
+    <string name="store_charge">金額</string>
 </resources>
