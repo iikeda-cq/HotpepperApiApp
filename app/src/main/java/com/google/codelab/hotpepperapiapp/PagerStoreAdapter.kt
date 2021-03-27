@@ -7,10 +7,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class PagerStoreAdapter (private val items: List<Store>) : RecyclerView.Adapter<PagerViewHolder>() {
+class PagerStoreAdapter(private val items: List<Store>) : RecyclerView.Adapter<PagerViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PagerViewHolder =
-        PagerViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.pager_store, parent, false))
+        PagerViewHolder(
+            LayoutInflater.from(parent.context).inflate(R.layout.pager_store, parent, false)
+        )
 
     override fun onBindViewHolder(holder: PagerViewHolder, position: Int) {
         holder.bind(items[position])
