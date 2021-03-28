@@ -6,5 +6,6 @@ data class Store(
     var price: String = "",
     var lat: Double = 0.0,
     var lng: Double = 0.0,
-    var genre: String = ""
+    var genre: String = "",
+    var url: String = ""
 )
