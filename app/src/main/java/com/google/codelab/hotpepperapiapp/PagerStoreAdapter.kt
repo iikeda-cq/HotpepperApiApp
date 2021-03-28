@@ -25,11 +25,13 @@ class PagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val image: ImageView = itemView.findViewById(R.id.pager_image)
     private val name: TextView = itemView.findViewById(R.id.pager_name)
     private val charge: TextView = itemView.findViewById(R.id.pager_charge)
+    private val genre: TextView = itemView.findViewById(R.id.pager_genre)
 
     fun bind(store: Store) {
         image.setImageResource(R.drawable.store_image)
         name.text = store.name
         charge.text = store.price
+        genre.text = store.genre
 
     }
 }

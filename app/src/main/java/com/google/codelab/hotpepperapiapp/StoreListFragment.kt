@@ -6,25 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import com.google.codelab.hotpepperapiapp.databinding.CellStoreBinding
 import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreListBinding
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
-import com.xwray.groupie.viewbinding.BindableItem
-
 
 class StoreListFragment : Fragment() {
     private lateinit var binding: FragmentStoreListBinding
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentStoreListBinding.inflate(layoutInflater)
+        requireActivity().setTitle(R.string.view_list)
 
         return binding.root
     }
@@ -48,8 +42,9 @@ fun createTestData(): List<Store> {
     while (i <= 10) {
         val data = Store()
         data.image = R.drawable.store_image
-        data.name = "居酒屋"
-        data.price = "4000"
+        data.name = "居酒屋$i"
+        data.price = "約4000円"
+        data.genre = "イタリアン"
 
         dataSet.add(data)
         i += 1
