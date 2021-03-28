@@ -20,12 +20,15 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
     private val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
     private var locationCallback: LocationCallback? = null
+    private val testData = createTestData()
+    private var mapMarkerPosition = 0
 
     private lateinit var binding: FragmentMapsBinding
     private lateinit var mMap: GoogleMap
@@ -53,11 +56,26 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
         binding.storePager.adapter = PagerStoreAdapter(createTestData())
         binding.storePager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+
+        // ViewPagerのスクロールに合わせてマップ上のピンにフォーカスを合わせる
+        binding.storePager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                val selectedStoreLatLng = LatLng(testData[position].lat, testData[position].lng)
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedStoreLatLng, 14.0f))
+            }
+        })
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         checkPermission()
+
+        mMap.setOnMarkerClickListener {
+            binding.storePager.setCurrentItem(it.tag as Int, true)
+            true
+        }
+
     }
 
     override fun onRequestPermissionsResult(
@@ -121,7 +139,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             mMap.isMyLocationEnabled = true
             val locationRequest = LocationRequest().apply {
                 interval = 10000
-                fastestInterval = 5000
+                fastestInterval = 60000
                 priority = LocationRequest.PRIORITY_HIGH_ACCURACY
             }
             locationCallback = object : LocationCallback() {
@@ -144,8 +162,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun storeMapping() {
-        val testData = createTestData()
-
         testData.mapIndexed { index, store ->
             store.lat = lastLocation.latitude.plus((index.toDouble() / 800 * index))
             store.lng = lastLocation.longitude.plus((index.toDouble() / 600 * index))
@@ -154,12 +170,16 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun addMarker(store: Store) {
-        mMap.addMarker(
+        val pin: Marker = mMap.addMarker(
             MarkerOptions()
                 .position(LatLng(store.lat, store.lng))
                 .title(store.name)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-        ).showInfoWindow()
+        )
+
+        pin.tag = mapMarkerPosition
+        pin.showInfoWindow()
+        mapMarkerPosition += 1
 
     }
 }
