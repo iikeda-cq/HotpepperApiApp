@@ -42,6 +42,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMapsBinding.inflate(layoutInflater)
+        requireActivity().setTitle(R.string.view_map)
 
         return binding.root
     }
@@ -57,6 +58,18 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         binding.storePager.adapter = PagerStoreAdapter(createTestData())
         binding.storePager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
 
+    }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
+        checkPermission()
+
+        // マーカーのタップで一致するstoreデータを表示する
+        mMap.setOnMarkerClickListener {
+            binding.storePager.setCurrentItem(it.tag as Int, true)
+            true
+        }
+
         // ViewPagerのスクロールに合わせてマップ上のピンにフォーカスを合わせる
         binding.storePager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -65,16 +78,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedStoreLatLng, 14.0f))
             }
         })
-    }
-
-    override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
-        checkPermission()
-
-        mMap.setOnMarkerClickListener {
-            binding.storePager.setCurrentItem(it.tag as Int, true)
-            true
-        }
 
     }
 
