@@ -16,12 +16,15 @@ class StoreListFragment : Fragment() {
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
     private val dataSet: MutableList<Store> = ArrayList()
 
-    private val onItemClickListener = OnItemClickListener { item, view ->
+    private val onItemClickListener = OnItemClickListener { item, _ ->
         // どのitemがクリックされたかindexを取得
         val index = groupAdapter.getAdapterPosition(item)
 
         parentFragmentManager.beginTransaction()
-            .replace(R.id.frameLayout, StoreWebViewFragment.newInstance(dataSet[index].name,dataSet[index].url))
+            .replace(
+                R.id.frameLayout,
+                StoreWebViewFragment.newInstance(dataSet[index].name, dataSet[index].url)
+            )
             .addToBackStack(null)
             .commit()
     }
@@ -39,9 +42,11 @@ class StoreListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.recyclerView.adapter = groupAdapter
-        binding.recyclerView.layoutManager =
-            GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
+        binding.recyclerView.apply {
+            adapter = groupAdapter
+            layoutManager =
+                GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
+        }
 
         groupAdapter.update(createTestData().map { StoreItem(it) })
         groupAdapter.setOnItemClickListener(onItemClickListener)
@@ -51,11 +56,14 @@ class StoreListFragment : Fragment() {
         var i = 1
         while (i <= 10) {
             val data = Store()
-            data.image = R.drawable.store_image
-            data.name = "居酒屋$i"
-            data.price = "約4000円"
-            data.genre = "イタリアン"
-            data.url = "https://www.hotpepper.jp/strJ001219042/"
+
+            data.apply {
+                image = R.drawable.store_image
+                name = "クラフトビール×個室肉バル クラフトマーケット 海浜幕張店"
+                price = "2001～3000円"
+                genre = "居酒屋"
+                url = "https://www.hotpepper.jp/strJ001219042/"
+            }
 
             dataSet.add(data)
             i += 1

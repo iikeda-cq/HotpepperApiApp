@@ -19,7 +19,7 @@ class StoreWebViewFragment : Fragment() {
     companion object {
         private const val URL = "url"
         private const val NAME = "name"
-        fun newInstance(name: String,url: String): StoreWebViewFragment {
+        fun newInstance(name: String, url: String): StoreWebViewFragment {
             return StoreWebViewFragment().apply {
                 arguments = Bundle().apply {
                     putString(NAME, name)

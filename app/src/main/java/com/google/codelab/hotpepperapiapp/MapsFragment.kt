@@ -27,14 +27,16 @@ import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
 class MapsFragment : Fragment(), OnMapReadyCallback {
     private val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
     private var locationCallback: LocationCallback? = null
-    private val testData = createTestData()
+    val testData = StoreListFragment().createTestData()
+    private val dataSet: List<Store> = StoreListFragment().createTestData()
+
+    // マーカーとViewPagerを紐づけるための変数
     private var mapMarkerPosition = 0
 
     private lateinit var binding: FragmentMapsBinding
     private lateinit var mMap: GoogleMap
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var lastLocation: Location
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,8 +57,26 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireContext())
 
-        binding.storePager.adapter = PagerStoreAdapter(createTestData())
+        binding.storePager.adapter =
+            PagerStoreAdapter(dataSet, object : PagerStoreAdapter.ListListener {
+                override fun onClickRow(tappedView: View, selectedBook: Store) {
+                    val position = binding.storePager.currentItem
+                    parentFragmentManager.beginTransaction()
+                        .replace(
+                            R.id.frameLayout,
+                            StoreWebViewFragment.newInstance(
+                                dataSet[position].name,
+                                dataSet[position].url
+                            )
+                        )
+                        .addToBackStack(null)
+                        .commit()
+                }
+            })
+
         binding.storePager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+
+        Toast.makeText(requireContext(),"現在地周辺のお店${dataSet.size}件",Toast.LENGTH_LONG).show()
 
     }
 
@@ -78,7 +98,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedStoreLatLng, 14.0f))
             }
         })
-
     }
 
     override fun onRequestPermissionsResult(
@@ -165,6 +184,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun storeMapping() {
+        mMap.clear()
         testData.mapIndexed { index, store ->
             store.lat = lastLocation.latitude.plus((index.toDouble() / 800 * index))
             store.lng = lastLocation.longitude.plus((index.toDouble() / 600 * index))
@@ -176,7 +196,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         val pin: Marker = mMap.addMarker(
             MarkerOptions()
                 .position(LatLng(store.lat, store.lng))
-                .title(store.name)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
         )
 
@@ -184,5 +203,10 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         pin.showInfoWindow()
         mapMarkerPosition += 1
 
+    }
+
+    fun nextPage(){
+        val position = binding.storePager.currentItem
+        binding.storePager.setCurrentItem(position + 1, true)
     }
 }
