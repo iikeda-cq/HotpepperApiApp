@@ -12,4 +12,5 @@
     <string name="store_name">店舗名</string>
     <string name="store_charge">金額</string>
     <string name="store_genre">ジャンル</string>
+    <string name="store_budget">予算：</string>
 </resources>
