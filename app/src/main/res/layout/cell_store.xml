@@ -4,14 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     >
 
-    <data>
-
-        <variable
-            name="viewModel"
-            type="com.google.codelab.hotpepperapiapp.StoreListFragment" />
-
-    </data>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="200dp"
         android:layout_height="250dp"
