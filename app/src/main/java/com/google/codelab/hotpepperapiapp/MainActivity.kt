@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
                     return@OnNavigationItemSelectedListener true
                 }
                 R.id.navigation_favorite -> {
-
+                    showFragment(FavoriteStoreFragment())
                     return@OnNavigationItemSelectedListener true
                 }
             }
