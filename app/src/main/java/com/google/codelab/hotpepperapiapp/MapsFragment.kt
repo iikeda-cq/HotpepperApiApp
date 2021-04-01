@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
+import kotlin.random.Random
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
     private val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
@@ -66,7 +67,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                             R.id.frameLayout,
                             StoreWebViewFragment.newInstance(
                                 dataSet[position].name,
-                                dataSet[position].url
+                                dataSet[position].url,
+                                dataSet[position].price,
+                                true
                             )
                         )
                         .addToBackStack(null)
@@ -76,7 +79,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
         binding.storePager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
 
-        Toast.makeText(requireContext(),"現在地周辺のお店${dataSet.size}件",Toast.LENGTH_LONG).show()
+        Toast.makeText(requireContext(), "現在地周辺のお店${dataSet.size}件", Toast.LENGTH_LONG).show()
 
     }
 
@@ -205,7 +208,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     }
 
-    fun nextPage(){
+    fun nextPage() {
         val position = binding.storePager.currentItem
         binding.storePager.setCurrentItem(position + 1, true)
     }

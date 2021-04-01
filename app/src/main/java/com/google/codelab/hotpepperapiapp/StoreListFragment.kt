@@ -23,7 +23,7 @@ class StoreListFragment : Fragment() {
         parentFragmentManager.beginTransaction()
             .replace(
                 R.id.frameLayout,
-                StoreWebViewFragment.newInstance(dataSet[index].name, dataSet[index].url)
+                StoreWebViewFragment.newInstance(dataSet[index].name, dataSet[index].url, dataSet[index].price, true)
             )
             .addToBackStack(null)
             .commit()
@@ -59,7 +59,7 @@ class StoreListFragment : Fragment() {
 
             data.apply {
                 image = R.drawable.store_image
-                name = "クラフトビール×個室肉バル クラフトマーケット 海浜幕張店"
+                name = "[$i]クラフトビール×個室肉バル クラフトマーケット 海浜幕張店"
                 price = "2001～3000円"
                 genre = "居酒屋"
                 url = "https://www.hotpepper.jp/strJ001219042/"

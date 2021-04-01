@@ -11,6 +11,7 @@ class StoreItem(private val store: Store) : BindableItem<CellStoreBinding>() {
         viewBinding.storeImage.setImageResource(R.drawable.store_image)
         viewBinding.storeName.text = store.name
         viewBinding.storePrice.text = store.price
+        viewBinding.storeGenre.text = store.genre
     }
 
     override fun initializeViewBinding(view: View): CellStoreBinding {
