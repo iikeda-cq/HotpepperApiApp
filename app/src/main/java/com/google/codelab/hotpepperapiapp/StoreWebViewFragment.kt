@@ -2,9 +2,11 @@ package com.google.codelab.hotpepperapiapp
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreWebViewBinding
@@ -32,7 +34,7 @@ class StoreWebViewFragment : Fragment() {
         get() = checkNotNull(arguments?.getBoolean(FLAG))
 
     companion object {
-        private const val STORE_ID= "store_id"
+        private const val STORE_ID = "store_id"
         private const val URL = "url"
         private const val NAME = "name"
         private const val PRICE = "price"
@@ -63,6 +65,9 @@ class StoreWebViewFragment : Fragment() {
         binding = FragmentStoreWebViewBinding.inflate(inflater)
 
         requireActivity().title = name
+        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        setHasOptionsMenu(true)
+
         realm = Realm.getDefaultInstance()
         binding.storeWebView.loadUrl(url)
 
@@ -95,7 +100,7 @@ class StoreWebViewFragment : Fragment() {
 
         binding.fabDelete.setOnClickListener {
             val target = realm.where(Store::class.java)
-                .equalTo("storeId", name)
+                .equalTo("storeId", storeId)
                 .findAll()
 
             realm.executeTransaction {
@@ -116,7 +121,7 @@ class StoreWebViewFragment : Fragment() {
             .findAll()
 
         realmResults.map {
-            if (it.name == name) {
+            if (it.storeId == storeId) {
                 binding.fabFavorite.isVisible = false
                 binding.fabDelete.isVisible = true
                 return
@@ -124,8 +129,21 @@ class StoreWebViewFragment : Fragment() {
         }
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                parentFragmentManager.popBackStack()
+                true
+            }
+            else -> {
+                true
+            }
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         realm.close()
+        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
 }

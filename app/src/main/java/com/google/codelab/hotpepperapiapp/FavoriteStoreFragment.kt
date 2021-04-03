@@ -67,6 +67,7 @@ class FavoriteStoreFragment : Fragment() {
         dataSet.clear()
         realmResults.map { store ->
             val data = Store()
+            data.storeId = store.storeId
             data.name = store.name
             data.url = store.url
             data.price = store.price

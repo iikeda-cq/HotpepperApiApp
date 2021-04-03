@@ -7,7 +7,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class PagerStoreAdapter(private val store: List<Store>, private val listener: ListListener) : RecyclerView.Adapter<PagerViewHolder>() {
+class PagerStoreAdapter(private val store: List<Store>, private val listener: ListListener) :
+    RecyclerView.Adapter<PagerViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PagerViewHolder =
         PagerViewHolder(
@@ -24,7 +25,7 @@ class PagerStoreAdapter(private val store: List<Store>, private val listener: Li
     override fun getItemCount(): Int = store.size
 
     interface ListListener {
-        fun onClickRow(tappedView: View, selectedBook: Store)
+        fun onClickRow(tappedView: View, selectedStore: Store)
     }
 }
 

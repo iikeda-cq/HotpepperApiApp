@@ -62,7 +62,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
         binding.storePager.adapter =
             PagerStoreAdapter(dataSet, object : PagerStoreAdapter.ListListener {
-                override fun onClickRow(tappedView: View, selectedBook: Store) {
+                override fun onClickRow(tappedView: View, selectedStore: Store) {
                     val position = binding.storePager.currentItem
 
                     showFragmentBackStack(

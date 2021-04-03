@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
 
+        // ステータスバーとアクションバーの色を合わせる処理
         val actionBarColor = Color.parseColor("#FF018786")
         this.window.statusBarColor = actionBarColor.actionBarColorToStatusBarColor()
 
