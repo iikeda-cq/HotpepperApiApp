@@ -69,7 +69,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                             dataSet[position].name,
                             dataSet[position].url,
                             dataSet[position].price,
-                            true
                         )
                     )
                 }

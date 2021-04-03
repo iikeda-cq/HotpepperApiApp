@@ -28,7 +28,6 @@ class StoreListFragment : Fragment() {
                 dataSet[index].name,
                 dataSet[index].url,
                 dataSet[index].price,
-                true
             )
         )
     }

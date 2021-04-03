@@ -30,21 +30,16 @@ class StoreWebViewFragment : Fragment() {
     private val price: String
         get() = checkNotNull(arguments?.getString(PRICE))
 
-    private val flag: Boolean
-        get() = checkNotNull(arguments?.getBoolean(FLAG))
-
     companion object {
         private const val STORE_ID = "store_id"
         private const val URL = "url"
         private const val NAME = "name"
         private const val PRICE = "price"
-        private const val FLAG = "flag"
         fun newInstance(
             storeId: String,
             name: String,
             url: String,
-            price: String,
-            flag: Boolean
+            price: String
         ): StoreWebViewFragment {
             return StoreWebViewFragment().apply {
                 arguments = Bundle().apply {
@@ -52,7 +47,6 @@ class StoreWebViewFragment : Fragment() {
                     putString(NAME, name)
                     putString(URL, url)
                     putString(PRICE, price)
-                    putBoolean(FLAG, flag)
                 }
             }
         }
@@ -71,11 +65,6 @@ class StoreWebViewFragment : Fragment() {
         realm = Realm.getDefaultInstance()
         binding.storeWebView.loadUrl(url)
 
-        if (flag) {
-            binding.fabDelete.isVisible = false
-        } else {
-            binding.fabFavorite.isVisible = false
-        }
 
         // すでにお気に入りに追加済みかどうかをチェックする
         checkAlreadyAdd()
@@ -122,10 +111,16 @@ class StoreWebViewFragment : Fragment() {
 
         realmResults.map {
             if (it.storeId == storeId) {
-                binding.fabFavorite.isVisible = false
-                binding.fabDelete.isVisible = true
+                binding.apply {
+                    fabFavorite.isVisible = false
+                    fabDelete.isVisible = true
+                }
                 return
             }
+        }
+        binding.apply {
+            fabFavorite.isVisible = true
+            fabDelete.isVisible = false
         }
     }
 
