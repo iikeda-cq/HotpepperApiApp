@@ -22,13 +22,12 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.codelab.hotpepperapiapp.FragmentExt.showFragment
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
-import kotlin.random.Random
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
     private val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
     private var locationCallback: LocationCallback? = null
-    val testData = StoreListFragment().createTestData()
     private val dataSet: List<Store> = StoreListFragment().createTestData()
 
     // マーカーとViewPagerを紐づけるための変数
@@ -38,6 +37,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var lastLocation: Location
+
+    val testData = StoreListFragment().createTestData()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,24 +63,21 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             PagerStoreAdapter(dataSet, object : PagerStoreAdapter.ListListener {
                 override fun onClickRow(tappedView: View, selectedBook: Store) {
                     val position = binding.storePager.currentItem
-                    parentFragmentManager.beginTransaction()
-                        .replace(
-                            R.id.frameLayout,
-                            StoreWebViewFragment.newInstance(
-                                dataSet[position].name,
-                                dataSet[position].url,
-                                dataSet[position].price,
-                                true
-                            )
+
+                    showFragment(
+                        parentFragmentManager, StoreWebViewFragment.newInstance(
+                            dataSet[position].name,
+                            dataSet[position].url,
+                            dataSet[position].price,
+                            true
                         )
-                        .addToBackStack(null)
-                        .commit()
+                    )
                 }
             })
 
         binding.storePager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
 
-        Toast.makeText(requireContext(), "現在地周辺のお店${dataSet.size}件", Toast.LENGTH_LONG).show()
+        Toast.makeText(requireContext(), "現在地周辺のお店${dataSet.size}件", Toast.LENGTH_SHORT).show()
 
     }
 
@@ -205,11 +203,5 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         pin.tag = mapMarkerPosition
         pin.showInfoWindow()
         mapMarkerPosition += 1
-
-    }
-
-    fun nextPage() {
-        val position = binding.storePager.currentItem
-        binding.storePager.setCurrentItem(position + 1, true)
     }
 }

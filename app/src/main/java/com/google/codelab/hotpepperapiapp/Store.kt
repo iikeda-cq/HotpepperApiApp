@@ -7,6 +7,7 @@ open class Store : RealmObject() {
     @PrimaryKey
     var id: Long = 0
 
+    var storeId: String = ""
     var image: Int = 0
     var name: String = ""
     var price: String = ""

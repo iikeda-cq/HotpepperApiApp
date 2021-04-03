@@ -61,15 +61,15 @@ class StoreWebViewFragment : Fragment() {
         binding.storeWebView.loadUrl(url)
 
         if (flag) {
-            binding.delete.isVisible = false
+            binding.fabDelete.isVisible = false
         } else {
-            binding.fab.isVisible = false
+            binding.fabFavorite.isVisible = false
         }
 
         // すでにお気に入りに追加済みかどうかをチェックする
         checkAlreadyAdd()
 
-        binding.fab.setOnClickListener {
+        binding.fabFavorite.setOnClickListener {
             realm.executeTransaction {
                 val maxId = realm.where<Store>().max("id")
                 val nextId = (maxId?.toLong() ?: 0L) + 1L
@@ -83,10 +83,10 @@ class StoreWebViewFragment : Fragment() {
 
             // 複数回タップできないように設定
             it.isVisible = false
-            binding.delete.isVisible = true
+            binding.fabDelete.isVisible = true
         }
 
-        binding.delete.setOnClickListener {
+        binding.fabDelete.setOnClickListener {
             val target = realm.where(Store::class.java)
                 .equalTo("name", name)
                 .findAll()
@@ -97,7 +97,7 @@ class StoreWebViewFragment : Fragment() {
 
             Toast.makeText(requireContext(), R.string.delete_favorite, Toast.LENGTH_SHORT).show()
             it.isVisible = false
-            binding.fab.isVisible = true
+            binding.fabFavorite.isVisible = true
         }
 
         return binding.root
@@ -110,8 +110,8 @@ class StoreWebViewFragment : Fragment() {
 
         realmResults.map {
             if (it.name == name) {
-                binding.fab.isVisible = false
-                binding.delete.isVisible = true
+                binding.fabFavorite.isVisible = false
+                binding.fabDelete.isVisible = true
                 return
             }
         }

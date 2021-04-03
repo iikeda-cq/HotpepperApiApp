@@ -58,6 +58,7 @@ class StoreListFragment : Fragment() {
             val data = Store()
 
             data.apply {
+                storeId = i.toString()
                 image = R.drawable.store_image
                 name = "[$i]クラフトビール×個室肉バル クラフトマーケット 海浜幕張店"
                 price = "2001～3000円"
