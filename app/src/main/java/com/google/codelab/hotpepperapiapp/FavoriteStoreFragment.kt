@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.codelab.hotpepperapiapp.FragmentExt.showFragment
+import com.google.codelab.hotpepperapiapp.FragmentExt.showFragmentBackStack
 import com.google.codelab.hotpepperapiapp.databinding.FragmentFavoriteStoreBinding
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
@@ -23,8 +24,9 @@ class FavoriteStoreFragment : Fragment() {
         // どのitemがクリックされたかindexを取得
         val index = groupAdapter.getAdapterPosition(item)
 
-        showFragment(
+        showFragmentBackStack(
             parentFragmentManager, StoreWebViewFragment.newInstance(
+                dataSet[index].storeId,
                 dataSet[index].name,
                 dataSet[index].url,
                 dataSet[index].price,

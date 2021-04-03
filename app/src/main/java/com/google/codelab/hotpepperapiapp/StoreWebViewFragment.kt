@@ -16,6 +16,9 @@ class StoreWebViewFragment : Fragment() {
     lateinit var binding: FragmentStoreWebViewBinding
     lateinit var realm: Realm
 
+    private val storeId: String
+        get() = checkNotNull(arguments?.getString(STORE_ID))
+
     private val url: String
         get() = checkNotNull(arguments?.getString(URL))
 
@@ -29,11 +32,13 @@ class StoreWebViewFragment : Fragment() {
         get() = checkNotNull(arguments?.getBoolean(FLAG))
 
     companion object {
+        private const val STORE_ID= "store_id"
         private const val URL = "url"
         private const val NAME = "name"
         private const val PRICE = "price"
         private const val FLAG = "flag"
         fun newInstance(
+            storeId: String,
             name: String,
             url: String,
             price: String,
@@ -41,6 +46,7 @@ class StoreWebViewFragment : Fragment() {
         ): StoreWebViewFragment {
             return StoreWebViewFragment().apply {
                 arguments = Bundle().apply {
+                    putString(STORE_ID, storeId)
                     putString(NAME, name)
                     putString(URL, url)
                     putString(PRICE, price)
@@ -75,6 +81,7 @@ class StoreWebViewFragment : Fragment() {
                 val nextId = (maxId?.toLong() ?: 0L) + 1L
                 val store = realm.createObject<Store>(nextId)
 
+                store.storeId = storeId
                 store.name = name
                 store.url = url
                 store.price = price
@@ -88,7 +95,7 @@ class StoreWebViewFragment : Fragment() {
 
         binding.fabDelete.setOnClickListener {
             val target = realm.where(Store::class.java)
-                .equalTo("name", name)
+                .equalTo("storeId", name)
                 .findAll()
 
             realm.executeTransaction {
@@ -105,7 +112,7 @@ class StoreWebViewFragment : Fragment() {
 
     private fun checkAlreadyAdd() {
         val realmResults = realm.where(Store::class.java)
-            .distinct("name")
+            .distinct("storeId")
             .findAll()
 
         realmResults.map {

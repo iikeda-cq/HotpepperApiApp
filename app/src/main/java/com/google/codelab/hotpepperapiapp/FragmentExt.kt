@@ -10,4 +10,11 @@ object FragmentExt {
             .replace(R.id.frameLayout, fragment)
             .commit()
     }
+
+    fun showFragmentBackStack(fragmentManager: FragmentManager, fragment: Fragment) {
+        fragmentManager.beginTransaction()
+            .replace(R.id.frameLayout, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
 }

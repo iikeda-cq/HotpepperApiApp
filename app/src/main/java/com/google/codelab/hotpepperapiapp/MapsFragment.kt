@@ -23,6 +23,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.codelab.hotpepperapiapp.FragmentExt.showFragment
+import com.google.codelab.hotpepperapiapp.FragmentExt.showFragmentBackStack
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
@@ -64,8 +65,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 override fun onClickRow(tappedView: View, selectedBook: Store) {
                     val position = binding.storePager.currentItem
 
-                    showFragment(
+                    showFragmentBackStack(
                         parentFragmentManager, StoreWebViewFragment.newInstance(
+                            dataSet[position].storeId,
                             dataSet[position].name,
                             dataSet[position].url,
                             dataSet[position].price,
