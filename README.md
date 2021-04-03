@@ -10,6 +10,11 @@ HotpepperグルメのAPI(https://webservice.recruit.co.jp/doc/hotpepper/referenc
   - APIから店舗の緯度・経度を取得し、その場所の地図上にピンを立て表示する
   - ピンのタップとViewPagerのスクロールが連動するように実装
 - お気に入り登録
-  - Realmでお気にいり店舗の店舗名・値段・ジャンル・URLを保存し、その登録・削除を実装
+  - Realmでお気にいり店舗の店舗名・値段・ジャンル・URLを保存し、その登録・削除機能を実装
 - WebView
   - フローティングアクションボタンを配置し、ここからお気に入り登録できるように実装
+
+## 使用技術
+- GoogleMapAPI
+- Realm
+- Groupie
