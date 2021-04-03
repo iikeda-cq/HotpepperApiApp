@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,13 +19,10 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.codelab.hotpepperapiapp.FragmentExt.showFragment
+import com.google.android.gms.maps.model.*
 import com.google.codelab.hotpepperapiapp.FragmentExt.showFragmentBackStack
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
+import kotlin.random.Random
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
     private val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
@@ -98,7 +96,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 val selectedStoreLatLng = LatLng(testData[position].lat, testData[position].lng)
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedStoreLatLng, 14.0f))
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedStoreLatLng, 16.0f))
             }
         })
     }
@@ -188,9 +186,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     private fun storeMapping() {
         mMap.clear()
-        testData.mapIndexed { index, store ->
-            store.lat = lastLocation.latitude.plus((index.toDouble() / 800 * index))
-            store.lng = lastLocation.longitude.plus((index.toDouble() / 600 * index))
+
+        // テストように適当に現在地付近にマーカーを設定
+        testData.mapIndexed { _, store ->
+            store.lat = lastLocation.latitude.plus(Random.nextDouble(-9.0, 9.0) / 1000)
+            store.lng = lastLocation.longitude.plus(Random.nextDouble(-9.0, 9.0) / 1000)
             addMarker(store)
         }
     }

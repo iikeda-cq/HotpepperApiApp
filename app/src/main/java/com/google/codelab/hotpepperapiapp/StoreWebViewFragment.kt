@@ -15,8 +15,8 @@ import io.realm.kotlin.createObject
 import io.realm.kotlin.where
 
 class StoreWebViewFragment : Fragment() {
-    lateinit var binding: FragmentStoreWebViewBinding
-    lateinit var realm: Realm
+    private lateinit var binding: FragmentStoreWebViewBinding
+    private lateinit var realm: Realm
 
     private val storeId: String
         get() = checkNotNull(arguments?.getString(STORE_ID))
