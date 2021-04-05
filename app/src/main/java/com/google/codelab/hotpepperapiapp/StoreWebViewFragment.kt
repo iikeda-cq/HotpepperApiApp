@@ -97,6 +97,8 @@ class StoreWebViewFragment : Fragment() {
             }
 
             Toast.makeText(requireContext(), R.string.delete_favorite, Toast.LENGTH_SHORT).show()
+
+            // 複数回タップできないように設定
             it.isVisible = false
             binding.fabFavorite.isVisible = true
         }

@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,7 +18,10 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.codelab.hotpepperapiapp.FragmentExt.showFragmentBackStack
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
 import kotlin.random.Random
@@ -112,7 +114,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                     // 許可された
                     myLocationEnable()
                 } else {
-                    Toast.makeText(context, "現在地は表示できません", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, R.string.no_locations, Toast.LENGTH_LONG).show()
                 }
             }
         }
