@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContentProviderCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.location.*
@@ -23,6 +24,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.codelab.hotpepperapiapp.FragmentExt.showFragmentBackStack
+import com.google.codelab.hotpepperapiapp.MapExt.checkPermission
 import com.google.codelab.hotpepperapiapp.StoreListFragment.Companion.createTestData
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
 import kotlin.random.Random
@@ -39,8 +41,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var currentLocation: Location
-
-    val testData = createTestData()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -85,7 +85,12 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        checkPermission()
+
+        if(checkPermission(requireContext())) {
+            enableMyLocation()
+        } else {
+            requestLocationPermission(requireContext(), requireActivity())
+        }
 
         // マーカーのタップで一致するstoreデータを表示する
         map.setOnMarkerClickListener {
@@ -97,7 +102,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         binding.storePager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                val selectedStoreLatLng = LatLng(testData[position].lat, testData[position].lng)
+                val selectedStoreLatLng = LatLng(dataSet[position].lat, dataSet[position].lng)
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedStoreLatLng, 16.0f))
             }
         })
@@ -113,23 +118,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION -> {
                 if (permissions.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // 許可された
-                    EnableMyLocation()
+                    enableMyLocation()
                 } else {
                     Toast.makeText(context, R.string.no_locations, Toast.LENGTH_LONG).show()
                 }
             }
-        }
-    }
-
-    private fun checkPermission() {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            EnableMyLocation()
-        } else {
-            requestLocationPermission(requireContext(), requireActivity())
         }
     }
 
@@ -155,7 +148,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun EnableMyLocation() {
+    private fun enableMyLocation() {
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -190,7 +183,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         map.clear()
 
         // テストように適当に現在地付近にマーカーを設定
-        testData.mapIndexed { _, store ->
+        dataSet.forEach { store ->
             store.lat = currentLocation.latitude.plus(Random.nextDouble(-9.0, 9.0) / 1000)
             store.lng = currentLocation.longitude.plus(Random.nextDouble(-9.0, 9.0) / 1000)
             addMarker(store)
