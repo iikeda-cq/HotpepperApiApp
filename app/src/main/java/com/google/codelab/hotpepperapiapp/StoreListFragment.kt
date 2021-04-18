@@ -15,7 +15,6 @@ import com.xwray.groupie.OnItemClickListener
 class StoreListFragment : Fragment() {
     private lateinit var binding: FragmentStoreListBinding
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
-    private val dataSet: MutableList<Store> = ArrayList()
 
     private val onItemClickListener = OnItemClickListener { item, _ ->
         // どのitemがクリックされたかindexを取得
@@ -55,24 +54,27 @@ class StoreListFragment : Fragment() {
         groupAdapter.setOnItemClickListener(onItemClickListener)
     }
 
-    fun createTestData(): List<Store> {
-        var i = 1
-        while (i <= 10) {
-            val data = Store()
+    companion object {
+        private val dataSet: MutableList<Store> = ArrayList()
+        fun createTestData(): List<Store> {
+            var i = 1
+            while (i <= 10) {
+                val data = Store()
 
-            data.apply {
-                storeId = i.toString()
-                image = R.drawable.store_image
-                name = "[$i]クラフトビール×個室肉バル クラフトマーケット 海浜幕張店"
-                price = "2001～3000円"
-                genre = "居酒屋"
-                url = "https://www.hotpepper.jp/strJ001219042/"
+                data.apply {
+                    storeId = i.toString()
+                    image = R.drawable.store_image
+                    name = "[$i]クラフトビール×個室肉バル クラフトマーケット 海浜幕張店"
+                    price = "2001～3000円"
+                    genre = "居酒屋"
+                    url = "https://www.hotpepper.jp/strJ001219042/"
+                }
+
+                dataSet.add(data)
+                i += 1
             }
-
-            dataSet.add(data)
-            i += 1
+            return dataSet
         }
-        return dataSet
     }
 }
 

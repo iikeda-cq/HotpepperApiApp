@@ -23,13 +23,14 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.codelab.hotpepperapiapp.FragmentExt.showFragmentBackStack
+import com.google.codelab.hotpepperapiapp.StoreListFragment.Companion.createTestData
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
 import kotlin.random.Random
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
     private val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
     private var locationCallback: LocationCallback? = null
-    private val dataSet: List<Store> = StoreListFragment().createTestData()
+    private val dataSet: List<Store> = createTestData()
 
     // マーカーとViewPagerを紐づけるための変数
     private var mapMarkerPosition = 0
@@ -39,7 +40,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var currentLocation: Location
 
-    val testData = StoreListFragment().createTestData()
+    val testData = createTestData()
 
     override fun onCreateView(
         inflater: LayoutInflater,
