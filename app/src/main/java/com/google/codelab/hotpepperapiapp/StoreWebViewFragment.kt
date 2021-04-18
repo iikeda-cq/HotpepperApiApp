@@ -71,8 +71,8 @@ class StoreWebViewFragment : Fragment() {
 
         binding.fabFavorite.setOnClickListener {
             realm.executeTransaction {
-                val maxId = realm.where<Store>().max("id")
-                val nextId = (maxId?.toLong() ?: 0L) + 1L
+                val currentId = realm.where<Store>().max("id")
+                val nextId = (currentId?.toLong() ?: 0L) + 1L
                 val store = realm.createObject<Store>(nextId)
 
                 store.storeId = storeId

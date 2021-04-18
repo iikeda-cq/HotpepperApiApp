@@ -16,18 +16,18 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.navigation_list -> {
                     showFragment(supportFragmentManager, StoreListFragment())
-                    return@OnNavigationItemSelectedListener true
+                    true
                 }
                 R.id.navigation_map -> {
                     showFragment(supportFragmentManager, MapsFragment())
-                    return@OnNavigationItemSelectedListener true
+                    true
                 }
                 R.id.navigation_favorite -> {
                     showFragment(supportFragmentManager, FavoriteStoreFragment())
-                    return@OnNavigationItemSelectedListener true
+                    true
                 }
+                else -> false
             }
-            false
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {

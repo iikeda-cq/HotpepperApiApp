@@ -35,9 +35,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     private var mapMarkerPosition = 0
 
     private lateinit var binding: FragmentMapsBinding
-    private lateinit var mMap: GoogleMap
+    private lateinit var map: GoogleMap
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private lateinit var lastLocation: Location
+    private lateinit var currentLocation: Location
 
     val testData = StoreListFragment().createTestData()
 
@@ -83,11 +83,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
+        map = googleMap
         checkPermission()
 
         // マーカーのタップで一致するstoreデータを表示する
-        mMap.setOnMarkerClickListener {
+        map.setOnMarkerClickListener {
             binding.storePager.setCurrentItem(it.tag as Int, true)
             true
         }
@@ -97,7 +97,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 val selectedStoreLatLng = LatLng(testData[position].lat, testData[position].lng)
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedStoreLatLng, 16.0f))
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedStoreLatLng, 16.0f))
             }
         })
     }
@@ -112,7 +112,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION -> {
                 if (permissions.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // 許可された
-                    myLocationEnable()
+                    EnableMyLocation()
                 } else {
                     Toast.makeText(context, R.string.no_locations, Toast.LENGTH_LONG).show()
                 }
@@ -126,7 +126,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            myLocationEnable()
+            EnableMyLocation()
         } else {
             requestLocationPermission(requireContext(), requireActivity())
         }
@@ -154,13 +154,13 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun myLocationEnable() {
+    private fun EnableMyLocation() {
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            mMap.isMyLocationEnabled = true
+            map.isMyLocationEnabled = true
             val locationRequest = LocationRequest().apply {
                 interval = 10000
                 fastestInterval = 60000
@@ -169,11 +169,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             locationCallback = object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult?) {
                     super.onLocationResult(locationResult)
-                    if (locationResult?.lastLocation != null) {
-                        lastLocation = locationResult.lastLocation
-                        val currentLatLng = LatLng(lastLocation.latitude, lastLocation.longitude)
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 14.0f))
-                        storeMapping()
+                    locationResult?.lastLocation?.let {  lastLocation ->
+                        currentLocation = lastLocation
+                        val currentLatLng = LatLng(currentLocation.latitude, currentLocation.longitude)
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 14.0f))
+                        mapStore()
                     }
                 }
             }
@@ -185,19 +185,19 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun storeMapping() {
-        mMap.clear()
+    private fun mapStore() {
+        map.clear()
 
         // テストように適当に現在地付近にマーカーを設定
         testData.mapIndexed { _, store ->
-            store.lat = lastLocation.latitude.plus(Random.nextDouble(-9.0, 9.0) / 1000)
-            store.lng = lastLocation.longitude.plus(Random.nextDouble(-9.0, 9.0) / 1000)
+            store.lat = currentLocation.latitude.plus(Random.nextDouble(-9.0, 9.0) / 1000)
+            store.lng = currentLocation.longitude.plus(Random.nextDouble(-9.0, 9.0) / 1000)
             addMarker(store)
         }
     }
 
     private fun addMarker(store: Store) {
-        val pin: Marker = mMap.addMarker(
+        val pin: Marker = map.addMarker(
             MarkerOptions()
                 .position(LatLng(store.lat, store.lng))
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
