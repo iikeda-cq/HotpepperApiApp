@@ -9,10 +9,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import com.google.codelab.hotpepperapiapp.RealmClient.addStore
+import com.google.codelab.hotpepperapiapp.RealmClient.deleteStore
+import com.google.codelab.hotpepperapiapp.RealmClient.fetchStores
 import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreWebViewBinding
 import io.realm.Realm
-import io.realm.kotlin.createObject
-import io.realm.kotlin.where
 
 class StoreWebViewFragment : Fragment() {
     private lateinit var binding: FragmentStoreWebViewBinding
@@ -70,16 +71,7 @@ class StoreWebViewFragment : Fragment() {
         checkAlreadyAdd()
 
         binding.fabFavorite.setOnClickListener {
-            realm.executeTransaction {
-                val currentId = realm.where<Store>().max("id")
-                val nextId = (currentId?.toLong() ?: 0L) + 1L
-                val store = realm.createObject<Store>(nextId)
-
-                store.storeId = storeId
-                store.name = name
-                store.url = url
-                store.price = price
-            }
+            addStore(realm, storeId, name, url, price)
             Toast.makeText(requireContext(), R.string.add_favorite, Toast.LENGTH_SHORT).show()
 
             // 複数回タップできないように設定
@@ -88,13 +80,7 @@ class StoreWebViewFragment : Fragment() {
         }
 
         binding.fabDelete.setOnClickListener {
-            val target = realm.where(Store::class.java)
-                .equalTo("storeId", storeId)
-                .findAll()
-
-            realm.executeTransaction {
-                target.deleteFromRealm(0)
-            }
+            deleteStore(realm, storeId)
 
             Toast.makeText(requireContext(), R.string.delete_favorite, Toast.LENGTH_SHORT).show()
 
@@ -107,11 +93,9 @@ class StoreWebViewFragment : Fragment() {
     }
 
     private fun checkAlreadyAdd() {
-        val realmResults = realm.where(Store::class.java)
-            .distinct("storeId")
-            .findAll()
+        val stores = fetchStores(realm)
 
-        realmResults.forEach {
+        stores.forEach {
             if (it.storeId == storeId) {
                 binding.apply {
                     fabFavorite.isVisible = false

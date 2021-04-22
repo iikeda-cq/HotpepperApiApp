@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.codelab.hotpepperapiapp.FragmentExt.showFragment
 import com.google.codelab.hotpepperapiapp.FragmentExt.showFragmentBackStack
+import com.google.codelab.hotpepperapiapp.RealmClient.fetchStores
 import com.google.codelab.hotpepperapiapp.databinding.FragmentFavoriteStoreBinding
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
@@ -59,12 +60,10 @@ class FavoriteStoreFragment : Fragment() {
     }
 
     private fun fetchRealmData(): MutableList<Store> {
-        val realmResults = realm.where(Store::class.java)
-            .distinct("name")
-            .findAll()
+        val stores = fetchStores(realm)
 
         dataSet.clear()
-        realmResults.forEach { store ->
+        stores.forEach { store ->
             val data = Store()
             data.storeId = store.storeId
             data.name = store.name
