@@ -111,7 +111,7 @@ class StoreWebViewFragment : Fragment() {
             .distinct("storeId")
             .findAll()
 
-        realmResults.map {
+        realmResults.forEach {
             if (it.storeId == storeId) {
                 binding.apply {
                     fabFavorite.isVisible = false

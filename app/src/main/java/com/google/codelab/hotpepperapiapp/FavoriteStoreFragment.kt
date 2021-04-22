@@ -64,7 +64,7 @@ class FavoriteStoreFragment : Fragment() {
             .findAll()
 
         dataSet.clear()
-        realmResults.map { store ->
+        realmResults.forEach { store ->
             val data = Store()
             data.storeId = store.storeId
             data.name = store.name
