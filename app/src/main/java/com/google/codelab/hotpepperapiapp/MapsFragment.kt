@@ -1,8 +1,6 @@
 package com.google.codelab.hotpepperapiapp
 
 import android.Manifest
-import android.app.Activity
-import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -11,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContentProviderCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.location.*
@@ -25,6 +22,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.codelab.hotpepperapiapp.FragmentExt.showFragmentBackStack
 import com.google.codelab.hotpepperapiapp.MapExt.checkPermission
+import com.google.codelab.hotpepperapiapp.MapExt.requestLocationPermission
 import com.google.codelab.hotpepperapiapp.StoreListFragment.Companion.createTestData
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
 import kotlin.random.Random
@@ -126,28 +124,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun requestLocationPermission(context: Context, activity: Activity) {
-        if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            // 許可を求め、拒否されていた場合
-            ActivityCompat.requestPermissions(
-                activity,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION
-            )
-        } else {
-            // まだ許可を求めていない
-            ActivityCompat.requestPermissions(
-                activity,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION
-            )
-        }
-    }
-
     private fun enableMyLocation() {
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
@@ -156,8 +132,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         ) {
             map.isMyLocationEnabled = true
             val locationRequest = LocationRequest().apply {
-                interval = 10000
-                fastestInterval = 60000
                 priority = LocationRequest.PRIORITY_HIGH_ACCURACY
             }
             locationCallback = object : LocationCallback() {
