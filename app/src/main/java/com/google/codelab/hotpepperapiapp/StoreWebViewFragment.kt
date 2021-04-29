@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.google.codelab.hotpepperapiapp.RealmClient.addStore
 import com.google.codelab.hotpepperapiapp.RealmClient.deleteStore
@@ -30,6 +29,8 @@ class StoreWebViewFragment : Fragment() {
 
     private val price: String
         get() = checkNotNull(arguments?.getString(PRICE))
+
+    var isFavorite = false
 
     companion object {
         private const val STORE_ID = "store_id"
@@ -71,25 +72,22 @@ class StoreWebViewFragment : Fragment() {
         checkAlreadyAdd()
 
         binding.fabFavorite.setOnClickListener {
-            addStore(realm, storeId, name, url, price)
-            Toast.makeText(requireContext(), R.string.add_favorite, Toast.LENGTH_SHORT).show()
-
-            // 複数回タップできないように設定
-            it.isVisible = false
-            binding.fabDelete.isVisible = true
-        }
-
-        binding.fabDelete.setOnClickListener {
-            deleteStore(realm, storeId)
-
-            Toast.makeText(requireContext(), R.string.delete_favorite, Toast.LENGTH_SHORT).show()
-
-            // 複数回タップできないように設定
-            it.isVisible = false
-            binding.fabFavorite.isVisible = true
+            addFavorite(isFavorite)
         }
 
         return binding.root
+    }
+
+    private fun addFavorite(isFav: Boolean) {
+        if (isFav) {
+            deleteStore(realm, storeId)
+            Toast.makeText(requireContext(), R.string.delete_favorite, Toast.LENGTH_SHORT).show()
+        } else {
+            addStore(realm, storeId, name, url, price)
+            Toast.makeText(requireContext(), R.string.add_favorite, Toast.LENGTH_SHORT).show()
+        }
+        binding.isFab = !isFav
+        isFavorite = !isFav
     }
 
     private fun checkAlreadyAdd() {
@@ -98,15 +96,15 @@ class StoreWebViewFragment : Fragment() {
         stores.forEach {
             if (it.storeId == storeId) {
                 binding.apply {
-                    fabFavorite.isVisible = false
-                    fabDelete.isVisible = true
+                    isFavorite = true
+                    binding.isFab = true
                 }
                 return
             }
         }
         binding.apply {
-            fabFavorite.isVisible = true
-            fabDelete.isVisible = false
+            isFavorite = false
+            binding.isFab = false
         }
     }
 
