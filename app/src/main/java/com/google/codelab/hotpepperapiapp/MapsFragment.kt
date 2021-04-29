@@ -54,7 +54,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val mapFragment =
-            childFragmentManager.findFragmentById(R.id.fragment_map) as SupportMapFragment?
+            childFragmentManager.findFragmentById(R.id.fragment_map) as? SupportMapFragment?
         mapFragment?.getMapAsync(this)
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireContext())

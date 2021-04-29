@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import com.google.codelab.hotpepperapiapp.RealmClient.addStore
 import com.google.codelab.hotpepperapiapp.RealmClient.deleteStore
 import com.google.codelab.hotpepperapiapp.RealmClient.fetchFirstStore
-import com.google.codelab.hotpepperapiapp.RealmClient.fetchStores
 import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreWebViewBinding
 import io.realm.Realm
 
@@ -74,13 +73,13 @@ class StoreWebViewFragment : Fragment() {
         checkAlreadyAdd()
 
         binding.fabFavorite.setOnClickListener {
-            addFavorite(isFavorite)
+            changeFavoriteStore(isFavorite)
         }
 
         return binding.root
     }
 
-    private fun addFavorite(isFav: Boolean) {
+    private fun changeFavoriteStore(isFav: Boolean) {
         if (isFav) {
             deleteStore(realm, storeId)
             Toast.makeText(requireContext(), R.string.delete_favorite, Toast.LENGTH_SHORT).show()
