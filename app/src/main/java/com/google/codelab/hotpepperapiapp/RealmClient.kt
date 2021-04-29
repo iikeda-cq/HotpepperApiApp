@@ -36,4 +36,10 @@ object RealmClient {
             .distinct(STORE_ID)
             .findAll()
     }
+
+    fun fetchFirstStore(realm: Realm, storeId: String): Store? {
+        return realm.where(Store::class.java)
+            .equalTo(STORE_ID, storeId)
+            .findFirst()
+    }
 }

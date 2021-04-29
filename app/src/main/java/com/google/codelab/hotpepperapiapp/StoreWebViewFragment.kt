@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.codelab.hotpepperapiapp.RealmClient.addStore
 import com.google.codelab.hotpepperapiapp.RealmClient.deleteStore
+import com.google.codelab.hotpepperapiapp.RealmClient.fetchFirstStore
 import com.google.codelab.hotpepperapiapp.RealmClient.fetchStores
 import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreWebViewBinding
 import io.realm.Realm
@@ -59,6 +60,7 @@ class StoreWebViewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentStoreWebViewBinding.inflate(inflater)
+        binding.isFab = isFavorite
 
         requireActivity().title = name
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -91,20 +93,13 @@ class StoreWebViewFragment : Fragment() {
     }
 
     private fun checkAlreadyAdd() {
-        val stores = fetchStores(realm)
+        val store = fetchFirstStore(realm, storeId)
 
-        stores.forEach {
-            if (it.storeId == storeId) {
-                binding.apply {
-                    isFavorite = true
-                    binding.isFab = true
-                }
-                return
+        if (store != null){
+            binding.apply {
+                isFavorite = true
+                binding.isFab = true
             }
-        }
-        binding.apply {
-            isFavorite = false
-            binding.isFab = false
         }
     }
 
