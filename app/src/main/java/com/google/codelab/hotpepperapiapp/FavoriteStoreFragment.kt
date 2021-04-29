@@ -18,7 +18,7 @@ import io.realm.Realm
 class FavoriteStoreFragment : Fragment() {
     private lateinit var binding: FragmentFavoriteStoreBinding
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
-    private var dataSet: MutableList<Store> = ArrayList()
+    private val dataSet: MutableList<Store> = ArrayList()
     private lateinit var realm: Realm
 
     private val onItemClickListener = OnItemClickListener { item, _ ->
@@ -54,26 +54,19 @@ class FavoriteStoreFragment : Fragment() {
                 GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
         }
 
-        dataSet = fetchRealmData()
+        fetchRealmData()
         groupAdapter.update(dataSet.map { StoreItem(it) })
         groupAdapter.setOnItemClickListener(onItemClickListener)
     }
 
-    private fun fetchRealmData(): MutableList<Store> {
+    private fun fetchRealmData() {
         val stores = fetchStores(realm)
 
         dataSet.clear()
-        stores.forEach { store ->
-            val data = Store()
-            data.storeId = store.storeId
-            data.name = store.name
-            data.url = store.url
-            data.price = store.price
-            data.genre = store.genre
 
-            dataSet.add(data)
+        stores.forEach { store ->
+            dataSet.add(store)
         }
-        return dataSet
     }
 
     override fun onDestroy() {
