@@ -1,8 +1,6 @@
 package com.google.codelab.hotpepperapiapp
 
 import android.Manifest
-import android.app.Activity
-import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -23,23 +21,24 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.codelab.hotpepperapiapp.FragmentExt.showFragmentBackStack
+import com.google.codelab.hotpepperapiapp.MapExt.checkPermission
+import com.google.codelab.hotpepperapiapp.MapExt.requestLocationPermission
+import com.google.codelab.hotpepperapiapp.StoreListFragment.Companion.createTestData
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
 import kotlin.random.Random
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
     private val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
     private var locationCallback: LocationCallback? = null
-    private val dataSet: List<Store> = StoreListFragment().createTestData()
+    private val dataSet: List<Store> = createTestData()
 
     // マーカーとViewPagerを紐づけるための変数
     private var mapMarkerPosition = 0
 
     private lateinit var binding: FragmentMapsBinding
-    private lateinit var mMap: GoogleMap
+    private lateinit var map: GoogleMap
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private lateinit var lastLocation: Location
-
-    val testData = StoreListFragment().createTestData()
+    private lateinit var currentLocation: Location
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,7 +54,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val mapFragment =
-            childFragmentManager.findFragmentById(R.id.fragment_map) as SupportMapFragment?
+            childFragmentManager.findFragmentById(R.id.fragment_map) as? SupportMapFragment?
         mapFragment?.getMapAsync(this)
         fusedLocationProviderClient =
             LocationServices.getFusedLocationProviderClient(requireContext())
@@ -83,11 +82,16 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
-        checkPermission()
+        map = googleMap
+
+        if(checkPermission(requireContext())) {
+            enableMyLocation()
+        } else {
+            requestLocationPermission(requireContext(), requireActivity())
+        }
 
         // マーカーのタップで一致するstoreデータを表示する
-        mMap.setOnMarkerClickListener {
+        map.setOnMarkerClickListener {
             binding.storePager.setCurrentItem(it.tag as Int, true)
             true
         }
@@ -96,8 +100,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         binding.storePager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                val selectedStoreLatLng = LatLng(testData[position].lat, testData[position].lng)
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedStoreLatLng, 16.0f))
+                val selectedStoreLatLng = LatLng(dataSet[position].lat, dataSet[position].lng)
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedStoreLatLng, 16.0f))
             }
         })
     }
@@ -112,7 +116,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION -> {
                 if (permissions.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // 許可された
-                    myLocationEnable()
+                    enableMyLocation()
                 } else {
                     Toast.makeText(context, R.string.no_locations, Toast.LENGTH_LONG).show()
                 }
@@ -120,60 +124,24 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun checkPermission() {
+    private fun enableMyLocation() {
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            myLocationEnable()
-        } else {
-            requestLocationPermission(requireContext(), requireActivity())
-        }
-    }
-
-    private fun requestLocationPermission(context: Context, activity: Activity) {
-        if (ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            // 許可を求め、拒否されていた場合
-            ActivityCompat.requestPermissions(
-                activity,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION
-            )
-        } else {
-            // まだ許可を求めていない
-            ActivityCompat.requestPermissions(
-                activity,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION
-            )
-        }
-    }
-
-    private fun myLocationEnable() {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
-            mMap.isMyLocationEnabled = true
+            map.isMyLocationEnabled = true
             val locationRequest = LocationRequest().apply {
-                interval = 10000
-                fastestInterval = 60000
                 priority = LocationRequest.PRIORITY_HIGH_ACCURACY
             }
             locationCallback = object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult?) {
                     super.onLocationResult(locationResult)
-                    if (locationResult?.lastLocation != null) {
-                        lastLocation = locationResult.lastLocation
-                        val currentLatLng = LatLng(lastLocation.latitude, lastLocation.longitude)
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 14.0f))
-                        storeMapping()
+                    locationResult?.lastLocation?.let {  lastLocation ->
+                        currentLocation = lastLocation
+                        val currentLatLng = LatLng(currentLocation.latitude, currentLocation.longitude)
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 14.0f))
+                        mapStore()
                     }
                 }
             }
@@ -185,19 +153,19 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun storeMapping() {
-        mMap.clear()
+    private fun mapStore() {
+        map.clear()
 
         // テストように適当に現在地付近にマーカーを設定
-        testData.mapIndexed { _, store ->
-            store.lat = lastLocation.latitude.plus(Random.nextDouble(-9.0, 9.0) / 1000)
-            store.lng = lastLocation.longitude.plus(Random.nextDouble(-9.0, 9.0) / 1000)
+        dataSet.forEach { store ->
+            store.lat = currentLocation.latitude.plus(Random.nextDouble(-9.0, 9.0) / 1000)
+            store.lng = currentLocation.longitude.plus(Random.nextDouble(-9.0, 9.0) / 1000)
             addMarker(store)
         }
     }
 
     private fun addMarker(store: Store) {
-        val pin: Marker = mMap.addMarker(
+        val pin: Marker = map.addMarker(
             MarkerOptions()
                 .position(LatLng(store.lat, store.lng))
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))

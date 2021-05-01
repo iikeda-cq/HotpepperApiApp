@@ -7,12 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import com.google.codelab.hotpepperapiapp.RealmClient.addStore
+import com.google.codelab.hotpepperapiapp.RealmClient.deleteStore
+import com.google.codelab.hotpepperapiapp.RealmClient.fetchFirstStore
 import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreWebViewBinding
 import io.realm.Realm
-import io.realm.kotlin.createObject
-import io.realm.kotlin.where
 
 class StoreWebViewFragment : Fragment() {
     private lateinit var binding: FragmentStoreWebViewBinding
@@ -29,6 +29,8 @@ class StoreWebViewFragment : Fragment() {
 
     private val price: String
         get() = checkNotNull(arguments?.getString(PRICE))
+
+    var isFavorite = false
 
     companion object {
         private const val STORE_ID = "store_id"
@@ -57,6 +59,7 @@ class StoreWebViewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentStoreWebViewBinding.inflate(inflater)
+        binding.isFab = isFavorite
 
         requireActivity().title = name
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -70,59 +73,32 @@ class StoreWebViewFragment : Fragment() {
         checkAlreadyAdd()
 
         binding.fabFavorite.setOnClickListener {
-            realm.executeTransaction {
-                val maxId = realm.where<Store>().max("id")
-                val nextId = (maxId?.toLong() ?: 0L) + 1L
-                val store = realm.createObject<Store>(nextId)
-
-                store.storeId = storeId
-                store.name = name
-                store.url = url
-                store.price = price
-            }
-            Toast.makeText(requireContext(), R.string.add_favorite, Toast.LENGTH_SHORT).show()
-
-            // 複数回タップできないように設定
-            it.isVisible = false
-            binding.fabDelete.isVisible = true
-        }
-
-        binding.fabDelete.setOnClickListener {
-            val target = realm.where(Store::class.java)
-                .equalTo("storeId", storeId)
-                .findAll()
-
-            realm.executeTransaction {
-                target.deleteFromRealm(0)
-            }
-
-            Toast.makeText(requireContext(), R.string.delete_favorite, Toast.LENGTH_SHORT).show()
-
-            // 複数回タップできないように設定
-            it.isVisible = false
-            binding.fabFavorite.isVisible = true
+            changeFavoriteStore(isFavorite)
         }
 
         return binding.root
     }
 
-    private fun checkAlreadyAdd() {
-        val realmResults = realm.where(Store::class.java)
-            .distinct("storeId")
-            .findAll()
-
-        realmResults.map {
-            if (it.storeId == storeId) {
-                binding.apply {
-                    fabFavorite.isVisible = false
-                    fabDelete.isVisible = true
-                }
-                return
-            }
+    private fun changeFavoriteStore(isFav: Boolean) {
+        if (isFav) {
+            deleteStore(realm, storeId)
+            Toast.makeText(requireContext(), R.string.delete_favorite, Toast.LENGTH_SHORT).show()
+        } else {
+            addStore(realm, storeId, name, url, price)
+            Toast.makeText(requireContext(), R.string.add_favorite, Toast.LENGTH_SHORT).show()
         }
-        binding.apply {
-            fabFavorite.isVisible = true
-            fabDelete.isVisible = false
+        binding.isFab = !isFav
+        isFavorite = !isFav
+    }
+
+    private fun checkAlreadyAdd() {
+        val store = fetchFirstStore(realm, storeId)
+
+        if (store != null){
+            binding.apply {
+                isFavorite = true
+                binding.isFab = true
+            }
         }
     }
 
