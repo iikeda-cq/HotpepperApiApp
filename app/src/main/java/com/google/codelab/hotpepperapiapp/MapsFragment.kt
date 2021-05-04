@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,17 +21,22 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.codelab.hotpepperapiapp.ApiClient.retrofit
 import com.google.codelab.hotpepperapiapp.FragmentExt.showFragmentBackStack
 import com.google.codelab.hotpepperapiapp.MapExt.checkPermission
 import com.google.codelab.hotpepperapiapp.MapExt.requestLocationPermission
 import com.google.codelab.hotpepperapiapp.StoreListFragment.Companion.createTestData
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import kotlin.random.Random
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
     private val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
     private var locationCallback: LocationCallback? = null
     private val dataSet: List<Store> = createTestData()
+    private val TAG = MapsFragment::class.java.simpleName
 
     // マーカーとViewPagerを紐づけるための変数
     private var mapMarkerPosition = 0
@@ -84,7 +90,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
 
-        if(checkPermission(requireContext())) {
+        if (checkPermission(requireContext())) {
             enableMyLocation()
         } else {
             requestLocationPermission(requireContext(), requireActivity())
@@ -137,11 +143,12 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             locationCallback = object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult?) {
                     super.onLocationResult(locationResult)
-                    locationResult?.lastLocation?.let {  lastLocation ->
+                    locationResult?.lastLocation?.let { lastLocation ->
                         currentLocation = lastLocation
-                        val currentLatLng = LatLng(currentLocation.latitude, currentLocation.longitude)
+                        val currentLatLng =
+                            LatLng(currentLocation.latitude, currentLocation.longitude)
                         map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 14.0f))
-                        mapStore()
+                        fetchStores()
                     }
                 }
             }
@@ -153,18 +160,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun mapStore() {
-        map.clear()
-
-        // テストように適当に現在地付近にマーカーを設定
-        dataSet.forEach { store ->
-            store.lat = currentLocation.latitude.plus(Random.nextDouble(-9.0, 9.0) / 1000)
-            store.lng = currentLocation.longitude.plus(Random.nextDouble(-9.0, 9.0) / 1000)
-            addMarker(store)
-        }
-    }
-
-    private fun addMarker(store: Store) {
+    private fun addMarker(store: Shop) {
         val pin: Marker = map.addMarker(
             MarkerOptions()
                 .position(LatLng(store.lat, store.lng))
@@ -174,5 +170,39 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         pin.tag = mapMarkerPosition
         pin.showInfoWindow()
         mapMarkerPosition += 1
+    }
+
+    private fun fetchStores() {
+        retrofit.create(ApiRequest::class.java).fetchNearStores(
+            "970479567de67028",
+            "lite",
+            currentLocation.latitude,
+            currentLocation.longitude,
+            3,
+            "json"
+        ).enqueue(object :
+            Callback<StoresResponse> {
+            override fun onFailure(call: Call<StoresResponse>, t: Throwable?) {
+                Toast.makeText(requireContext(), R.string.offline_error, Toast.LENGTH_SHORT).show()
+                Log.w(TAG, "Something wrong On API: offline")
+            }
+
+            override fun onResponse(
+                call: Call<StoresResponse>,
+                response: Response<StoresResponse>
+            ) {
+                when (response.code()) {
+                    200 -> {
+                        response.body()?.results?.shop?.map {
+                            addMarker(it)
+                        }
+                        Log.d(TAG, "success: $response")
+                    }
+                    else -> {
+                        Log.w(TAG, "Something wrong On API: $response")
+                    }
+                }
+            }
+        })
     }
 }

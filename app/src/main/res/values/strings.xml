@@ -16,4 +16,5 @@
     <string name="add_favorite">お気に入りに追加しました</string>
     <string name="delete_favorite">お気に入りから削除しました</string>
     <string name="no_locations">現在地は表示できません</string>
+    <string name="offline_error">ネットワークに接続できません。</string>
 </resources>
