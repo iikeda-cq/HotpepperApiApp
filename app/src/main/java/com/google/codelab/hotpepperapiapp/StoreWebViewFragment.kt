@@ -24,31 +24,19 @@ class StoreWebViewFragment : Fragment() {
     private val url: String
         get() = checkNotNull(arguments?.getString(URL))
 
-    private val name: String
-        get() = checkNotNull(arguments?.getString(NAME))
-
-    private val price: String
-        get() = checkNotNull(arguments?.getString(PRICE))
-
     var isFavorite = false
 
     companion object {
         private const val STORE_ID = "store_id"
         private const val URL = "url"
-        private const val NAME = "name"
-        private const val PRICE = "price"
         fun newInstance(
             storeId: String,
-            name: String,
-            url: String,
-            price: String
+            url: String
         ): StoreWebViewFragment {
             return StoreWebViewFragment().apply {
                 arguments = Bundle().apply {
                     putString(STORE_ID, storeId)
-                    putString(NAME, name)
                     putString(URL, url)
-                    putString(PRICE, price)
                 }
             }
         }
@@ -61,7 +49,7 @@ class StoreWebViewFragment : Fragment() {
         binding = FragmentStoreWebViewBinding.inflate(inflater)
         binding.isFab = isFavorite
 
-        requireActivity().title = name
+//        requireActivity().title = name
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setHasOptionsMenu(true)
 
@@ -84,7 +72,7 @@ class StoreWebViewFragment : Fragment() {
             deleteStore(realm, storeId)
             Toast.makeText(requireContext(), R.string.delete_favorite, Toast.LENGTH_SHORT).show()
         } else {
-            addStore(realm, storeId, name, url, price)
+            addStore(realm, storeId)
             Toast.makeText(requireContext(), R.string.add_favorite, Toast.LENGTH_SHORT).show()
         }
         binding.isFab = !isFav

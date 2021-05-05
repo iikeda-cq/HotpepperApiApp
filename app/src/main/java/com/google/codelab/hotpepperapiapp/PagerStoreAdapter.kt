@@ -1,13 +1,19 @@
 package com.google.codelab.hotpepperapiapp
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 
-class PagerStoreAdapter(private val store: List<Store>, private val listener: ListListener) :
+class PagerStoreAdapter(
+    private val store: MutableList<Shop>,
+    private val listener: ListListener,
+    val context: Context
+) :
     RecyclerView.Adapter<PagerViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PagerViewHolder =
@@ -16,7 +22,7 @@ class PagerStoreAdapter(private val store: List<Store>, private val listener: Li
         )
 
     override fun onBindViewHolder(holder: PagerViewHolder, position: Int) {
-        holder.bind(store[position])
+        holder.bind(store[position], context)
         holder.itemView.setOnClickListener {
             listener.onClickRow(it, store[position])
         }
@@ -25,7 +31,7 @@ class PagerStoreAdapter(private val store: List<Store>, private val listener: Li
     override fun getItemCount(): Int = store.size
 
     interface ListListener {
-        fun onClickRow(tappedView: View, selectedStore: Store)
+        fun onClickRow(tappedView: View, selectedStore: Shop)
     }
 }
 
@@ -35,10 +41,10 @@ class PagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val price: TextView = itemView.findViewById(R.id.pager_charge)
     private val genre: TextView = itemView.findViewById(R.id.pager_genre)
 
-    fun bind(store: Store) {
-        image.setImageResource(R.drawable.store_image)
+    fun bind(store: Shop, context: Context) {
+        Glide.with(context).load(store.photo.photo.logo).into(image)
         name.text = store.name
-        price.text = store.price
-        genre.text = store.genre
+        price.text = store.budget.average
+        genre.text = store.genre.name
     }
 }

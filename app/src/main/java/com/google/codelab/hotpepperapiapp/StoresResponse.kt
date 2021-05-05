@@ -11,7 +11,8 @@ data class Results(
     val apiVersion: String,
     @SerializedName("results_available")
     val available: String,
-    val shop: List<Shop>
+    @SerializedName("shop")
+    val store: List<Shop>
 )
 
 data class Shop(
@@ -20,12 +21,18 @@ data class Shop(
     val lat: Double,
     val lng: Double,
     val genre: Genre,
+    val budget: Budget,
     val urls: Urls,
     val photo: Photos
 )
 
 data class Genre(
     val name : String
+)
+
+data class Budget(
+    val name: String,
+    val average: String
 )
 
 data class Urls(

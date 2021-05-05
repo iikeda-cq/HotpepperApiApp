@@ -13,10 +13,11 @@
         <ImageView
             android:id="@+id/pager_image"
             android:layout_width="150dp"
-            android:layout_height="wrap_content"
+            android:layout_height="150dp"
             android:layout_marginStart="8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="8dp"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView

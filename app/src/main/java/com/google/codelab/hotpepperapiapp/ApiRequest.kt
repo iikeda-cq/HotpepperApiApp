@@ -10,7 +10,7 @@ interface ApiRequest {
     @GET(".")
     fun fetchNearStores(
         @Query("key") key: String,
-        @Query("type") type: String,
+        @Query("count") count: Int,
         @Query("lat") lat: Double,
         @Query("lng") lng: Double,
         @Query("range") range: Int,

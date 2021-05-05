@@ -25,17 +25,15 @@ import com.google.codelab.hotpepperapiapp.ApiClient.retrofit
 import com.google.codelab.hotpepperapiapp.FragmentExt.showFragmentBackStack
 import com.google.codelab.hotpepperapiapp.MapExt.checkPermission
 import com.google.codelab.hotpepperapiapp.MapExt.requestLocationPermission
-import com.google.codelab.hotpepperapiapp.StoreListFragment.Companion.createTestData
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlin.random.Random
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
     private val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
     private var locationCallback: LocationCallback? = null
-    private val dataSet: List<Store> = createTestData()
+    private val storeList: MutableList<Shop> = ArrayList()
     private val TAG = MapsFragment::class.java.simpleName
 
     // マーカーとViewPagerを紐づけるための変数
@@ -66,24 +64,20 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             LocationServices.getFusedLocationProviderClient(requireContext())
 
         binding.storePager.adapter =
-            PagerStoreAdapter(dataSet, object : PagerStoreAdapter.ListListener {
-                override fun onClickRow(tappedView: View, selectedStore: Store) {
+            PagerStoreAdapter(storeList, object : PagerStoreAdapter.ListListener {
+                override fun onClickRow(tappedView: View, selectedStore: Shop) {
                     val position = binding.storePager.currentItem
 
                     showFragmentBackStack(
                         parentFragmentManager, StoreWebViewFragment.newInstance(
-                            dataSet[position].storeId,
-                            dataSet[position].name,
-                            dataSet[position].url,
-                            dataSet[position].price,
+                            storeList[position].id,
+                            storeList[position].urls.url
                         )
                     )
                 }
-            })
+            }, requireContext())
 
         binding.storePager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-
-        Toast.makeText(requireContext(), "現在地周辺のお店${dataSet.size}件", Toast.LENGTH_SHORT).show()
 
     }
 
@@ -106,7 +100,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         binding.storePager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                val selectedStoreLatLng = LatLng(dataSet[position].lat, dataSet[position].lng)
+                val selectedStoreLatLng = LatLng(storeList[position].lat, storeList[position].lng)
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedStoreLatLng, 16.0f))
             }
         })
@@ -160,22 +154,10 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun addMarker(store: Shop) {
-        val pin: Marker = map.addMarker(
-            MarkerOptions()
-                .position(LatLng(store.lat, store.lng))
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-        )
-
-        pin.tag = mapMarkerPosition
-        pin.showInfoWindow()
-        mapMarkerPosition += 1
-    }
-
     private fun fetchStores() {
         retrofit.create(ApiRequest::class.java).fetchNearStores(
             "970479567de67028",
-            "lite",
+            20,
             currentLocation.latitude,
             currentLocation.longitude,
             3,
@@ -193,9 +175,19 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             ) {
                 when (response.code()) {
                     200 -> {
-                        response.body()?.results?.shop?.map {
-                            addMarker(it)
+                        response.body()?.results?.store?.map { store ->
+                            addMarker(store)
+                            storeList.add(store)
                         }
+
+                        binding.storePager.adapter?.notifyDataSetChanged()
+
+                        Toast.makeText(
+                            requireContext(),
+                            "現在地周辺のお店${storeList.size}件",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
                         Log.d(TAG, "success: $response")
                     }
                     else -> {
@@ -204,5 +196,17 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 }
             }
         })
+    }
+
+    private fun addMarker(store: Shop) {
+        val pin: Marker = map.addMarker(
+            MarkerOptions()
+                .position(LatLng(store.lat, store.lng))
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+        )
+
+        pin.tag = mapMarkerPosition
+        pin.showInfoWindow()
+        mapMarkerPosition += 1
     }
 }

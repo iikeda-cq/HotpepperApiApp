@@ -28,9 +28,7 @@ class FavoriteStoreFragment : Fragment() {
         showFragmentBackStack(
             parentFragmentManager, StoreWebViewFragment.newInstance(
                 dataSet[index].storeId,
-                dataSet[index].name,
-                dataSet[index].url,
-                dataSet[index].price,
+                dataSet[index].url
             )
         )
     }

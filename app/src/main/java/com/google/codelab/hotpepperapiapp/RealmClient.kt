@@ -8,16 +8,13 @@ import io.realm.kotlin.where
 object RealmClient {
     private const val STORE_ID = "storeId"
 
-    fun addStore(realm: Realm, storeId: String, name: String, url: String, price: String) {
+    fun addStore(realm: Realm, storeId: String) {
         realm.executeTransaction {
             val currentId = realm.where<Store>().max("id")
             val nextId = (currentId?.toLong() ?: 0L) + 1L
             val store = realm.createObject<Store>(nextId)
 
             store.storeId = storeId
-            store.name = name
-            store.url = url
-            store.price = price
         }
     }
 
