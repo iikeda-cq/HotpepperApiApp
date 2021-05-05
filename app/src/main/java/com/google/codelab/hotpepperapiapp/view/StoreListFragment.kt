@@ -60,6 +60,7 @@ class StoreListFragment : Fragment() {
         private val dataSet: MutableList<StoreModel> = ArrayList()
         fun createTestData(): List<StoreModel> {
             var i = 1
+            dataSet.clear()
             while (i <= 10) {
                 val data = StoreModel(
                     storeId = i.toString(),
