@@ -6,10 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragmentBackStack
 import com.google.codelab.hotpepperapiapp.R
-import com.google.codelab.hotpepperapiapp.model.Store
 import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreListBinding
+import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragmentBackStack
+import com.google.codelab.hotpepperapiapp.model.StoreModel
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.OnItemClickListener
@@ -57,21 +57,20 @@ class StoreListFragment : Fragment() {
     }
 
     companion object {
-        private val dataSet: MutableList<Store> = ArrayList()
-        fun createTestData(): List<Store> {
+        private val dataSet: MutableList<StoreModel> = ArrayList()
+        fun createTestData(): List<StoreModel> {
             var i = 1
             while (i <= 10) {
-                val data = Store()
-
-                data.apply {
-                    storeId = i.toString()
-                    image = R.drawable.store_image
-                    name = "[$i]クラフトビール×個室肉バル クラフトマーケット 海浜幕張店"
-                    price = "2001～3000円"
-                    genre = "居酒屋"
-                    url = "https://www.hotpepper.jp/strJ001219042/"
-                }
-
+                val data = StoreModel(
+                    storeId = i.toString(),
+                    image = R.drawable.store_image,
+                    name = "[$i]クラフトビール×個室肉バル クラフトマーケット 海浜幕張店",
+                    price = "2001～3000円",
+                    genre = "居酒屋",
+                    url = "https://www.hotpepper.jp/strJ001219042/",
+                    lng = 0.0,
+                    lat=0.0
+                )
                 dataSet.add(data)
                 i += 1
             }

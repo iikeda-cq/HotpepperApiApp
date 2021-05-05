@@ -8,8 +8,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.model.Store
+import com.google.codelab.hotpepperapiapp.model.StoreModel
 
-class PagerStoreAdapter(private val store: List<Store>, private val listener: ListListener) :
+class PagerStoreAdapter(private val store: List<StoreModel>, private val listener: ListListener) :
     RecyclerView.Adapter<PagerViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PagerViewHolder =
@@ -27,7 +28,7 @@ class PagerStoreAdapter(private val store: List<Store>, private val listener: Li
     override fun getItemCount(): Int = store.size
 
     interface ListListener {
-        fun onClickRow(tappedView: View, selectedStore: Store)
+        fun onClickRow(tappedView: View, selectedStore: StoreModel)
     }
 }
 
@@ -37,7 +38,7 @@ class PagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val price: TextView = itemView.findViewById(R.id.pager_charge)
     private val genre: TextView = itemView.findViewById(R.id.pager_genre)
 
-    fun bind(store: Store) {
+    fun bind(store: StoreModel) {
         image.setImageResource(R.drawable.store_image)
         name.text = store.name
         price.text = store.price

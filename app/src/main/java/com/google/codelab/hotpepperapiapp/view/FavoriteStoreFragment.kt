@@ -6,20 +6,23 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragmentBackStack
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.RealmClient.fetchStores
-import com.google.codelab.hotpepperapiapp.model.Store
+import com.google.codelab.hotpepperapiapp.StoreMapper.Companion.transform
 import com.google.codelab.hotpepperapiapp.databinding.FragmentFavoriteStoreBinding
+import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragmentBackStack
+import com.google.codelab.hotpepperapiapp.model.Store
+import com.google.codelab.hotpepperapiapp.model.StoreModel
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.OnItemClickListener
 import io.realm.Realm
+import io.realm.RealmResults
 
 class FavoriteStoreFragment : Fragment() {
     private lateinit var binding: FragmentFavoriteStoreBinding
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
-    private val dataSet: MutableList<Store> = ArrayList()
+    private val dataSet: MutableList<StoreModel> = ArrayList()
     private lateinit var realm: Realm
 
     private val onItemClickListener = OnItemClickListener { item, _ ->
@@ -65,7 +68,7 @@ class FavoriteStoreFragment : Fragment() {
 
         dataSet.clear()
 
-        stores.forEach { store ->
+        transform(stores).forEach { store ->
             dataSet.add(store)
         }
     }

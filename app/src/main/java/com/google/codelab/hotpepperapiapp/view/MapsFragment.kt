@@ -27,12 +27,13 @@ import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.model.Store
 import com.google.codelab.hotpepperapiapp.view.StoreListFragment.Companion.createTestData
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
+import com.google.codelab.hotpepperapiapp.model.StoreModel
 import kotlin.random.Random
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
     private val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
     private var locationCallback: LocationCallback? = null
-    private val dataSet: List<Store> = createTestData()
+    private val storeList: List<StoreModel> = createTestData()
 
     // マーカーとViewPagerを紐づけるための変数
     private var mapMarkerPosition = 0
@@ -62,16 +63,16 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             LocationServices.getFusedLocationProviderClient(requireContext())
 
         binding.storePager.adapter =
-            PagerStoreAdapter(dataSet, object : PagerStoreAdapter.ListListener {
-                override fun onClickRow(tappedView: View, selectedStore: Store) {
+            PagerStoreAdapter(storeList, object : PagerStoreAdapter.ListListener {
+                override fun onClickRow(tappedView: View, selectedStore: StoreModel) {
                     val position = binding.storePager.currentItem
 
                     showFragmentBackStack(
                         parentFragmentManager, StoreWebViewFragment.newInstance(
-                            dataSet[position].storeId,
-                            dataSet[position].name,
-                            dataSet[position].url,
-                            dataSet[position].price,
+                            storeList[position].storeId,
+                            storeList[position].name,
+                            storeList[position].url,
+                            storeList[position].price,
                         )
                     )
                 }
@@ -79,7 +80,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
         binding.storePager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
 
-        Toast.makeText(requireContext(), "現在地周辺のお店${dataSet.size}件", Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), "現在地周辺のお店${storeList.size}件", Toast.LENGTH_SHORT).show()
 
     }
 
@@ -102,7 +103,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         binding.storePager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                val selectedStoreLatLng = LatLng(dataSet[position].lat, dataSet[position].lng)
+                val selectedStoreLatLng = LatLng(storeList[position].lat, storeList[position].lng)
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedStoreLatLng, 16.0f))
             }
         })
@@ -159,14 +160,14 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         map.clear()
 
         // テストように適当に現在地付近にマーカーを設定
-        dataSet.forEach { store ->
+        storeList.forEach { store ->
             store.lat = currentLocation.latitude.plus(Random.nextDouble(-9.0, 9.0) / 1000)
             store.lng = currentLocation.longitude.plus(Random.nextDouble(-9.0, 9.0) / 1000)
             addMarker(store)
         }
     }
 
-    private fun addMarker(store: Store) {
+    private fun addMarker(store: StoreModel) {
         val pin: Marker = map.addMarker(
             MarkerOptions()
                 .position(LatLng(store.lat, store.lng))
