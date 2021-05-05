@@ -1,4 +1,4 @@
-package com.google.codelab.hotpepperapiapp
+package com.google.codelab.hotpepperapiapp.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,23 +6,28 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import com.google.codelab.hotpepperapiapp.FragmentExt.showFragmentBackStack
-import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreListBinding
+import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragmentBackStack
+import com.google.codelab.hotpepperapiapp.R
+import com.google.codelab.hotpepperapiapp.RealmClient.fetchStores
+import com.google.codelab.hotpepperapiapp.model.Store
+import com.google.codelab.hotpepperapiapp.databinding.FragmentFavoriteStoreBinding
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.OnItemClickListener
+import io.realm.Realm
 
-class StoreListFragment : Fragment() {
-    private lateinit var binding: FragmentStoreListBinding
+class FavoriteStoreFragment : Fragment() {
+    private lateinit var binding: FragmentFavoriteStoreBinding
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
+    private val dataSet: MutableList<Store> = ArrayList()
+    private lateinit var realm: Realm
 
     private val onItemClickListener = OnItemClickListener { item, _ ->
         // どのitemがクリックされたかindexを取得
         val index = groupAdapter.getAdapterPosition(item)
 
         showFragmentBackStack(
-            parentFragmentManager,
-            StoreWebViewFragment.newInstance(
+            parentFragmentManager, StoreWebViewFragment.newInstance(
                 dataSet[index].storeId,
                 dataSet[index].name,
                 dataSet[index].url,
@@ -35,46 +40,38 @@ class StoreListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentStoreListBinding.inflate(layoutInflater)
-        requireActivity().setTitle(R.string.view_list)
-
+        binding = FragmentFavoriteStoreBinding.inflate(inflater)
+        requireActivity().setTitle(R.string.navigation_favorite)
+        realm = Realm.getDefaultInstance()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.recyclerView.apply {
+        binding.recyclerViewFavorite.apply {
             adapter = groupAdapter
             layoutManager =
                 GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
         }
 
-        groupAdapter.update(createTestData().map { StoreItem(it) })
+        fetchRealmData()
+        groupAdapter.update(dataSet.map { StoreItem(it) })
         groupAdapter.setOnItemClickListener(onItemClickListener)
     }
 
-    companion object {
-        private val dataSet: MutableList<Store> = ArrayList()
-        fun createTestData(): List<Store> {
-            var i = 1
-            while (i <= 10) {
-                val data = Store()
+    private fun fetchRealmData() {
+        val stores = fetchStores(realm)
 
-                data.apply {
-                    storeId = i.toString()
-                    image = R.drawable.store_image
-                    name = "[$i]クラフトビール×個室肉バル クラフトマーケット 海浜幕張店"
-                    price = "2001～3000円"
-                    genre = "居酒屋"
-                    url = "https://www.hotpepper.jp/strJ001219042/"
-                }
+        dataSet.clear()
 
-                dataSet.add(data)
-                i += 1
-            }
-            return dataSet
+        stores.forEach { store ->
+            dataSet.add(store)
         }
     }
-}
 
+    override fun onDestroy() {
+        super.onDestroy()
+        realm.close()
+    }
+}

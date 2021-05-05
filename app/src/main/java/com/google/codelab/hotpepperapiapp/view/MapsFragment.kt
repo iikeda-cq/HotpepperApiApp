@@ -1,4 +1,4 @@
-package com.google.codelab.hotpepperapiapp
+package com.google.codelab.hotpepperapiapp.view
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -20,10 +20,12 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.codelab.hotpepperapiapp.FragmentExt.showFragmentBackStack
-import com.google.codelab.hotpepperapiapp.MapExt.checkPermission
-import com.google.codelab.hotpepperapiapp.MapExt.requestLocationPermission
-import com.google.codelab.hotpepperapiapp.StoreListFragment.Companion.createTestData
+import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragmentBackStack
+import com.google.codelab.hotpepperapiapp.ext.MapExt.checkPermission
+import com.google.codelab.hotpepperapiapp.ext.MapExt.requestLocationPermission
+import com.google.codelab.hotpepperapiapp.R
+import com.google.codelab.hotpepperapiapp.model.Store
+import com.google.codelab.hotpepperapiapp.view.StoreListFragment.Companion.createTestData
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
 import kotlin.random.Random
 

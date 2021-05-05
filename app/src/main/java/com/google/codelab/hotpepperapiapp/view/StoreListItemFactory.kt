@@ -1,6 +1,8 @@
-package com.google.codelab.hotpepperapiapp
+package com.google.codelab.hotpepperapiapp.view
 
 import android.view.View
+import com.google.codelab.hotpepperapiapp.R
+import com.google.codelab.hotpepperapiapp.model.Store
 import com.google.codelab.hotpepperapiapp.databinding.CellStoreBinding
 import com.xwray.groupie.viewbinding.BindableItem
 

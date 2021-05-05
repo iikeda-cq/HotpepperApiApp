@@ -1,12 +1,12 @@
-package com.google.codelab.hotpepperapiapp
+package com.google.codelab.hotpepperapiapp.view
 
 import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.codelab.hotpepperapiapp.FragmentExt.showFragment
-import com.google.codelab.hotpepperapiapp.IntExt.actionBarColorToStatusBarColor
+import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragment
+import com.google.codelab.hotpepperapiapp.ext.IntExt.actionBarColorToStatusBarColor
+import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
