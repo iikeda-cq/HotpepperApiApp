@@ -1,5 +1,6 @@
 package com.google.codelab.hotpepperapiapp
 
+import com.google.codelab.hotpepperapiapp.model.Store
 import io.realm.Realm
 import io.realm.RealmResults
 import io.realm.kotlin.createObject

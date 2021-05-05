@@ -1,4 +1,4 @@
-package com.google.codelab.hotpepperapiapp
+package com.google.codelab.hotpepperapiapp.ext
 
 import android.Manifest
 import android.app.Activity

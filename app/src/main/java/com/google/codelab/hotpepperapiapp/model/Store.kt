@@ -1,4 +1,4 @@
-package com.google.codelab.hotpepperapiapp
+package com.google.codelab.hotpepperapiapp.model
 
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey

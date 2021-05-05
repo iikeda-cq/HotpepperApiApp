@@ -1,4 +1,4 @@
-package com.google.codelab.hotpepperapiapp
+package com.google.codelab.hotpepperapiapp.view
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -22,10 +22,14 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.codelab.hotpepperapiapp.ApiClient.retrofit
-import com.google.codelab.hotpepperapiapp.FragmentExt.showFragmentBackStack
-import com.google.codelab.hotpepperapiapp.MapExt.checkPermission
-import com.google.codelab.hotpepperapiapp.MapExt.requestLocationPermission
+import com.google.codelab.hotpepperapiapp.ApiRequest
+import com.google.codelab.hotpepperapiapp.R
+import com.google.codelab.hotpepperapiapp.Shop
+import com.google.codelab.hotpepperapiapp.StoresResponse
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
+import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragmentBackStack
+import com.google.codelab.hotpepperapiapp.ext.MapExt.checkPermission
+import com.google.codelab.hotpepperapiapp.ext.MapExt.requestLocationPermission
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

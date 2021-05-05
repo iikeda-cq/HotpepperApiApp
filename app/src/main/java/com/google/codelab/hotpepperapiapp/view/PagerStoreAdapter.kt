@@ -1,4 +1,4 @@
-package com.google.codelab.hotpepperapiapp
+package com.google.codelab.hotpepperapiapp.view
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -8,6 +8,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.codelab.hotpepperapiapp.R
+import com.google.codelab.hotpepperapiapp.Shop
 
 class PagerStoreAdapter(
     private val store: MutableList<Shop>,
