@@ -1,6 +1,10 @@
 package com.google.codelab.hotpepperapiapp
 
+import androidx.databinding.ObservableArrayList
+import io.reactivex.Observable
+import io.reactivex.Single
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Query
@@ -15,5 +19,5 @@ interface ApiRequest {
         @Query("lng") lng: Double,
         @Query("range") range: Int,
         @Query("format") format: String
-    ): Call<StoresResponse>
+    ): Single<Response<StoresResponse>>
 }

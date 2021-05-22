@@ -2,9 +2,7 @@ package com.google.codelab.hotpepperapiapp.view
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,32 +19,26 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.codelab.hotpepperapiapp.ApiClient.retrofit
-import com.google.codelab.hotpepperapiapp.ApiRequest
+import com.google.codelab.hotpepperapiapp.MapsViewModel
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.Shop
-import com.google.codelab.hotpepperapiapp.StoresResponse
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
 import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragmentBackStack
 import com.google.codelab.hotpepperapiapp.ext.MapExt.checkPermission
 import com.google.codelab.hotpepperapiapp.ext.MapExt.requestLocationPermission
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
     private val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
     private var locationCallback: LocationCallback? = null
     private val storeList: MutableList<Shop> = ArrayList()
-    private val TAG = MapsFragment::class.java.simpleName
 
     // マーカーとViewPagerを紐づけるための変数
     private var mapMarkerPosition = 0
 
     private lateinit var binding: FragmentMapsBinding
+    private lateinit var viewModel: MapsViewModel
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private lateinit var currentLocation: Location
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,6 +47,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     ): View {
         binding = FragmentMapsBinding.inflate(layoutInflater)
         requireActivity().setTitle(R.string.view_map)
+
+        viewModel = MapsViewModel()
 
         return binding.root
     }
@@ -80,6 +74,15 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                     )
                 }
             }, requireContext())
+
+        // APIから店舗情報を取得したら地図にマッピングする
+        viewModel.storeRepos.observe(viewLifecycleOwner, {
+            it.results.store.map { store ->
+                addMarker(store)
+                storeList.add(store)
+            }
+            binding.storePager.adapter?.notifyDataSetChanged()
+        })
 
         binding.storePager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
 
@@ -142,11 +145,14 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 override fun onLocationResult(locationResult: LocationResult?) {
                     super.onLocationResult(locationResult)
                     locationResult?.lastLocation?.let { lastLocation ->
-                        currentLocation = lastLocation
+                        MainActivity.lat = lastLocation.latitude
+                        MainActivity.lng = lastLocation.longitude
                         val currentLatLng =
-                            LatLng(currentLocation.latitude, currentLocation.longitude)
+                            LatLng(lastLocation.latitude, lastLocation.longitude)
                         map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 14.0f))
-                        fetchStores()
+
+                        // APIからお店の情報を取得する
+                        viewModel.fetchStores(lastLocation.latitude, lastLocation.longitude)
                     }
                 }
             }
@@ -156,50 +162,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 null
             )
         }
-    }
-
-    private fun fetchStores() {
-        retrofit.create(ApiRequest::class.java).fetchNearStores(
-            "970479567de67028",
-            20,
-            currentLocation.latitude,
-            currentLocation.longitude,
-            3,
-            "json"
-        ).enqueue(object :
-            Callback<StoresResponse> {
-            override fun onFailure(call: Call<StoresResponse>, t: Throwable?) {
-                Toast.makeText(requireContext(), R.string.offline_error, Toast.LENGTH_SHORT).show()
-                Log.w(TAG, "Something wrong On API: offline")
-            }
-
-            override fun onResponse(
-                call: Call<StoresResponse>,
-                response: Response<StoresResponse>
-            ) {
-                when (response.code()) {
-                    200 -> {
-                        response.body()?.results?.store?.map { store ->
-                            addMarker(store)
-                            storeList.add(store)
-                        }
-
-                        binding.storePager.adapter?.notifyDataSetChanged()
-
-                        Toast.makeText(
-                            requireContext(),
-                            "現在地周辺のお店${storeList.size}件",
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                        Log.d(TAG, "success: $response")
-                    }
-                    else -> {
-                        Log.w(TAG, "Something wrong On API: $response")
-                    }
-                }
-            }
-        })
     }
 
     private fun addMarker(store: Shop) {
