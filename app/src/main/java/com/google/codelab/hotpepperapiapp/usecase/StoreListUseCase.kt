@@ -3,9 +3,9 @@ package com.google.codelab.hotpepperapiapp.usecase
 import com.google.codelab.hotpepperapiapp.StoresResponse
 import io.reactivex.Single
 
-interface StoresFetchUseCase {
+interface StoreListUseCase {
     fun fetchStores(
         lat: Double,
-        lng: Double
+        lng: Double,
     ): Single<StoresResponse>
 }

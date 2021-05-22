@@ -4,7 +4,7 @@ import com.google.codelab.hotpepperapiapp.RemoteData
 import com.google.codelab.hotpepperapiapp.StoresResponse
 import io.reactivex.Single
 
-class StoresFetchUseCaseImpl() : StoresFetchUseCase {
+class StoreListUseCaseImpl : StoreListUseCase {
     private val remote: RemoteData = RemoteData()
 
     override fun fetchStores(

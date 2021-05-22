@@ -54,7 +54,7 @@ class FavoriteStoreFragment : Fragment() {
         }
 
         fetchRealmData()
-        groupAdapter.update(dataSet.map { StoreItem(it) })
+//        groupAdapter.update(dataSet.map { StoreItem(it) })
         groupAdapter.setOnItemClickListener(onItemClickListener)
     }
 
