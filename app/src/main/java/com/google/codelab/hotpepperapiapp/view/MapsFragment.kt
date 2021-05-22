@@ -16,7 +16,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
-import com.google.codelab.hotpepperapiapp.MapsViewModel
+import com.google.codelab.hotpepperapiapp.viewModel.MapsViewModel
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.Shop
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding

@@ -1,6 +1,6 @@
-package com.google.codelab.hotpepperapiapp
+package com.google.codelab.hotpepperapiapp.usecase
 
-import io.reactivex.Observable
+import com.google.codelab.hotpepperapiapp.StoresResponse
 import io.reactivex.Single
 
 interface StoresFetchUseCase {

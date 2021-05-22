@@ -1,5 +1,7 @@
-package com.google.codelab.hotpepperapiapp
+package com.google.codelab.hotpepperapiapp.usecase
 
+import com.google.codelab.hotpepperapiapp.RemoteData
+import com.google.codelab.hotpepperapiapp.StoresResponse
 import io.reactivex.Single
 
 class StoresFetchUseCaseImpl() : StoresFetchUseCase {

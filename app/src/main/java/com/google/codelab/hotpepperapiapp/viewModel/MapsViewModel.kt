@@ -1,8 +1,11 @@
-package com.google.codelab.hotpepperapiapp
+package com.google.codelab.hotpepperapiapp.viewModel
 
 import android.annotation.SuppressLint
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.codelab.hotpepperapiapp.usecase.StoresFetchUseCase
+import com.google.codelab.hotpepperapiapp.usecase.StoresFetchUseCaseImpl
+import com.google.codelab.hotpepperapiapp.StoresResponse
 
 class MapsViewModel {
     private val usecase: StoresFetchUseCase = StoresFetchUseCaseImpl()
