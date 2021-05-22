@@ -5,6 +5,9 @@ import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.*
+import com.google.codelab.hotpepperapiapp.Shop
 
 object MapExt {
     private const val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
@@ -36,5 +39,15 @@ object MapExt {
                 MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION
             )
         }
+    }
+
+    fun addMarker(map: GoogleMap,store: Shop, position: Int): Int {
+        val pin: Marker = map.addMarker(
+            MarkerOptions()
+                .position(LatLng(store.lat, store.lng))
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+        )
+        pin.tag = position
+        return position + 1
     }
 }

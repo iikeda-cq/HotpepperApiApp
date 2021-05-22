@@ -15,15 +15,13 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.codelab.hotpepperapiapp.MapsViewModel
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.Shop
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
 import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragmentBackStack
+import com.google.codelab.hotpepperapiapp.ext.MapExt.addMarker
 import com.google.codelab.hotpepperapiapp.ext.MapExt.checkPermission
 import com.google.codelab.hotpepperapiapp.ext.MapExt.requestLocationPermission
 
@@ -78,10 +76,15 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         // APIから店舗情報を取得したら地図にマッピングする
         viewModel.storeRepos.observe(viewLifecycleOwner, {
             it.results.store.map { store ->
-                addMarker(store)
+                mapMarkerPosition = addMarker(map, store, mapMarkerPosition)
                 storeList.add(store)
             }
             binding.storePager.adapter?.notifyDataSetChanged()
+            Toast.makeText(
+                requireContext(),
+                "周辺の店舗が${it.results.store.size}件見つかりました",
+                Toast.LENGTH_SHORT
+            ).show()
         })
 
         binding.storePager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
@@ -162,17 +165,5 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 null
             )
         }
-    }
-
-    private fun addMarker(store: Shop) {
-        val pin: Marker = map.addMarker(
-            MarkerOptions()
-                .position(LatLng(store.lat, store.lng))
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-        )
-
-        pin.tag = mapMarkerPosition
-        pin.showInfoWindow()
-        mapMarkerPosition += 1
     }
 }
