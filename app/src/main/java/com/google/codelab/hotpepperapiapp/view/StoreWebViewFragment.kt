@@ -50,7 +50,6 @@ class StoreWebViewFragment : Fragment() {
         binding = FragmentStoreWebViewBinding.inflate(inflater)
         binding.isFab = isFavorite
 
-//        requireActivity().title = name
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setHasOptionsMenu(true)
 

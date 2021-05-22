@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.Shop
 import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreListBinding
@@ -20,6 +21,7 @@ class StoreListFragment : Fragment() {
     private lateinit var viewModel: StoreListViewModel
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
     private val storeList: MutableList<Shop> = ArrayList()
+    private var startPage = 1
 
     private val onItemClickListener = OnItemClickListener { item, _ ->
         // どのitemがクリックされたかindexを取得
@@ -58,9 +60,20 @@ class StoreListFragment : Fragment() {
         viewModel.fetchStores(MainActivity.lat ?: return, MainActivity.lng ?: return)
 
         viewModel.storeRepos.observe(viewLifecycleOwner, { stores ->
-            groupAdapter.update(stores.results.store.map { StoreItem(it, requireContext()) })
             stores.results.store.map { storeList.add(it) }
+            groupAdapter.update(storeList.map { StoreItem(it, requireContext()) })
+
+            startPage += stores.results.totalPages
             groupAdapter.setOnItemClickListener(onItemClickListener)
+        })
+
+        binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (!recyclerView.canScrollVertically(1)) {
+                    viewModel.fetchStores(MainActivity.lat ?: return, MainActivity.lng ?: return, startPage)
+                }
+            }
         })
     }
 }

@@ -7,5 +7,6 @@ interface StoreListUseCase {
     fun fetchStores(
         lat: Double,
         lng: Double,
+        start: Int
     ): Single<StoresResponse>
 }

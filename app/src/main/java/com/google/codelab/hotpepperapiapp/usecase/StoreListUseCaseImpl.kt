@@ -9,8 +9,9 @@ class StoreListUseCaseImpl : StoreListUseCase {
 
     override fun fetchStores(
         lat: Double,
-        lng: Double
+        lng: Double,
+        start: Int
     ): Single<StoresResponse> {
-        return remote.fetchStores(lat, lng)
+        return remote.fetchStores(lat, lng, start)
     }
 }

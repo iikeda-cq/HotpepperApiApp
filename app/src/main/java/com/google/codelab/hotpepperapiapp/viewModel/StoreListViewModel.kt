@@ -13,8 +13,8 @@ class StoreListViewModel {
     val storeRepos: LiveData<StoresResponse> = _storeRepos
 
     @SuppressLint("CheckResult")
-    fun fetchStores(lat: Double, lng: Double) {
-        usecase.fetchStores(lat, lng)
+    fun fetchStores(lat: Double, lng: Double, start: Int = 1) {
+        usecase.fetchStores(lat, lng, start)
             .subscribe { storeListRepos: StoresResponse ->
                 _storeRepos.postValue(storeListRepos)
             }

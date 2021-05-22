@@ -17,6 +17,7 @@ interface ApiRequest {
         @Query("count") count: Int,
         @Query("lat") lat: Double,
         @Query("lng") lng: Double,
+        @Query("start") start: Int,
         @Query("range") range: Int,
         @Query("format") format: String
     ): Single<Response<StoresResponse>>

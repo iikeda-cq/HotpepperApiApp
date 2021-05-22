@@ -9,8 +9,8 @@ data class StoresResponse(
 data class Results(
     @SerializedName("api_version")
     val apiVersion: String,
-    @SerializedName("results_available")
-    val available: String,
+    @SerializedName("results_returned")
+    val totalPages: Int,
     @SerializedName("shop")
     val store: List<Shop>
 )

@@ -11,9 +11,10 @@ class RemoteData {
     fun fetchStores(
         lat: Double,
         lng: Double,
+        start: Int = 1
     ): Single<StoresResponse> {
         return retrofit.create(ApiRequest::class.java).fetchNearStores(
-            key, COUNT, lat, lng, RANGE, JSON
+            key, COUNT, lat, lng,start, RANGE, JSON
         ).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map {
