@@ -3,12 +3,12 @@ package com.google.codelab.hotpepperapiapp.viewModel
 import android.annotation.SuppressLint
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.codelab.hotpepperapiapp.usecase.StoresFetchUseCase
-import com.google.codelab.hotpepperapiapp.usecase.StoresFetchUseCaseImpl
-import com.google.codelab.hotpepperapiapp.StoresResponse
+import com.google.codelab.hotpepperapiapp.usecase.MapsUseCase
+import com.google.codelab.hotpepperapiapp.usecase.MapsUseCaseImpl
+import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 
 class MapsViewModel {
-    private val usecase: StoresFetchUseCase = StoresFetchUseCaseImpl()
+    private val usecase: MapsUseCase = MapsUseCaseImpl()
     private val _storeRepos: MutableLiveData<StoresResponse> = MutableLiveData()
     val storeRepos: LiveData<StoresResponse> = _storeRepos
 

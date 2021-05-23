@@ -3,7 +3,7 @@ package com.google.codelab.hotpepperapiapp.viewModel
 import android.annotation.SuppressLint
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.codelab.hotpepperapiapp.StoresResponse
+import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 import com.google.codelab.hotpepperapiapp.usecase.StoreListUseCase
 import com.google.codelab.hotpepperapiapp.usecase.StoreListUseCaseImpl
 

@@ -1,6 +1,7 @@
 package com.google.codelab.hotpepperapiapp
 
 import com.google.codelab.hotpepperapiapp.ApiClient.retrofit
+import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -14,7 +15,7 @@ class RemoteData {
         start: Int = 1
     ): Single<StoresResponse> {
         return retrofit.create(ApiRequest::class.java).fetchNearStores(
-            key, COUNT, lat, lng,start, RANGE, JSON
+            key, COUNT, lat, lng, start, RANGE, JSON
         ).subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map {

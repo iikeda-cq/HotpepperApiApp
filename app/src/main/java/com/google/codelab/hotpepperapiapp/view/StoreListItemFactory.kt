@@ -4,12 +4,11 @@ import android.content.Context
 import android.view.View
 import com.bumptech.glide.Glide
 import com.google.codelab.hotpepperapiapp.R
-import com.google.codelab.hotpepperapiapp.Shop
-import com.google.codelab.hotpepperapiapp.model.Store
+import com.google.codelab.hotpepperapiapp.model.response.NearStore
 import com.google.codelab.hotpepperapiapp.databinding.CellStoreBinding
 import com.xwray.groupie.viewbinding.BindableItem
 
-class StoreItem(private val store: Shop, val context: Context) : BindableItem<CellStoreBinding>() {
+class StoreItem(private val store: NearStore, val context: Context) : BindableItem<CellStoreBinding>() {
     override fun getLayout() = R.layout.cell_store
 
     override fun bind(viewBinding: CellStoreBinding, position: Int) {

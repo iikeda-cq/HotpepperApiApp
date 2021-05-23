@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.codelab.hotpepperapiapp.R
-import com.google.codelab.hotpepperapiapp.Shop
+import com.google.codelab.hotpepperapiapp.model.response.NearStore
 import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreListBinding
 import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragmentBackStack
 import com.google.codelab.hotpepperapiapp.viewModel.StoreListViewModel
@@ -20,8 +20,9 @@ class StoreListFragment : Fragment() {
     private lateinit var binding: FragmentStoreListBinding
     private lateinit var viewModel: StoreListViewModel
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
-    private val storeList: MutableList<Shop> = ArrayList()
+    private val storeList: MutableList<NearStore> = ArrayList()
     private var startPage = 1
+    private var isMoreLoad = true
 
     private val onItemClickListener = OnItemClickListener { item, _ ->
         // どのitemがクリックされたかindexを取得
@@ -60,6 +61,9 @@ class StoreListFragment : Fragment() {
         viewModel.fetchStores(MainActivity.lat ?: return, MainActivity.lng ?: return)
 
         viewModel.storeRepos.observe(viewLifecycleOwner, { stores ->
+            if (stores.results.totalPages < 20) {
+                isMoreLoad = false
+            }
             stores.results.store.map { storeList.add(it) }
             groupAdapter.update(storeList.map { StoreItem(it, requireContext()) })
 
@@ -70,8 +74,12 @@ class StoreListFragment : Fragment() {
         binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                if (!recyclerView.canScrollVertically(1)) {
-                    viewModel.fetchStores(MainActivity.lat ?: return, MainActivity.lng ?: return, startPage)
+                if (!recyclerView.canScrollVertically(1) && isMoreLoad) {
+                    viewModel.fetchStores(
+                        MainActivity.lat ?: return,
+                        MainActivity.lng ?: return,
+                        startPage
+                    )
                 }
             }
         })

@@ -1,4 +1,4 @@
-package com.google.codelab.hotpepperapiapp
+package com.google.codelab.hotpepperapiapp.model.response
 
 import com.google.gson.annotations.SerializedName
 
@@ -12,10 +12,10 @@ data class Results(
     @SerializedName("results_returned")
     val totalPages: Int,
     @SerializedName("shop")
-    val store: List<Shop>
+    val store: List<NearStore>
 )
 
-data class Shop(
+data class NearStore(
     val id: String,
     val name: String,
     val lat: Double,

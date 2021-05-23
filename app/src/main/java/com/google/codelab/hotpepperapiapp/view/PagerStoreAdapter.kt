@@ -9,10 +9,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.codelab.hotpepperapiapp.R
-import com.google.codelab.hotpepperapiapp.Shop
+import com.google.codelab.hotpepperapiapp.model.response.NearStore
 
 class PagerStoreAdapter(
-    private val store: MutableList<Shop>,
+    private val store: MutableList<NearStore>,
     private val listener: ListListener,
     val context: Context
 ) :
@@ -33,7 +33,7 @@ class PagerStoreAdapter(
     override fun getItemCount(): Int = store.size
 
     interface ListListener {
-        fun onClickRow(tappedView: View, selectedStore: Shop)
+        fun onClickRow(tappedView: View, selectedStore: NearStore)
     }
 }
 
@@ -43,7 +43,7 @@ class PagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val price: TextView = itemView.findViewById(R.id.pager_charge)
     private val genre: TextView = itemView.findViewById(R.id.pager_genre)
 
-    fun bind(store: Shop, context: Context) {
+    fun bind(store: NearStore, context: Context) {
         Glide.with(context).load(store.photo.photo.logo).into(image)
         name.text = store.name
         price.text = store.budget.average

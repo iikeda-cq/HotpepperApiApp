@@ -18,7 +18,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.codelab.hotpepperapiapp.viewModel.MapsViewModel
 import com.google.codelab.hotpepperapiapp.R
-import com.google.codelab.hotpepperapiapp.Shop
+import com.google.codelab.hotpepperapiapp.model.response.NearStore
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
 import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragmentBackStack
 import com.google.codelab.hotpepperapiapp.ext.MapExt.addMarker
@@ -28,7 +28,7 @@ import com.google.codelab.hotpepperapiapp.ext.MapExt.requestLocationPermission
 class MapsFragment : Fragment(), OnMapReadyCallback {
     private val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
     private var locationCallback: LocationCallback? = null
-    private val storeList: MutableList<Shop> = ArrayList()
+    private val storeList: MutableList<NearStore> = ArrayList()
 
     // マーカーとViewPagerを紐づけるための変数
     private var mapMarkerPosition = 0
@@ -61,7 +61,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
         binding.storePager.adapter =
             PagerStoreAdapter(storeList, object : PagerStoreAdapter.ListListener {
-                override fun onClickRow(tappedView: View, selectedStore: Shop) {
+                override fun onClickRow(tappedView: View, selectedStore: NearStore) {
                     val position = binding.storePager.currentItem
 
                     showFragmentBackStack(
@@ -111,7 +111,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 val selectedStoreLatLng = LatLng(storeList[position].lat, storeList[position].lng)
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedStoreLatLng, 16.0f))
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedStoreLatLng, 18.0f))
             }
         })
     }
@@ -152,7 +152,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                         MainActivity.lng = lastLocation.longitude
                         val currentLatLng =
                             LatLng(lastLocation.latitude, lastLocation.longitude)
-                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 14.0f))
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 18.0f))
 
                         // APIからお店の情報を取得する
                         viewModel.fetchStores(lastLocation.latitude, lastLocation.longitude)
