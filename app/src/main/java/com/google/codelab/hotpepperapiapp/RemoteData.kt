@@ -24,6 +24,19 @@ class RemoteData {
             }
     }
 
+    fun fetchFavoriteStores(
+        storeId: String
+    ): Single<StoresResponse> {
+        return retrofit.create(ApiRequest::class.java).fetchFavoriteStores(
+            key, COUNT, storeId, JSON
+        ).subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .map {
+                return@map it.body()
+                    ?: throw IOException("failed to fetch")
+            }
+    }
+
     companion object {
         private const val key = "970479567de67028"
         private const val JSON = "json"

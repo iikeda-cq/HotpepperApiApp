@@ -80,6 +80,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 storeList.add(store)
             }
             binding.storePager.adapter?.notifyDataSetChanged()
+
             Toast.makeText(
                 requireContext(),
                 "周辺の店舗が${it.results.store.size}件見つかりました",

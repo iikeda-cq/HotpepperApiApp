@@ -3,6 +3,7 @@ package com.google.codelab.hotpepperapiapp
 import com.google.codelab.hotpepperapiapp.model.Store
 import io.realm.Realm
 import io.realm.RealmResults
+import io.realm.Sort
 import io.realm.kotlin.createObject
 import io.realm.kotlin.where
 
@@ -33,6 +34,7 @@ object RealmClient {
         return realm.where(Store::class.java)
             .distinct(STORE_ID)
             .findAll()
+            .sort("id", Sort.ASCENDING)
     }
 
     fun fetchFirstStore(realm: Realm, storeId: String): Store? {

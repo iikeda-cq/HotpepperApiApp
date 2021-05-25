@@ -1,5 +1,6 @@
 package com.google.codelab.hotpepperapiapp.view
 
+import android.app.Fragment
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,9 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.codelab.hotpepperapiapp.R
-import com.google.codelab.hotpepperapiapp.model.response.NearStore
 import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreListBinding
 import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragmentBackStack
+import com.google.codelab.hotpepperapiapp.model.response.NearStore
 import com.google.codelab.hotpepperapiapp.viewModel.StoreListViewModel
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
@@ -68,8 +69,9 @@ class StoreListFragment : Fragment() {
             groupAdapter.update(storeList.map { StoreItem(it, requireContext()) })
 
             startPage += stores.results.totalPages
-            groupAdapter.setOnItemClickListener(onItemClickListener)
         })
+
+        groupAdapter.setOnItemClickListener(onItemClickListener)
 
         binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
