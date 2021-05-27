@@ -1,5 +1,6 @@
 package com.google.codelab.hotpepperapiapp.view
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import com.google.codelab.hotpepperapiapp.viewModel.FavoriteStoreViewModel
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.OnItemClickListener
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.realm.Realm
 
 class FavoriteStoreFragment : Fragment() {
@@ -53,6 +55,7 @@ class FavoriteStoreFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("CheckResult")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -66,7 +69,9 @@ class FavoriteStoreFragment : Fragment() {
 
         favoriteStoreIds?.let { viewModel.fetchFavoriteStores(it) }
 
-        viewModel.storeRepos.observe(viewLifecycleOwner, { stores ->
+        viewModel.favoriteStoresList
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { stores ->
             if (stores.results.totalPages < 20) {
                 isMoreLoad = false
             }
@@ -74,7 +79,7 @@ class FavoriteStoreFragment : Fragment() {
             groupAdapter.update(favoriteStoreList.map { StoreItem(it, requireContext()) })
 
             currentStoresCount += stores.results.totalPages
-        })
+        }
 
         groupAdapter.setOnItemClickListener(onItemClickListener)
 

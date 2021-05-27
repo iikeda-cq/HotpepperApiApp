@@ -1,6 +1,7 @@
 package com.google.codelab.hotpepperapiapp.view
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,14 +17,15 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
-import com.google.codelab.hotpepperapiapp.viewModel.MapsViewModel
 import com.google.codelab.hotpepperapiapp.R
-import com.google.codelab.hotpepperapiapp.model.response.NearStore
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
 import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragmentBackStack
 import com.google.codelab.hotpepperapiapp.ext.MapExt.addMarker
 import com.google.codelab.hotpepperapiapp.ext.MapExt.checkPermission
 import com.google.codelab.hotpepperapiapp.ext.MapExt.requestLocationPermission
+import com.google.codelab.hotpepperapiapp.model.response.NearStore
+import com.google.codelab.hotpepperapiapp.viewModel.MapsViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
     private val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
@@ -51,6 +53,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         return binding.root
     }
 
+    @SuppressLint("CheckResult")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val mapFragment =
@@ -74,19 +77,21 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             }, requireContext())
 
         // APIから店舗情報を取得したら地図にマッピングする
-        viewModel.storeRepos.observe(viewLifecycleOwner, {
-            it.results.store.map { store ->
-                mapMarkerPosition = addMarker(map, store, mapMarkerPosition)
-                storeList.add(store)
-            }
-            binding.storePager.adapter?.notifyDataSetChanged()
+        viewModel.storesList
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                it.results.store.map { store ->
+                    mapMarkerPosition = addMarker(map, store, mapMarkerPosition)
+                    storeList.add(store)
+                }
+                binding.storePager.adapter?.notifyDataSetChanged()
 
-            Toast.makeText(
-                requireContext(),
-                "周辺の店舗が${it.results.store.size}件見つかりました",
-                Toast.LENGTH_SHORT
-            ).show()
-        })
+                Toast.makeText(
+                    requireContext(),
+                    "周辺の店舗が${it.results.store.size}件見つかりました",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
 
         binding.storePager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
 

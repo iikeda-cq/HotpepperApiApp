@@ -6,17 +6,17 @@ import androidx.lifecycle.MutableLiveData
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 import com.google.codelab.hotpepperapiapp.usecase.FavoriteStoreUseCase
 import com.google.codelab.hotpepperapiapp.usecase.FavoriteStoresUseCaseImpl
+import io.reactivex.subjects.PublishSubject
 
 class FavoriteStoreViewModel {
     private val usecase: FavoriteStoreUseCase = FavoriteStoresUseCaseImpl()
-    private val _storeRepos: MutableLiveData<StoresResponse> = MutableLiveData()
-    val storeRepos: LiveData<StoresResponse> = _storeRepos
+    val favoriteStoresList: PublishSubject<StoresResponse> = PublishSubject.create()
 
     @SuppressLint("CheckResult")
     fun fetchFavoriteStores(storeId: String) {
         usecase.fetchFavoriteStores(storeId)
-            .subscribe { storeRepos: StoresResponse ->
-                _storeRepos.postValue(storeRepos)
+            .subscribe { stores ->
+                favoriteStoresList.onNext(stores)
             }
     }
 }

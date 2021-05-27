@@ -6,17 +6,17 @@ import androidx.lifecycle.MutableLiveData
 import com.google.codelab.hotpepperapiapp.usecase.MapsUseCase
 import com.google.codelab.hotpepperapiapp.usecase.MapsUseCaseImpl
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
+import io.reactivex.subjects.PublishSubject
 
 class MapsViewModel {
     private val usecase: MapsUseCase = MapsUseCaseImpl()
-    private val _storeRepos: MutableLiveData<StoresResponse> = MutableLiveData()
-    val storeRepos: LiveData<StoresResponse> = _storeRepos
+    val storesList: PublishSubject<StoresResponse> = PublishSubject.create()
 
     @SuppressLint("CheckResult")
     fun fetchStores(lat: Double, lng: Double) {
         usecase.fetchStores(lat, lng)
-            .subscribe { storeRepos: StoresResponse ->
-                _storeRepos.postValue(storeRepos)
+            .subscribe { stores ->
+                storesList.onNext(stores)
             }
     }
 }
