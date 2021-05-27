@@ -1,5 +1,6 @@
 package com.google.codelab.hotpepperapiapp.view
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -13,10 +14,13 @@ import com.google.codelab.hotpepperapiapp.RealmClient.addStore
 import com.google.codelab.hotpepperapiapp.RealmClient.deleteStore
 import com.google.codelab.hotpepperapiapp.RealmClient.fetchFirstStore
 import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreWebViewBinding
+import com.google.codelab.hotpepperapiapp.viewModel.StoreWebViewViewModel
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.realm.Realm
 
 class StoreWebViewFragment : Fragment() {
     private lateinit var binding: FragmentStoreWebViewBinding
+    private lateinit var viewModel: StoreWebViewViewModel
     private lateinit var realm: Realm
 
     private val storeId: String
@@ -25,7 +29,7 @@ class StoreWebViewFragment : Fragment() {
     private val url: String
         get() = checkNotNull(arguments?.getString(URL))
 
-    var isFavorite = false
+    private var isFavorite = false
 
     companion object {
         private const val STORE_ID = "store_id"
@@ -43,28 +47,41 @@ class StoreWebViewFragment : Fragment() {
         }
     }
 
+    @SuppressLint("CheckResult")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentStoreWebViewBinding.inflate(inflater)
-        binding.isFab = isFavorite
+        viewModel = StoreWebViewViewModel()
+        realm = Realm.getDefaultInstance()
 
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setHasOptionsMenu(true)
 
-        realm = Realm.getDefaultInstance()
+        binding.viewModel = viewModel
+        binding.isFab = isFavorite
         binding.storeWebView.loadUrl(url)
-
 
         // すでにお気に入りに追加済みかどうかをチェックする
         checkAlreadyAdd()
 
-        binding.fabFavorite.setOnClickListener {
-            changeFavoriteStore(isFavorite)
-        }
+        viewModel.onClickFab
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { changeFavoriteStore(isFavorite) }
 
         return binding.root
+    }
+
+    private fun checkAlreadyAdd() {
+        val store = fetchFirstStore(realm, storeId)
+
+        if (store != null) {
+            binding.apply {
+                isFavorite = true
+                binding.isFab = true
+            }
+        }
     }
 
     private fun changeFavoriteStore(isFav: Boolean) {
@@ -77,17 +94,6 @@ class StoreWebViewFragment : Fragment() {
         }
         binding.isFab = !isFav
         isFavorite = !isFav
-    }
-
-    private fun checkAlreadyAdd() {
-        val store = fetchFirstStore(realm, storeId)
-
-        if (store != null){
-            binding.apply {
-                isFavorite = true
-                binding.isFab = true
-            }
-        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
