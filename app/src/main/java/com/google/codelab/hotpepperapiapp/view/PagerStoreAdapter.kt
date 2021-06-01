@@ -3,20 +3,20 @@ package com.google.codelab.hotpepperapiapp.view
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.codelab.hotpepperapiapp.R
-import com.google.codelab.hotpepperapiapp.model.Store
+import com.google.codelab.hotpepperapiapp.databinding.PagerStoreBinding
 import com.google.codelab.hotpepperapiapp.model.StoreModel
 
 class PagerStoreAdapter(private val store: List<StoreModel>, private val listener: ListListener) :
     RecyclerView.Adapter<PagerViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PagerViewHolder =
-        PagerViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.pager_store, parent, false)
-        )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PagerViewHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val binding = PagerStoreBinding.inflate(layoutInflater, parent, false)
+        return PagerViewHolder(binding)
+    }
+
 
     override fun onBindViewHolder(holder: PagerViewHolder, position: Int) {
         holder.bind(store[position])
@@ -32,16 +32,12 @@ class PagerStoreAdapter(private val store: List<StoreModel>, private val listene
     }
 }
 
-class PagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    private val image: ImageView = itemView.findViewById(R.id.pager_image)
-    private val name: TextView = itemView.findViewById(R.id.pager_name)
-    private val price: TextView = itemView.findViewById(R.id.pager_charge)
-    private val genre: TextView = itemView.findViewById(R.id.pager_genre)
+class PagerViewHolder(val binding: PagerStoreBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(store: StoreModel) {
-        image.setImageResource(R.drawable.store_image)
-        name.text = store.name
-        price.text = store.price
-        genre.text = store.genre
+        binding.pagerImage.setImageResource(R.drawable.store_image)
+        binding.pagerName.text = store.name
+        binding.pagerCharge.text = store.price
+        binding.pagerGenre.text = store.genre
     }
 }
