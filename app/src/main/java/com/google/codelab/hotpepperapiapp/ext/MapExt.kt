@@ -9,7 +9,7 @@ import androidx.core.app.ActivityCompat
 object MapExt {
     private const val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
 
-    fun checkPermission(context: Context): Boolean {
+    fun hasLocationPermission(context: Context): Boolean {
         return ActivityCompat.checkSelfPermission(
             context,
             Manifest.permission.ACCESS_FINE_LOCATION

@@ -11,7 +11,7 @@ import com.google.codelab.hotpepperapiapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val mOnNavigationItemSelectedListener =
+    private val onNavigationItemSelectedListener =
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_list -> {
@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         this.window.statusBarColor = actionBarColor.actionBarColorToStatusBarColor()
 
         binding.navigation.apply {
-            setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+            setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
             selectedItemId = R.id.navigation_map
         }
 

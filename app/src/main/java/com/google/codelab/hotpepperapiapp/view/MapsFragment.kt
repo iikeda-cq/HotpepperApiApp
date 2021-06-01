@@ -21,10 +21,9 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragmentBackStack
-import com.google.codelab.hotpepperapiapp.ext.MapExt.checkPermission
+import com.google.codelab.hotpepperapiapp.ext.MapExt.hasLocationPermission
 import com.google.codelab.hotpepperapiapp.ext.MapExt.requestLocationPermission
 import com.google.codelab.hotpepperapiapp.R
-import com.google.codelab.hotpepperapiapp.model.Store
 import com.google.codelab.hotpepperapiapp.view.StoreListFragment.Companion.createTestData
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
 import com.google.codelab.hotpepperapiapp.model.StoreModel
@@ -87,7 +86,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
 
-        if(checkPermission(requireContext())) {
+        if(hasLocationPermission(requireContext())) {
             enableMyLocation()
         } else {
             requestLocationPermission(requireContext(), requireActivity())
