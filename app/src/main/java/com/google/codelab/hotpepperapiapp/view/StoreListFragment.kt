@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreListBinding
-import com.google.codelab.hotpepperapiapp.ext.FragmentExt
+import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragment
 import com.google.codelab.hotpepperapiapp.model.StoreModel
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
@@ -22,15 +22,12 @@ class StoreListFragment : Fragment() {
         // どのitemがクリックされたかindexを取得
         val index = groupAdapter.getAdapterPosition(item)
 
-        FragmentExt.showFragmentBackStack(
-            parentFragmentManager,
-            StoreWebViewFragment.newInstance(
-                dataSet[index].storeId,
-                dataSet[index].name,
-                dataSet[index].url,
-                dataSet[index].price,
-            )
-        )
+        StoreWebViewFragment.newInstance(
+            dataSet[index].storeId,
+            dataSet[index].name,
+            dataSet[index].url,
+            dataSet[index].price,
+        ).showFragment(parentFragmentManager)
     }
 
     override fun onCreateView(

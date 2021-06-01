@@ -15,15 +15,15 @@ class MainActivity : AppCompatActivity() {
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_list -> {
-                    showFragment(supportFragmentManager, StoreListFragment())
+                    StoreListFragment().showFragment(supportFragmentManager)
                     true
                 }
                 R.id.navigation_map -> {
-                    showFragment(supportFragmentManager, MapsFragment())
+                    MapsFragment().showFragment(supportFragmentManager)
                     true
                 }
                 R.id.navigation_favorite -> {
-                    showFragment(supportFragmentManager, FavoriteStoreFragment())
+                    FavoriteStoreFragment().showFragment(supportFragmentManager)
                     true
                 }
                 else -> false

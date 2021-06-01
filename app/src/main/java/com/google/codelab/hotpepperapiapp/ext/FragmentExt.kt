@@ -5,17 +5,10 @@ import androidx.fragment.app.FragmentManager
 import com.google.codelab.hotpepperapiapp.R
 
 object FragmentExt {
-    fun showFragment(fragmentManager: FragmentManager, fragment: Fragment) {
-        fragmentManager.popBackStack()
+    fun Fragment.showFragment(fragmentManager: FragmentManager) {
         fragmentManager.beginTransaction()
             .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-            .replace(R.id.frameLayout, fragment)
-            .commit()
-    }
-
-    fun showFragmentBackStack(fragmentManager: FragmentManager, fragment: Fragment) {
-        fragmentManager.beginTransaction()
-            .replace(R.id.frameLayout, fragment)
+            .replace(R.id.frameLayout, this)
             .addToBackStack(null)
             .commit()
     }
