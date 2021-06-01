@@ -5,13 +5,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.RealmClient.fetchStores
 import com.google.codelab.hotpepperapiapp.databinding.FragmentFavoriteStoreBinding
-import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragmentBackStack
+import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragment
 import com.google.codelab.hotpepperapiapp.model.response.NearStore
 import com.google.codelab.hotpepperapiapp.viewModel.FavoriteStoreViewModel
 import com.xwray.groupie.GroupAdapter
@@ -35,7 +37,7 @@ class FavoriteStoreFragment : Fragment() {
         // どのitemがクリックされたかindexを取得
         val index = groupAdapter.getAdapterPosition(item)
 
-        showFragmentBackStack(
+        showFragment(
             parentFragmentManager, StoreWebViewFragment.newInstance(
                 favoriteStoreList[index].id,
                 favoriteStoreList[index].urls.url
@@ -48,10 +50,11 @@ class FavoriteStoreFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentFavoriteStoreBinding.inflate(inflater)
-        viewModel = FavoriteStoreViewModel()
+        viewModel = ViewModelProviders.of(this).get(FavoriteStoreViewModel::class.java)
         realm = Realm.getDefaultInstance()
 
         requireActivity().setTitle(R.string.navigation_favorite)
+        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
         return binding.root
     }
 

@@ -8,8 +8,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -19,7 +21,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
-import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragmentBackStack
+import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragment
 import com.google.codelab.hotpepperapiapp.ext.MapExt.addMarker
 import com.google.codelab.hotpepperapiapp.ext.MapExt.checkPermission
 import com.google.codelab.hotpepperapiapp.ext.MapExt.requestLocationPermission
@@ -47,8 +49,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     ): View {
         binding = FragmentMapsBinding.inflate(layoutInflater)
         requireActivity().setTitle(R.string.view_map)
+        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
-        viewModel = MapsViewModel()
+        viewModel = ViewModelProviders.of(this).get(MapsViewModel::class.java)
 
         return binding.root
     }
@@ -67,7 +70,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 override fun onClickRow(tappedView: View, selectedStore: NearStore) {
                     val position = binding.storePager.currentItem
 
-                    showFragmentBackStack(
+                    showFragment(
                         parentFragmentManager, StoreWebViewFragment.newInstance(
                             storeList[position].id,
                             storeList[position].urls.url

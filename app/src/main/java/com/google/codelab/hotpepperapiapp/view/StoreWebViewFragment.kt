@@ -9,11 +9,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.RealmClient.addStore
 import com.google.codelab.hotpepperapiapp.RealmClient.deleteStore
 import com.google.codelab.hotpepperapiapp.RealmClient.fetchFirstStore
 import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreWebViewBinding
+import com.google.codelab.hotpepperapiapp.viewModel.FavoriteStoreViewModel
 import com.google.codelab.hotpepperapiapp.viewModel.StoreWebViewViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.realm.Realm
@@ -53,10 +55,11 @@ class StoreWebViewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentStoreWebViewBinding.inflate(inflater)
-        viewModel = StoreWebViewViewModel()
+        viewModel = ViewModelProviders.of(this).get(StoreWebViewViewModel::class.java)
         realm = Realm.getDefaultInstance()
 
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        requireActivity().setTitle(R.string.view_store_detail)
         setHasOptionsMenu(true)
 
         binding.viewModel = viewModel

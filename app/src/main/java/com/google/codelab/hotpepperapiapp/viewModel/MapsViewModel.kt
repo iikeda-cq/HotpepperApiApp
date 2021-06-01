@@ -1,6 +1,7 @@
 package com.google.codelab.hotpepperapiapp.viewModel
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

@@ -15,8 +15,7 @@ class FavoriteStoresUseCaseImpl : FavoriteStoreUseCase {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map {
-                return@map it.body()
-                    ?: throw IOException("failed to fetch")
+                it.body()
             }
     }
 }

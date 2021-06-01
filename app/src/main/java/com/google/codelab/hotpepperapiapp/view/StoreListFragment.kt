@@ -5,12 +5,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreListBinding
-import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragmentBackStack
+import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragment
 import com.google.codelab.hotpepperapiapp.model.response.NearStore
 import com.google.codelab.hotpepperapiapp.viewModel.StoreListViewModel
 import com.xwray.groupie.GroupAdapter
@@ -30,7 +32,7 @@ class StoreListFragment : Fragment() {
         // どのitemがクリックされたかindexを取得
         val index = groupAdapter.getAdapterPosition(item)
 
-        showFragmentBackStack(
+        showFragment(
             parentFragmentManager,
             StoreWebViewFragment.newInstance(
                 storeList[index].id,
@@ -45,8 +47,9 @@ class StoreListFragment : Fragment() {
     ): View {
         binding = FragmentStoreListBinding.inflate(layoutInflater)
         requireActivity().setTitle(R.string.view_list)
+        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
-        viewModel = StoreListViewModel()
+        viewModel = ViewModelProviders.of(this).get(StoreListViewModel::class.java)
 
         return binding.root
     }
@@ -61,7 +64,9 @@ class StoreListFragment : Fragment() {
                 GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
         }
 
-        viewModel.fetchStores(MainActivity.lat ?: return, MainActivity.lng ?: return)
+        if (storeList.isEmpty()) {
+            viewModel.fetchStores(MainActivity.lat ?: return, MainActivity.lng ?: return)
+        }
 
         viewModel.storesList
             .observeOn(AndroidSchedulers.mainThread())

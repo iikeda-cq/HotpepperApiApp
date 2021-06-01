@@ -8,6 +8,7 @@
     <!--title-->
     <string name="view_map">現在地周辺の店舗</string>
     <string name="view_list">店舗一覧</string>
+    <string name="view_store_detail">店舗詳細</string>
 
     <string name="store_name">店舗名</string>
     <string name="store_charge">金額</string>
