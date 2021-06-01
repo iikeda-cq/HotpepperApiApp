@@ -22,9 +22,8 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
-import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragmentBackStack
-import com.google.codelab.hotpepperapiapp.ext.MapExt.hasLocationPermission
-import com.google.codelab.hotpepperapiapp.ext.MapExt.requestLocationPermission
+import com.google.codelab.hotpepperapiapp.ext.FragmentExt
+import com.google.codelab.hotpepperapiapp.ext.MapExt
 import com.google.codelab.hotpepperapiapp.model.StoreModel
 import com.google.codelab.hotpepperapiapp.view.StoreListFragment.Companion.createTestData
 import kotlin.random.Random
@@ -66,7 +65,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 override fun onClickRow(tappedView: View, selectedStore: StoreModel) {
                     val position = binding.storePager.currentItem
 
-                    showFragmentBackStack(
+                    FragmentExt.showFragmentBackStack(
                         parentFragmentManager, StoreWebViewFragment.newInstance(
                             storeList[position].storeId,
                             storeList[position].name,
@@ -86,10 +85,10 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
 
-        if (hasLocationPermission(requireContext())) {
+        if (MapExt.hasLocationPermission(requireContext())) {
             enableMyLocation()
         } else {
-            requestLocationPermission(requireContext(), requireActivity())
+            MapExt.requestLocationPermission(requireContext(), requireActivity())
         }
 
         // マーカーのタップで一致するstoreデータを表示する

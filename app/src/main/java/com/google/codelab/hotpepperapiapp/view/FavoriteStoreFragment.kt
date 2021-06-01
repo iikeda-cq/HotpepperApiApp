@@ -8,9 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.RealmClient
-import com.google.codelab.hotpepperapiapp.StoreMapper.Companion.transform
+import com.google.codelab.hotpepperapiapp.StoreMapper
 import com.google.codelab.hotpepperapiapp.databinding.FragmentFavoriteStoreBinding
-import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragmentBackStack
+import com.google.codelab.hotpepperapiapp.ext.FragmentExt
 import com.google.codelab.hotpepperapiapp.model.StoreModel
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
@@ -27,7 +27,7 @@ class FavoriteStoreFragment : Fragment() {
         // どのitemがクリックされたかindexを取得
         val index = groupAdapter.getAdapterPosition(item)
 
-        showFragmentBackStack(
+        FragmentExt.showFragmentBackStack(
             parentFragmentManager, StoreWebViewFragment.newInstance(
                 dataSet[index].storeId,
                 dataSet[index].name,
@@ -66,7 +66,7 @@ class FavoriteStoreFragment : Fragment() {
 
         dataSet.clear()
 
-        transform(stores).forEach { store ->
+        StoreMapper.transform(stores).forEach { store ->
             dataSet.add(store)
         }
     }

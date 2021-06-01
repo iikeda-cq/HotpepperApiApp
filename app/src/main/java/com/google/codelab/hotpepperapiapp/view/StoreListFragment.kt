@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreListBinding
-import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragmentBackStack
+import com.google.codelab.hotpepperapiapp.ext.FragmentExt
 import com.google.codelab.hotpepperapiapp.model.StoreModel
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
@@ -22,7 +22,7 @@ class StoreListFragment : Fragment() {
         // どのitemがクリックされたかindexを取得
         val index = groupAdapter.getAdapterPosition(item)
 
-        showFragmentBackStack(
+        FragmentExt.showFragmentBackStack(
             parentFragmentManager,
             StoreWebViewFragment.newInstance(
                 dataSet[index].storeId,
@@ -70,7 +70,7 @@ class StoreListFragment : Fragment() {
                     genre = "居酒屋",
                     url = "https://www.hotpepper.jp/strJ001219042/",
                     lng = 0.0,
-                    lat=0.0
+                    lat = 0.0
                 )
                 dataSet.add(data)
                 i += 1
