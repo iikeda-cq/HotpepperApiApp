@@ -7,17 +7,15 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.codelab.hotpepperapiapp.R
-import com.google.codelab.hotpepperapiapp.RealmClient.fetchStores
+import com.google.codelab.hotpepperapiapp.RealmClient
 import com.google.codelab.hotpepperapiapp.StoreMapper.Companion.transform
 import com.google.codelab.hotpepperapiapp.databinding.FragmentFavoriteStoreBinding
 import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragmentBackStack
-import com.google.codelab.hotpepperapiapp.model.Store
 import com.google.codelab.hotpepperapiapp.model.StoreModel
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.OnItemClickListener
 import io.realm.Realm
-import io.realm.RealmResults
 
 class FavoriteStoreFragment : Fragment() {
     private lateinit var binding: FragmentFavoriteStoreBinding
@@ -64,7 +62,7 @@ class FavoriteStoreFragment : Fragment() {
     }
 
     private fun fetchRealmData() {
-        val stores = fetchStores(realm)
+        val stores = RealmClient.fetchStores(realm)
 
         dataSet.clear()
 

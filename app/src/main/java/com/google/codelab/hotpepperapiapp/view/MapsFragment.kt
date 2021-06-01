@@ -20,13 +20,13 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.codelab.hotpepperapiapp.R
+import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
 import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragmentBackStack
 import com.google.codelab.hotpepperapiapp.ext.MapExt.hasLocationPermission
 import com.google.codelab.hotpepperapiapp.ext.MapExt.requestLocationPermission
-import com.google.codelab.hotpepperapiapp.R
-import com.google.codelab.hotpepperapiapp.view.StoreListFragment.Companion.createTestData
-import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
 import com.google.codelab.hotpepperapiapp.model.StoreModel
+import com.google.codelab.hotpepperapiapp.view.StoreListFragment.Companion.createTestData
 import kotlin.random.Random
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
@@ -86,7 +86,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
 
-        if(hasLocationPermission(requireContext())) {
+        if (hasLocationPermission(requireContext())) {
             enableMyLocation()
         } else {
             requestLocationPermission(requireContext(), requireActivity())
@@ -139,9 +139,10 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             locationCallback = object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult?) {
                     super.onLocationResult(locationResult)
-                    locationResult?.lastLocation?.let {  lastLocation ->
+                    locationResult?.lastLocation?.let { lastLocation ->
                         currentLocation = lastLocation
-                        val currentLatLng = LatLng(currentLocation.latitude, currentLocation.longitude)
+                        val currentLatLng =
+                            LatLng(currentLocation.latitude, currentLocation.longitude)
                         map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 14.0f))
                         mapStore()
                     }
