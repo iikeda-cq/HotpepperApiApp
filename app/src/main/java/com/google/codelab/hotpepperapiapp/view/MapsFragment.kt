@@ -61,8 +61,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             LocationServices.getFusedLocationProviderClient(requireContext())
 
         binding.storePager.adapter =
-            PagerStoreAdapter(storeList, object : PagerStoreAdapter.ListListener {
-                override fun onClickRow(tappedView: View, selectedStore: StoreModel) {
+            PagerStoreAdapter(storeList){
                     val position = binding.storePager.currentItem
 
                     StoreWebViewFragment.newInstance(
@@ -72,7 +71,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                         storeList[position].price,
                     ).showFragment(parentFragmentManager)
                 }
-            })
+
 
         binding.storePager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
 

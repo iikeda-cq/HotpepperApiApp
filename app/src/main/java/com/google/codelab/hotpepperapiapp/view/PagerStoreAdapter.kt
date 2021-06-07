@@ -8,7 +8,7 @@ import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.PagerStoreBinding
 import com.google.codelab.hotpepperapiapp.model.StoreModel
 
-class PagerStoreAdapter(private val store: List<StoreModel>, private val listener: ListListener) :
+class PagerStoreAdapter(private val store: List<StoreModel>, private val onCellClick: (StoreModel) -> Unit) :
     RecyclerView.Adapter<PagerViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PagerViewHolder {
@@ -21,15 +21,11 @@ class PagerStoreAdapter(private val store: List<StoreModel>, private val listene
     override fun onBindViewHolder(holder: PagerViewHolder, position: Int) {
         holder.bind(store[position])
         holder.itemView.setOnClickListener {
-            listener.onClickRow(it, store[position])
+            onCellClick(store[position])
         }
     }
 
     override fun getItemCount(): Int = store.size
-
-    interface ListListener {
-        fun onClickRow(tappedView: View, selectedStore: StoreModel)
-    }
 }
 
 class PagerViewHolder(val binding: PagerStoreBinding) : RecyclerView.ViewHolder(binding.root) {
