@@ -1,6 +1,5 @@
 package com.google.codelab.hotpepperapiapp.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreListBinding
 import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragment
@@ -54,7 +54,6 @@ class StoreListFragment : Fragment() {
         return binding.root
     }
 
-    @SuppressLint("CheckResult")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -78,6 +77,19 @@ class StoreListFragment : Fragment() {
                 groupAdapter.update(storeList.map { StoreItem(it, requireContext()) })
 
                 startPage += stores.results.totalPages
+            }
+
+        viewModel.errorStream
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { failure ->
+                Snackbar.make(view, failure.message, Snackbar.LENGTH_SHORT)
+                    .setAction(R.string.retry) {
+                        viewModel.fetchStores(
+                            MainActivity.lat!!,
+                            MainActivity.lng!!,
+                            startPage
+                        )
+                    }.show()
             }
 
         groupAdapter.setOnItemClickListener(onItemClickListener)
