@@ -28,13 +28,6 @@ object MapExt {
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION
             )
-        } else {
-            // まだ許可を求めていない
-            ActivityCompat.requestPermissions(
-                activity,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION
-            )
         }
     }
 }
