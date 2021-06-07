@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.codelab.hotpepperapiapp.R
-import com.google.codelab.hotpepperapiapp.RealmClient
+import com.google.codelab.hotpepperapiapp.RealmClient.fetchStores
 import com.google.codelab.hotpepperapiapp.StoreMapper
 import com.google.codelab.hotpepperapiapp.databinding.FragmentFavoriteStoreBinding
 import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragment
@@ -21,7 +21,6 @@ class FavoriteStoreFragment : Fragment() {
     private lateinit var binding: FragmentFavoriteStoreBinding
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
     private val dataSet: MutableList<StoreModel> = ArrayList()
-    private lateinit var realm: Realm
 
     private val onItemClickListener = OnItemClickListener { item, _ ->
         // どのitemがクリックされたかindexを取得
@@ -41,7 +40,7 @@ class FavoriteStoreFragment : Fragment() {
     ): View {
         binding = FragmentFavoriteStoreBinding.inflate(inflater)
         requireActivity().setTitle(R.string.navigation_favorite)
-        realm = Realm.getDefaultInstance()
+
         return binding.root
     }
 
@@ -60,17 +59,14 @@ class FavoriteStoreFragment : Fragment() {
     }
 
     private fun fetchRealmData() {
-        val stores = RealmClient.fetchStores(realm)
+        Realm.getDefaultInstance().use { realm ->
+            val stores = realm.fetchStores()
 
-        dataSet.clear()
+            dataSet.clear()
 
-        StoreMapper.transform(stores).forEach { store ->
-            dataSet.add(store)
+            StoreMapper.transform(stores).forEach { store ->
+                dataSet.add(store)
+            }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        realm.close()
     }
 }
