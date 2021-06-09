@@ -21,6 +21,7 @@ import com.xwray.groupie.OnItemClickListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.realm.Realm
 import com.google.codelab.hotpepperapiapp.RealmClient.fetchStores
+import io.reactivex.rxkotlin.subscribeBy
 
 class FavoriteStoreFragment : Fragment() {
     private lateinit var binding: FragmentFavoriteStoreBinding
@@ -54,7 +55,6 @@ class FavoriteStoreFragment : Fragment() {
         return binding.root
     }
 
-    @SuppressLint("CheckResult")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -70,7 +70,7 @@ class FavoriteStoreFragment : Fragment() {
 
         viewModel.favoriteStoresList
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { stores ->
+            .subscribeBy { stores ->
                 if (stores.results.totalPages < 20) {
                     isMoreLoad = false
                 }

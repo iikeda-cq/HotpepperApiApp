@@ -19,6 +19,7 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.OnItemClickListener
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
 
 class StoreListFragment : Fragment() {
     private lateinit var binding: FragmentStoreListBinding
@@ -66,7 +67,7 @@ class StoreListFragment : Fragment() {
 
         viewModel.storesList
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { stores ->
+            .subscribeBy { stores ->
                 if (stores.results.totalPages < 20) {
                     isMoreLoad = false
                 }
@@ -78,7 +79,7 @@ class StoreListFragment : Fragment() {
 
         viewModel.errorStream
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { failure ->
+            .subscribeBy { failure ->
                 Snackbar.make(view, failure.message, Snackbar.LENGTH_SHORT)
                     .setAction(R.string.retry) {
                         viewModel.fetchStores(

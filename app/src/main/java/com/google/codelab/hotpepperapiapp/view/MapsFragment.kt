@@ -27,6 +27,7 @@ import com.google.codelab.hotpepperapiapp.ext.MapExt.addMarker
 import com.google.codelab.hotpepperapiapp.model.response.NearStore
 import com.google.codelab.hotpepperapiapp.viewModel.MapsViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
     private val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
@@ -55,7 +56,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         return binding.root
     }
 
-    @SuppressLint("CheckResult")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val mapFragment =
@@ -77,7 +77,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         // APIから店舗情報を取得したら地図にマッピングする
         viewModel.storesList
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
+            .subscribeBy {
                 it.results.store.map { store ->
                     mapMarkerPosition = addMarker(map, store, mapMarkerPosition)
                     storeList.add(store)

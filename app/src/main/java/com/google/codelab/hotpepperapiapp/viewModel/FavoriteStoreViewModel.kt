@@ -7,16 +7,16 @@ import androidx.lifecycle.ViewModel
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 import com.google.codelab.hotpepperapiapp.usecase.FavoriteStoreUseCase
 import com.google.codelab.hotpepperapiapp.usecase.FavoriteStoresUseCaseImpl
+import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.subjects.PublishSubject
 
 class FavoriteStoreViewModel: ViewModel() {
     private val usecase: FavoriteStoreUseCase = FavoriteStoresUseCaseImpl()
     val favoriteStoresList: PublishSubject<StoresResponse> = PublishSubject.create()
 
-    @SuppressLint("CheckResult")
     fun fetchFavoriteStores(storeId: String) {
         usecase.fetchFavoriteStores(storeId)
-            .subscribe { stores ->
+            .subscribeBy { stores ->
                 favoriteStoresList.onNext(stores)
             }
     }

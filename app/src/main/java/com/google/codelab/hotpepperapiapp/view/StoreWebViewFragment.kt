@@ -19,6 +19,7 @@ import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreWebViewBindin
 import com.google.codelab.hotpepperapiapp.viewModel.FavoriteStoreViewModel
 import com.google.codelab.hotpepperapiapp.viewModel.StoreWebViewViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
 import io.realm.Realm
 
 class StoreWebViewFragment : Fragment() {
@@ -49,7 +50,6 @@ class StoreWebViewFragment : Fragment() {
         }
     }
 
-    @SuppressLint("CheckResult")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -71,7 +71,7 @@ class StoreWebViewFragment : Fragment() {
 
         viewModel.onClickFab
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe { changeFavoriteStore(isFavorite) }
+            .subscribeBy { changeFavoriteStore(isFavorite) }
 
         return binding.root
     }
