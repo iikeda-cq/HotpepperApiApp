@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.FragmentFavoriteStoreBinding
 import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragment
@@ -78,6 +79,15 @@ class FavoriteStoreFragment : Fragment() {
                 groupAdapter.update(favoriteStoreList.map { StoreItem(it, requireContext()) })
 
                 currentStoresCount += stores.results.totalPages
+            }
+
+        viewModel.errorStream
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy { failure ->
+                Snackbar.make(view, failure.message, Snackbar.LENGTH_SHORT)
+                    .setAction(R.string.retry) {
+                        favoriteStoreIds?.let { ids -> viewModel.fetchFavoriteStores(ids) }
+                    }.show()
             }
 
         groupAdapter.setOnItemClickListener(onItemClickListener)

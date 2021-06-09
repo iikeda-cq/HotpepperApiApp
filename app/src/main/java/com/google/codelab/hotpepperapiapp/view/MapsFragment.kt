@@ -19,6 +19,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.snackbar.Snackbar
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
 import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragment
@@ -89,6 +90,18 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                     "周辺の店舗が${it.results.store.size}件見つかりました",
                     Toast.LENGTH_SHORT
                 ).show()
+            }
+
+        viewModel.errorStream
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy { failure ->
+                Snackbar.make(view, failure.message, Snackbar.LENGTH_SHORT)
+                    .setAction(R.string.retry) {
+                        viewModel.fetchStores(
+                            MainActivity.lat!!,
+                            MainActivity.lng!!
+                        )
+                    }.show()
             }
 
         binding.storePager.orientation = ViewPager2.ORIENTATION_HORIZONTAL

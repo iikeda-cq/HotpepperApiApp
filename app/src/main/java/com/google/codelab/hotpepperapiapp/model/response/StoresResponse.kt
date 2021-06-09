@@ -18,6 +18,8 @@ data class Results(
 data class NearStore(
     val id: String,
     val name: String,
+    @SerializedName("logo_image")
+    val logo: String,
     val lat: Double,
     val lng: Double,
     val genre: Genre,
