@@ -22,9 +22,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
 import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragment
+import com.google.codelab.hotpepperapiapp.ext.MapExt
 import com.google.codelab.hotpepperapiapp.ext.MapExt.addMarker
-import com.google.codelab.hotpepperapiapp.ext.MapExt.checkPermission
-import com.google.codelab.hotpepperapiapp.ext.MapExt.requestLocationPermission
 import com.google.codelab.hotpepperapiapp.model.response.NearStore
 import com.google.codelab.hotpepperapiapp.viewModel.MapsViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -66,18 +65,14 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             LocationServices.getFusedLocationProviderClient(requireContext())
 
         binding.storePager.adapter =
-            PagerStoreAdapter(storeList, object : PagerStoreAdapter.ListListener {
-                override fun onClickRow(tappedView: View, selectedStore: NearStore) {
+            PagerStoreAdapter(storeList, requireContext()){
                     val position = binding.storePager.currentItem
 
-                    showFragment(
-                        parentFragmentManager, StoreWebViewFragment.newInstance(
-                            storeList[position].id,
-                            storeList[position].urls.url
-                        )
-                    )
+                    StoreWebViewFragment.newInstance(
+                        storeList[position].id,
+                        storeList[position].urls.url
+                    ).showFragment(parentFragmentManager)
                 }
-            }, requireContext())
 
         // APIから店舗情報を取得したら地図にマッピングする
         viewModel.storesList
@@ -103,10 +98,10 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
 
-        if (checkPermission(requireContext())) {
+        if (MapExt.hasLocationPermission(requireContext())) {
             enableMyLocation()
         } else {
-            requestLocationPermission(requireContext(), requireActivity())
+            MapExt.requestLocationPermission(requireContext(), requireActivity())
         }
 
         // マーカーのタップで一致するstoreデータを表示する

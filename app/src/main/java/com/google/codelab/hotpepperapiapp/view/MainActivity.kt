@@ -11,19 +11,19 @@ import com.google.codelab.hotpepperapiapp.ext.IntExt.actionBarColorToStatusBarCo
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val mOnNavigationItemSelectedListener =
+    private val onNavigationItemSelectedListener =
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_list -> {
-                    showFragment(supportFragmentManager, StoreListFragment())
+                    StoreListFragment().showFragment(supportFragmentManager)
                     true
                 }
                 R.id.navigation_map -> {
-                    showFragment(supportFragmentManager, MapsFragment())
+                    MapsFragment().showFragment(supportFragmentManager)
                     true
                 }
                 R.id.navigation_favorite -> {
-                    showFragment(supportFragmentManager, FavoriteStoreFragment())
+                    FavoriteStoreFragment().showFragment(supportFragmentManager)
                     true
                 }
                 else -> false
@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         this.window.statusBarColor = actionBarColor.actionBarColorToStatusBarColor()
 
         binding.navigation.apply {
-            setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+            setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
             selectedItemId = R.id.navigation_map
         }
 

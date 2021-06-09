@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.google.codelab.hotpepperapiapp.R
+import com.google.codelab.hotpepperapiapp.RealmClient
 import com.google.codelab.hotpepperapiapp.RealmClient.addStore
 import com.google.codelab.hotpepperapiapp.RealmClient.deleteStore
 import com.google.codelab.hotpepperapiapp.RealmClient.fetchFirstStore
@@ -23,7 +24,6 @@ import io.realm.Realm
 class StoreWebViewFragment : Fragment() {
     private lateinit var binding: FragmentStoreWebViewBinding
     private lateinit var viewModel: StoreWebViewViewModel
-    private lateinit var realm: Realm
 
     private val storeId: String
         get() = checkNotNull(arguments?.getString(STORE_ID))
@@ -56,7 +56,6 @@ class StoreWebViewFragment : Fragment() {
     ): View {
         binding = FragmentStoreWebViewBinding.inflate(inflater)
         viewModel = ViewModelProviders.of(this).get(StoreWebViewViewModel::class.java)
-        realm = Realm.getDefaultInstance()
 
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         requireActivity().setTitle(R.string.view_store_detail)
@@ -64,6 +63,7 @@ class StoreWebViewFragment : Fragment() {
 
         binding.viewModel = viewModel
         binding.isFab = isFavorite
+
         binding.storeWebView.loadUrl(url)
 
         // すでにお気に入りに追加済みかどうかをチェックする
@@ -76,27 +76,32 @@ class StoreWebViewFragment : Fragment() {
         return binding.root
     }
 
-    private fun checkAlreadyAdd() {
-        val store = fetchFirstStore(realm, storeId)
-
-        if (store != null) {
-            binding.apply {
-                isFavorite = true
-                binding.isFab = true
-            }
-        }
-    }
-
     private fun changeFavoriteStore(isFav: Boolean) {
-        if (isFav) {
-            deleteStore(realm, storeId)
-            Toast.makeText(requireContext(), R.string.delete_favorite, Toast.LENGTH_SHORT).show()
-        } else {
-            addStore(realm, storeId)
-            Toast.makeText(requireContext(), R.string.add_favorite, Toast.LENGTH_SHORT).show()
+        Realm.getDefaultInstance().use { realm ->
+            if (isFav) {
+                realm.deleteStore(storeId)
+                Toast.makeText(requireContext(), R.string.delete_favorite, Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                realm.addStore(storeId)
+                Toast.makeText(requireContext(), R.string.add_favorite, Toast.LENGTH_SHORT).show()
+            }
         }
         binding.isFab = !isFav
         isFavorite = !isFav
+    }
+
+    private fun checkAlreadyAdd() {
+        Realm.getDefaultInstance().use { realm ->
+            val store = realm.fetchFirstStore(storeId)
+
+            if (store != null) {
+                binding.apply {
+                    isFavorite = true
+                    binding.isFab = true
+                }
+            }
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -113,7 +118,6 @@ class StoreWebViewFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        realm.close()
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
 }

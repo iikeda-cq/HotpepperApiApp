@@ -4,49 +4,41 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.model.response.NearStore
+import com.google.codelab.hotpepperapiapp.databinding.PagerStoreBinding
+import com.google.codelab.hotpepperapiapp.model.StoreModel
 
-class PagerStoreAdapter(
-    private val store: MutableList<NearStore>,
-    private val listener: ListListener,
-    val context: Context
-) :
+class PagerStoreAdapter(private val store: List<NearStore>,
+                        val context: Context,
+                        private val onCellClick: (NearStore) -> Unit) :
     RecyclerView.Adapter<PagerViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PagerViewHolder =
-        PagerViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.pager_store, parent, false)
-        )
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PagerViewHolder {
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val binding = PagerStoreBinding.inflate(layoutInflater, parent, false)
+        return PagerViewHolder(binding)
+    }
+
 
     override fun onBindViewHolder(holder: PagerViewHolder, position: Int) {
         holder.bind(store[position], context)
         holder.itemView.setOnClickListener {
-            listener.onClickRow(it, store[position])
+            onCellClick(store[position])
         }
     }
 
     override fun getItemCount(): Int = store.size
-
-    interface ListListener {
-        fun onClickRow(tappedView: View, selectedStore: NearStore)
-    }
 }
 
-class PagerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    private val image: ImageView = itemView.findViewById(R.id.pager_image)
-    private val name: TextView = itemView.findViewById(R.id.pager_name)
-    private val price: TextView = itemView.findViewById(R.id.pager_charge)
-    private val genre: TextView = itemView.findViewById(R.id.pager_genre)
+class PagerViewHolder(val binding: PagerStoreBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(store: NearStore, context: Context) {
-        Glide.with(context).load(store.photo.photo.logo).into(image)
-        name.text = store.name
-        price.text = store.budget.average
-        genre.text = store.genre.name
+        Glide.with(context).load(store.photo.photo.logo).into(binding.pagerImage)
+        binding.pagerName.text = store.name
+        binding.pagerCharge.text = store.budget.average
+        binding.pagerGenre.text = store.genre.name
     }
 }

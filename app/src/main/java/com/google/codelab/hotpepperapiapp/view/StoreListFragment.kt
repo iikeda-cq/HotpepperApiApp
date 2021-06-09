@@ -32,13 +32,10 @@ class StoreListFragment : Fragment() {
         // どのitemがクリックされたかindexを取得
         val index = groupAdapter.getAdapterPosition(item)
 
-        showFragment(
-            parentFragmentManager,
-            StoreWebViewFragment.newInstance(
-                storeList[index].id,
-                storeList[index].urls.url
-            )
-        )
+        StoreWebViewFragment.newInstance(
+            storeList[index].id,
+            storeList[index].urls.url
+        ).showFragment(parentFragmentManager)
     }
 
     override fun onCreateView(

@@ -8,6 +8,7 @@ import com.google.codelab.hotpepperapiapp.model.response.NearStore
 import com.google.codelab.hotpepperapiapp.databinding.CellStoreBinding
 import com.xwray.groupie.Item
 import com.xwray.groupie.viewbinding.BindableItem
+import com.google.codelab.hotpepperapiapp.model.StoreModel
 
 class StoreItem(private val store: NearStore, val context: Context) : BindableItem<CellStoreBinding>() {
     override fun getLayout() = R.layout.cell_store

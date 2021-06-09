@@ -12,7 +12,7 @@ import com.google.codelab.hotpepperapiapp.model.response.NearStore
 object MapExt {
     private const val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
 
-    fun checkPermission(context: Context): Boolean {
+    fun hasLocationPermission(context: Context): Boolean {
         return ActivityCompat.checkSelfPermission(
             context,
             Manifest.permission.ACCESS_FINE_LOCATION
@@ -32,7 +32,6 @@ object MapExt {
                 MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION
             )
         } else {
-            // まだ許可を求めていない
             ActivityCompat.requestPermissions(
                 activity,
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),

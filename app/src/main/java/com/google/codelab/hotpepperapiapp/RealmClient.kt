@@ -7,11 +7,12 @@ import io.realm.Sort
 import io.realm.kotlin.createObject
 import io.realm.kotlin.where
 
+// ToDo classに変更する
 object RealmClient {
     private const val STORE_ID = "storeId"
 
-    fun addStore(realm: Realm, storeId: String) {
-        realm.executeTransaction {
+    fun Realm.addStore(storeId: String) {
+        this.executeTransaction { realm ->
             val currentId = realm.where<Store>().max("id")
             val nextId = (currentId?.toLong() ?: 0L) + 1L
             val store = realm.createObject<Store>(nextId)
@@ -20,25 +21,25 @@ object RealmClient {
         }
     }
 
-    fun deleteStore(realm: Realm, id: String) {
-        val target = realm.where(Store::class.java)
+    fun Realm.deleteStore(id: String) {
+        val target = this.where(Store::class.java)
             .equalTo(STORE_ID, id)
             .findAll()
 
-        realm.executeTransaction {
+        this.executeTransaction {
             target.deleteFromRealm(0)
         }
     }
 
-    fun fetchStores(realm: Realm): RealmResults<Store> {
-        return realm.where(Store::class.java)
+    fun Realm.fetchStores(): RealmResults<Store> {
+        return this.where(Store::class.java)
             .distinct(STORE_ID)
             .findAll()
             .sort("id", Sort.ASCENDING)
     }
 
-    fun fetchFirstStore(realm: Realm, storeId: String): Store? {
-        return realm.where(Store::class.java)
+    fun Realm.fetchFirstStore(storeId: String): Store? {
+        return this.where(Store::class.java)
             .equalTo(STORE_ID, storeId)
             .findFirst()
     }

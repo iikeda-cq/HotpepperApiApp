@@ -11,7 +11,6 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.codelab.hotpepperapiapp.R
-import com.google.codelab.hotpepperapiapp.RealmClient.fetchStores
 import com.google.codelab.hotpepperapiapp.databinding.FragmentFavoriteStoreBinding
 import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragment
 import com.google.codelab.hotpepperapiapp.model.response.NearStore
@@ -21,11 +20,11 @@ import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.OnItemClickListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.realm.Realm
+import com.google.codelab.hotpepperapiapp.RealmClient.fetchStores
 
 class FavoriteStoreFragment : Fragment() {
     private lateinit var binding: FragmentFavoriteStoreBinding
     private lateinit var viewModel: FavoriteStoreViewModel
-    private lateinit var realm: Realm
 
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
     private val favoriteStoreList: MutableList<NearStore> = ArrayList()
@@ -37,12 +36,10 @@ class FavoriteStoreFragment : Fragment() {
         // どのitemがクリックされたかindexを取得
         val index = groupAdapter.getAdapterPosition(item)
 
-        showFragment(
-            parentFragmentManager, StoreWebViewFragment.newInstance(
-                favoriteStoreList[index].id,
-                favoriteStoreList[index].urls.url
-            )
-        )
+        StoreWebViewFragment.newInstance(
+            favoriteStoreList[index].id,
+            favoriteStoreList[index].urls.url
+        ).showFragment(parentFragmentManager)
     }
 
     override fun onCreateView(
@@ -51,7 +48,6 @@ class FavoriteStoreFragment : Fragment() {
     ): View {
         binding = FragmentFavoriteStoreBinding.inflate(inflater)
         viewModel = ViewModelProviders.of(this).get(FavoriteStoreViewModel::class.java)
-        realm = Realm.getDefaultInstance()
 
         requireActivity().setTitle(R.string.navigation_favorite)
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
@@ -75,14 +71,14 @@ class FavoriteStoreFragment : Fragment() {
         viewModel.favoriteStoresList
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { stores ->
-            if (stores.results.totalPages < 20) {
-                isMoreLoad = false
-            }
-            stores.results.store.map { favoriteStoreList.add(it) }
-            groupAdapter.update(favoriteStoreList.map { StoreItem(it, requireContext()) })
+                if (stores.results.totalPages < 20) {
+                    isMoreLoad = false
+                }
+                stores.results.store.map { favoriteStoreList.add(it) }
+                groupAdapter.update(favoriteStoreList.map { StoreItem(it, requireContext()) })
 
-            currentStoresCount += stores.results.totalPages
-        }
+                currentStoresCount += stores.results.totalPages
+            }
 
         groupAdapter.setOnItemClickListener(onItemClickListener)
 
@@ -100,26 +96,23 @@ class FavoriteStoreFragment : Fragment() {
 
     // Realmに保存されたストアデータから、Query用のstore_idを生成する
     private fun createFavoriteIds() {
-        val favoriteStoresList = fetchStores(realm)
-        favoriteStoreIds = null
+        Realm.getDefaultInstance().use { realm ->
+            val favoriteStoresList = realm.fetchStores()
+            favoriteStoreIds = null
 
-        favoriteStoresList.drop(currentStoresCount).forEachIndexed { index, store ->
-            // APIの仕様上、一度に20件までのデータしか取得できないため
-            if (index >= 20) {
-                return
+            favoriteStoresList.drop(currentStoresCount).forEachIndexed { index, store ->
+                // APIの仕様上、一度に20件までのデータしか取得できないため
+                if (index >= 20) {
+                    return
+                }
+
+                favoriteStoreIds = if (favoriteStoreIds.isNullOrBlank()) {
+                    store.storeId
+                } else {
+                    favoriteStoreIds + "," + store.storeId
+                }
+
             }
-
-            favoriteStoreIds = if (favoriteStoreIds.isNullOrBlank()) {
-                store.storeId
-            } else {
-                favoriteStoreIds + "," + store.storeId
-            }
-
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        realm.close()
     }
 }
