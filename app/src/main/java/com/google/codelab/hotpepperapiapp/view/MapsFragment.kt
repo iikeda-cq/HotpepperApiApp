@@ -22,8 +22,8 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
-import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragment
 import com.google.codelab.hotpepperapiapp.ext.MapExt
+import com.google.codelab.hotpepperapiapp.ext.showFragment
 import com.google.codelab.hotpepperapiapp.model.StoreModel
 import com.google.codelab.hotpepperapiapp.view.StoreListFragment.Companion.createTestData
 import kotlin.random.Random
@@ -61,16 +61,16 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             LocationServices.getFusedLocationProviderClient(requireContext())
 
         binding.storePager.adapter =
-            PagerStoreAdapter(storeList){
-                    val position = binding.storePager.currentItem
+            PagerStoreAdapter(storeList) {
+                val position = binding.storePager.currentItem
 
-                    StoreWebViewFragment.newInstance(
-                        storeList[position].storeId,
-                        storeList[position].name,
-                        storeList[position].url,
-                        storeList[position].price,
-                    ).showFragment(parentFragmentManager)
-                }
+                StoreWebViewFragment.newInstance(
+                    storeList[position].storeId,
+                    storeList[position].name,
+                    storeList[position].url,
+                    storeList[position].price,
+                ).showFragment(parentFragmentManager)
+            }
 
 
         binding.storePager.orientation = ViewPager2.ORIENTATION_HORIZONTAL

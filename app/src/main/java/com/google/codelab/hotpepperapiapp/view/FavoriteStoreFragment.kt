@@ -10,7 +10,7 @@ import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.RealmClient.fetchStores
 import com.google.codelab.hotpepperapiapp.StoreMapper
 import com.google.codelab.hotpepperapiapp.databinding.FragmentFavoriteStoreBinding
-import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragment
+import com.google.codelab.hotpepperapiapp.ext.showFragment
 import com.google.codelab.hotpepperapiapp.model.StoreModel
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
