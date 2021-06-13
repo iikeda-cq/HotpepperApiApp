@@ -22,7 +22,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
-import com.google.codelab.hotpepperapiapp.ext.MapExt
+import com.google.codelab.hotpepperapiapp.util.MapUtils
 import com.google.codelab.hotpepperapiapp.ext.showFragment
 import com.google.codelab.hotpepperapiapp.model.StoreModel
 import com.google.codelab.hotpepperapiapp.view.StoreListFragment.Companion.createTestData
@@ -82,10 +82,10 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
 
-        if (MapExt.hasLocationPermission(requireContext())) {
+        if (MapUtils.hasLocationPermission(requireContext())) {
             enableMyLocation()
         } else {
-            MapExt.requestLocationPermission(requireContext(), requireActivity())
+            MapUtils.requestLocationPermission(requireContext(), requireActivity())
         }
 
         // マーカーのタップで一致するstoreデータを表示する
