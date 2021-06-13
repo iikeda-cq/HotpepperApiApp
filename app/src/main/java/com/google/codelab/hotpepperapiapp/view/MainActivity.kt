@@ -10,19 +10,26 @@ import com.google.codelab.hotpepperapiapp.ext.showFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private val storeListFragment = StoreListFragment()
+    private val mapsFragment = MapsFragment()
+    private val favoriteStoreFragment = FavoriteStoreFragment()
+
     private val onNavigationItemSelectedListener =
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
+            if (binding.navigation.selectedItemId == item.itemId) {
+                return@OnNavigationItemSelectedListener true
+            }
             when (item.itemId) {
                 R.id.navigation_list -> {
-                    StoreListFragment().showFragment(supportFragmentManager)
+                    storeListFragment.showFragment(supportFragmentManager)
                     true
                 }
                 R.id.navigation_map -> {
-                    MapsFragment().showFragment(supportFragmentManager)
+                    mapsFragment.showFragment(supportFragmentManager)
                     true
                 }
                 R.id.navigation_favorite -> {
-                    FavoriteStoreFragment().showFragment(supportFragmentManager)
+                    favoriteStoreFragment.showFragment(supportFragmentManager)
                     true
                 }
                 else -> false
@@ -43,5 +50,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         setContentView(binding.root)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        if (supportFragmentManager.backStackEntryCount == 0) {
+            finish()
+        }
     }
 }
