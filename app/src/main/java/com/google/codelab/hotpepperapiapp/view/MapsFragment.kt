@@ -54,6 +54,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
         viewModel = ViewModelProviders.of(this).get(MapsViewModel::class.java)
 
+        binding.isLoading = false
+
         return binding.root
     }
 
@@ -84,6 +86,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                     storeList.add(store)
                 }
                 binding.storePager.adapter?.notifyDataSetChanged()
+                binding.isLoading = false
 
                 Toast.makeText(
                     requireContext(),
@@ -95,6 +98,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         viewModel.errorStream
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy { failure ->
+                binding.isLoading = false
                 Snackbar.make(view, failure.message, Snackbar.LENGTH_SHORT)
                     .setAction(R.string.retry) {
                         viewModel.fetchStores(
@@ -139,6 +143,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        binding.isLoading = true
         when (requestCode) {
             MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION -> {
                 if (permissions.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -173,6 +178,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
                         // APIからお店の情報を取得する
                         viewModel.fetchStores(lastLocation.latitude, lastLocation.longitude)
+                        binding.isLoading = true
                     }
                 }
             }
