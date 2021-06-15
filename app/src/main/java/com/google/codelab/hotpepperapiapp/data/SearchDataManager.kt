@@ -1,7 +1,10 @@
 package com.google.codelab.hotpepperapiapp.data
 
+import com.google.codelab.hotpepperapiapp.model.Store
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
+import io.reactivex.Observable
 import io.reactivex.Single
+import io.realm.RealmResults
 import retrofit2.Response
 
 interface SearchDataManager {
@@ -12,4 +15,6 @@ interface SearchDataManager {
     ): Single<Response<StoresResponse>>
 
     fun fetchFavoriteStores(storeId: String): Single<Response<StoresResponse>>
+
+    fun fetchLocalStoreIds(): Single<RealmResults<Store>>
 }

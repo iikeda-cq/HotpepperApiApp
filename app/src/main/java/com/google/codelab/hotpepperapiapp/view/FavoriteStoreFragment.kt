@@ -1,6 +1,5 @@
 package com.google.codelab.hotpepperapiapp.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.google.codelab.hotpepperapiapp.R
+import com.google.codelab.hotpepperapiapp.RealmClient.fetchStores
 import com.google.codelab.hotpepperapiapp.databinding.FragmentFavoriteStoreBinding
 import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragment
 import com.google.codelab.hotpepperapiapp.model.response.NearStore
@@ -20,9 +20,8 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.OnItemClickListener
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.realm.Realm
-import com.google.codelab.hotpepperapiapp.RealmClient.fetchStores
 import io.reactivex.rxkotlin.subscribeBy
+import io.realm.Realm
 
 class FavoriteStoreFragment : Fragment() {
     private lateinit var binding: FragmentFavoriteStoreBinding
@@ -30,9 +29,7 @@ class FavoriteStoreFragment : Fragment() {
 
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
     private val favoriteStoreList: MutableList<NearStore> = ArrayList()
-    private var favoriteStoreIds: String? = null
     private var isMoreLoad = true
-    private var currentStoresCount = 0
 
     private val onItemClickListener = OnItemClickListener { item, _ ->
         // どのitemがクリックされたかindexを取得
@@ -65,9 +62,7 @@ class FavoriteStoreFragment : Fragment() {
                 GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
         }
 
-        createFavoriteIds()
-
-        favoriteStoreIds?.let { viewModel.fetchFavoriteStores(it) }
+        viewModel.fetchLocalStoresId()
 
         viewModel.favoriteStoresList
             .observeOn(AndroidSchedulers.mainThread())
@@ -77,8 +72,6 @@ class FavoriteStoreFragment : Fragment() {
                 }
                 stores.results.store.map { favoriteStoreList.add(it) }
                 groupAdapter.update(favoriteStoreList.map { StoreItem(it, requireContext()) })
-
-                currentStoresCount += stores.results.totalPages
             }
 
         viewModel.errorStream
@@ -86,7 +79,7 @@ class FavoriteStoreFragment : Fragment() {
             .subscribeBy { failure ->
                 Snackbar.make(view, failure.message, Snackbar.LENGTH_SHORT)
                     .setAction(R.string.retry) {
-                        favoriteStoreIds?.let { ids -> viewModel.fetchFavoriteStores(ids) }
+                        viewModel.favoriteStoreIds?.let { ids -> viewModel.fetchFavoriteStores(ids) }
                     }.show()
             }
 
@@ -97,32 +90,10 @@ class FavoriteStoreFragment : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (!recyclerView.canScrollVertically(1) && isMoreLoad) {
-                    createFavoriteIds()
-                    favoriteStoreIds?.let { viewModel.fetchFavoriteStores(it) }
+                    viewModel.fetchLocalStoresId()
+                    viewModel.favoriteStoreIds?.let { viewModel.fetchFavoriteStores(it) }
                 }
             }
         })
-    }
-
-    // Realmに保存されたストアデータから、Query用のstore_idを生成する
-    private fun createFavoriteIds() {
-        Realm.getDefaultInstance().use { realm ->
-            val favoriteStoresList = realm.fetchStores()
-            favoriteStoreIds = null
-
-            favoriteStoresList.drop(currentStoresCount).forEachIndexed { index, store ->
-                // APIの仕様上、一度に20件までのデータしか取得できないため
-                if (index >= 20) {
-                    return
-                }
-
-                favoriteStoreIds = if (favoriteStoreIds.isNullOrBlank()) {
-                    store.storeId
-                } else {
-                    favoriteStoreIds + "," + store.storeId
-                }
-
-            }
-        }
     }
 }

@@ -1,10 +1,13 @@
 package com.google.codelab.hotpepperapiapp.usecase
 
 import com.google.codelab.hotpepperapiapp.data.SearchDataManagerImpl
+import com.google.codelab.hotpepperapiapp.model.Store
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
+import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import io.realm.RealmResults
 import java.io.IOException
 
 class FavoriteStoresUseCaseImpl : FavoriteStoreUseCase {
@@ -17,5 +20,11 @@ class FavoriteStoresUseCaseImpl : FavoriteStoreUseCase {
             .map {
                 it.body()
             }
+    }
+
+    override fun fetchLocalStoreIds(): Single<RealmResults<Store>> {
+        return dataManager.fetchLocalStoreIds()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 }
