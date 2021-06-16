@@ -2,6 +2,7 @@ package com.google.codelab.hotpepperapiapp.data
 
 import com.google.codelab.hotpepperapiapp.model.Store
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.realm.RealmResults
@@ -17,4 +18,8 @@ interface SearchDataManager {
     fun fetchFavoriteStores(storeId: String): Single<Response<StoresResponse>>
 
     fun fetchLocalStoreIds(): Single<RealmResults<Store>>
+
+    fun addFavoriteStore(storeId: String): Completable
+
+    fun deleteFavoriteStore(storeId: String): Completable
 }

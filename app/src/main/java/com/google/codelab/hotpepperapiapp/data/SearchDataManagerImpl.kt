@@ -2,6 +2,7 @@ package com.google.codelab.hotpepperapiapp.data
 
 import com.google.codelab.hotpepperapiapp.model.Store
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
+import io.reactivex.Completable
 import io.reactivex.Single
 import io.realm.RealmResults
 import retrofit2.Response
@@ -24,5 +25,13 @@ class SearchDataManagerImpl : SearchDataManager {
 
     override fun fetchLocalStoreIds(): Single<RealmResults<Store>> {
         return Single.just(local.fetchLocalStoreIds())
+    }
+
+    override fun addFavoriteStore(storeId: String): Completable {
+        return local.addFavoriteStore(storeId)
+    }
+
+    override fun deleteFavoriteStore(storeId: String): Completable {
+        return local.deleteFavoriteStore(storeId)
     }
 }

@@ -1,6 +1,5 @@
 package com.google.codelab.hotpepperapiapp.view
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -11,12 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.google.codelab.hotpepperapiapp.R
-import com.google.codelab.hotpepperapiapp.RealmClient
-import com.google.codelab.hotpepperapiapp.RealmClient.addStore
-import com.google.codelab.hotpepperapiapp.RealmClient.deleteStore
 import com.google.codelab.hotpepperapiapp.RealmClient.fetchFirstStore
 import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreWebViewBinding
-import com.google.codelab.hotpepperapiapp.viewModel.FavoriteStoreViewModel
 import com.google.codelab.hotpepperapiapp.viewModel.StoreWebViewViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
@@ -73,22 +68,39 @@ class StoreWebViewFragment : Fragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy { changeFavoriteStore(isFavorite) }
 
+        viewModel.addFavoriteStore
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy {
+                Toast.makeText(requireContext(), R.string.add_favorite, Toast.LENGTH_SHORT).show()
+                binding.isFab = !isFavorite
+                isFavorite = !isFavorite
+            }
+
+        viewModel.deleteFavoriteStore
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy {
+                Toast.makeText(requireContext(), R.string.delete_favorite, Toast.LENGTH_SHORT)
+                    .show()
+                binding.isFab = !isFavorite
+                isFavorite = !isFavorite
+            }
+
+        viewModel.errorStream
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy {
+                Toast.makeText(requireContext(), R.string.unexpected_error, Toast.LENGTH_SHORT)
+                    .show()
+            }
+
         return binding.root
     }
 
     private fun changeFavoriteStore(isFav: Boolean) {
-        Realm.getDefaultInstance().use { realm ->
-            if (isFav) {
-                realm.deleteStore(storeId)
-                Toast.makeText(requireContext(), R.string.delete_favorite, Toast.LENGTH_SHORT)
-                    .show()
-            } else {
-                realm.addStore(storeId)
-                Toast.makeText(requireContext(), R.string.add_favorite, Toast.LENGTH_SHORT).show()
-            }
+        if (isFav) {
+            viewModel.deleteFavoriteStore(storeId)
+        } else {
+            viewModel.addFavoriteStore(storeId)
         }
-        binding.isFab = !isFav
-        isFavorite = !isFav
     }
 
     private fun checkAlreadyAdd() {
