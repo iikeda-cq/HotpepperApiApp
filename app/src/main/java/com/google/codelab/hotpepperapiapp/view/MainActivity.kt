@@ -16,20 +16,17 @@ class MainActivity : AppCompatActivity() {
 
     private val onNavigationItemSelectedListener =
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
-            if (binding.navigation.selectedItemId == item.itemId) {
-                return@OnNavigationItemSelectedListener true
-            }
             when (item.itemId) {
                 R.id.navigation_list -> {
-                    storeListFragment.showFragment(supportFragmentManager)
+                    storeListFragment.showFragment(supportFragmentManager, true)
                     true
                 }
                 R.id.navigation_map -> {
-                    mapsFragment.showFragment(supportFragmentManager)
+                    mapsFragment.showFragment(supportFragmentManager, true)
                     true
                 }
                 R.id.navigation_favorite -> {
-                    favoriteStoreFragment.showFragment(supportFragmentManager)
+                    favoriteStoreFragment.showFragment(supportFragmentManager, true)
                     true
                 }
                 else -> false
@@ -50,12 +47,5 @@ class MainActivity : AppCompatActivity() {
         }
 
         setContentView(binding.root)
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        if (supportFragmentManager.backStackEntryCount == 0) {
-            finish()
-        }
     }
 }
