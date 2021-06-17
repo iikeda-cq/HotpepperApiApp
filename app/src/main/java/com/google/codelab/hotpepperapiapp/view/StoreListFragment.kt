@@ -12,9 +12,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreListBinding
-import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragment
 import com.google.codelab.hotpepperapiapp.model.response.NearStore
 import com.google.codelab.hotpepperapiapp.viewModel.StoreListViewModel
+import com.google.codelab.hotpepperapiapp.ext.showFragment
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.OnItemClickListener

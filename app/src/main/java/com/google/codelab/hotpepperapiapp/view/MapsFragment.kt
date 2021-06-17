@@ -1,7 +1,6 @@
 package com.google.codelab.hotpepperapiapp.view
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -22,10 +21,10 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.snackbar.Snackbar
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
-import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragment
-import com.google.codelab.hotpepperapiapp.ext.MapExt
-import com.google.codelab.hotpepperapiapp.ext.MapExt.addMarker
+import com.google.codelab.hotpepperapiapp.ext.showFragment
 import com.google.codelab.hotpepperapiapp.model.response.NearStore
+import com.google.codelab.hotpepperapiapp.util.MapUtils
+import com.google.codelab.hotpepperapiapp.util.MapUtils.addMarker
 import com.google.codelab.hotpepperapiapp.viewModel.MapsViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
@@ -68,14 +67,14 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             LocationServices.getFusedLocationProviderClient(requireContext())
 
         binding.storePager.adapter =
-            PagerStoreAdapter(storeList, requireContext()){
-                    val position = binding.storePager.currentItem
+            PagerStoreAdapter(storeList, requireContext()) {
+                val position = binding.storePager.currentItem
 
-                    StoreWebViewFragment.newInstance(
-                        storeList[position].id,
-                        storeList[position].urls.url
-                    ).showFragment(parentFragmentManager)
-                }
+                StoreWebViewFragment.newInstance(
+                    storeList[position].id,
+                    storeList[position].urls.url
+                ).showFragment(parentFragmentManager)
+            }
 
         // APIから店舗情報を取得したら地図にマッピングする
         viewModel.storesList
@@ -115,10 +114,10 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
 
-        if (MapExt.hasLocationPermission(requireContext())) {
+        if (MapUtils.hasLocationPermission(requireContext())) {
             enableMyLocation()
         } else {
-            MapExt.requestLocationPermission(requireContext(), requireActivity())
+            MapUtils.requestLocationPermission(requireContext(), requireActivity())
         }
 
         // マーカーのタップで一致するstoreデータを表示する

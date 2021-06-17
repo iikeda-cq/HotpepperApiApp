@@ -1,29 +1,32 @@
 package com.google.codelab.hotpepperapiapp.view
 
-import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.ActivityMainBinding
-import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragment
-import com.google.codelab.hotpepperapiapp.ext.IntExt.actionBarColorToStatusBarColor
+import com.google.codelab.hotpepperapiapp.ext.actionBarColorToStatusBarColor
+import com.google.codelab.hotpepperapiapp.ext.showFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private val storeListFragment = StoreListFragment()
+    private val mapsFragment = MapsFragment()
+    private val favoriteStoreFragment = FavoriteStoreFragment()
+
     private val onNavigationItemSelectedListener =
         BottomNavigationView.OnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_list -> {
-                    StoreListFragment().showFragment(supportFragmentManager)
+                    storeListFragment.showFragment(supportFragmentManager, true)
                     true
                 }
                 R.id.navigation_map -> {
-                    MapsFragment().showFragment(supportFragmentManager)
+                    mapsFragment.showFragment(supportFragmentManager, true)
                     true
                 }
                 R.id.navigation_favorite -> {
-                    FavoriteStoreFragment().showFragment(supportFragmentManager)
+                    favoriteStoreFragment.showFragment(supportFragmentManager, true)
                     true
                 }
                 else -> false
@@ -35,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
 
         // ステータスバーとアクションバーの色を合わせる処理
-        val actionBarColor = Color.parseColor("#FF018786")
+        val actionBarColor = getColor(R.color.actionBar)
         this.window.statusBarColor = actionBarColor.actionBarColorToStatusBarColor()
 
         binding.navigation.apply {

@@ -11,9 +11,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.google.codelab.hotpepperapiapp.R
-import com.google.codelab.hotpepperapiapp.RealmClient.fetchStores
 import com.google.codelab.hotpepperapiapp.databinding.FragmentFavoriteStoreBinding
-import com.google.codelab.hotpepperapiapp.ext.FragmentExt.showFragment
+import com.google.codelab.hotpepperapiapp.ext.showFragment
 import com.google.codelab.hotpepperapiapp.model.response.NearStore
 import com.google.codelab.hotpepperapiapp.viewModel.FavoriteStoreViewModel
 import com.xwray.groupie.GroupAdapter
@@ -21,7 +20,6 @@ import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.OnItemClickListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
-import io.realm.Realm
 
 class FavoriteStoreFragment : Fragment() {
     private lateinit var binding: FragmentFavoriteStoreBinding

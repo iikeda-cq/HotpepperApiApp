@@ -1,4 +1,4 @@
-package com.google.codelab.hotpepperapiapp.ext
+package com.google.codelab.hotpepperapiapp.util
 
 import android.Manifest
 import android.app.Activity
@@ -9,7 +9,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.*
 import com.google.codelab.hotpepperapiapp.model.response.NearStore
 
-object MapExt {
+object MapUtils {
     private const val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
 
     fun hasLocationPermission(context: Context): Boolean {
