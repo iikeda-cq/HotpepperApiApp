@@ -48,9 +48,4 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
     }
-
-    companion object {
-        var lat: Double? = null
-        var lng: Double? = null
-    }
 }

@@ -19,6 +19,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.snackbar.Snackbar
+import com.google.codelab.hotpepperapiapp.CurrentLatLng
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
 import com.google.codelab.hotpepperapiapp.ext.showFragment
@@ -27,12 +28,15 @@ import com.google.codelab.hotpepperapiapp.util.MapUtils
 import com.google.codelab.hotpepperapiapp.util.MapUtils.addMarker
 import com.google.codelab.hotpepperapiapp.viewModel.MapsViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
     private val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
     private var locationCallback: LocationCallback? = null
     private val storeList: MutableList<NearStore> = ArrayList()
+    private val disposables = CompositeDisposable()
 
     // マーカーとViewPagerを紐づけるための変数
     private var mapMarkerPosition = 0
@@ -92,7 +96,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                     "周辺の店舗が${it.results.store.size}件見つかりました",
                     Toast.LENGTH_SHORT
                 ).show()
-            }
+            }.addTo(disposables)
 
         viewModel.errorStream
             .observeOn(AndroidSchedulers.mainThread())
@@ -101,11 +105,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 Snackbar.make(view, failure.message, Snackbar.LENGTH_SHORT)
                     .setAction(R.string.retry) {
                         viewModel.fetchStores(
-                            MainActivity.lat!!,
-                            MainActivity.lng!!
+                            CurrentLatLng.lat ?: return@setAction ,
+                            CurrentLatLng.lng ?: return@setAction
                         )
                     }.show()
-            }
+            }.addTo(disposables)
 
         binding.storePager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
 
@@ -169,8 +173,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 override fun onLocationResult(locationResult: LocationResult?) {
                     super.onLocationResult(locationResult)
                     locationResult?.lastLocation?.let { lastLocation ->
-                        MainActivity.lat = lastLocation.latitude
-                        MainActivity.lng = lastLocation.longitude
+                        CurrentLatLng.lat = lastLocation.latitude
+                        CurrentLatLng.lng = lastLocation.longitude
                         val currentLatLng =
                             LatLng(lastLocation.latitude, lastLocation.longitude)
                         map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 18.0f))

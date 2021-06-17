@@ -4,21 +4,25 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
+import com.google.codelab.hotpepperapiapp.CurrentLatLng
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreListBinding
+import com.google.codelab.hotpepperapiapp.ext.showFragment
 import com.google.codelab.hotpepperapiapp.model.response.NearStore
 import com.google.codelab.hotpepperapiapp.viewModel.StoreListViewModel
-import com.google.codelab.hotpepperapiapp.ext.showFragment
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.OnItemClickListener
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 
 class StoreListFragment : Fragment() {
@@ -28,6 +32,7 @@ class StoreListFragment : Fragment() {
     private val storeList: MutableList<NearStore> = ArrayList()
     private var startPage = 1
     private var isMoreLoad = true
+    private val disposables = CompositeDisposable()
 
     private val onItemClickListener = OnItemClickListener { item, _ ->
         // どのitemがクリックされたかindexを取得
@@ -56,6 +61,13 @@ class StoreListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (CurrentLatLng.lat == null || CurrentLatLng.lng == null) {
+            Toast.makeText(requireContext(), R.string.no_locations, Toast.LENGTH_LONG).show()
+        }
+
+        val lat = CurrentLatLng.lat ?: return
+        val lng = CurrentLatLng.lng ?: return
+
         binding.recyclerView.apply {
             adapter = groupAdapter
             layoutManager =
@@ -63,8 +75,8 @@ class StoreListFragment : Fragment() {
         }
 
         if (storeList.isEmpty()) {
-            binding.isLoading  = true
-            viewModel.fetchStores(MainActivity.lat ?: return, MainActivity.lng ?: return)
+            binding.isLoading = true
+            viewModel.fetchStores(lat, lng)
         }
 
         viewModel.storesList
@@ -77,22 +89,22 @@ class StoreListFragment : Fragment() {
                 groupAdapter.update(storeList.map { StoreItem(it, requireContext()) })
 
                 startPage += stores.results.totalPages
-                binding.isLoading  = false
-            }
+                binding.isLoading = false
+            }.addTo(disposables)
 
         viewModel.errorStream
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy { failure ->
-                binding.isLoading  = false
+                binding.isLoading = false
                 Snackbar.make(view, failure.message, Snackbar.LENGTH_SHORT)
                     .setAction(R.string.retry) {
                         viewModel.fetchStores(
-                            MainActivity.lat!!,
-                            MainActivity.lng!!,
+                            lat,
+                            lng,
                             startPage
                         )
                     }.show()
-            }
+            }.addTo(disposables)
 
         groupAdapter.setOnItemClickListener(onItemClickListener)
 
@@ -101,11 +113,11 @@ class StoreListFragment : Fragment() {
                 super.onScrolled(recyclerView, dx, dy)
                 if (!recyclerView.canScrollVertically(1) && isMoreLoad) {
                     viewModel.fetchStores(
-                        MainActivity.lat ?: return,
-                        MainActivity.lng ?: return,
+                        lat,
+                        lng,
                         startPage
                     )
-                    binding.isLoading  = true
+                    binding.isLoading = true
                 }
             }
         })

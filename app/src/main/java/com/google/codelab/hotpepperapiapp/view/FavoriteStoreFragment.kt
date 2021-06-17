@@ -19,6 +19,8 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.OnItemClickListener
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 
 class FavoriteStoreFragment : Fragment() {
@@ -28,6 +30,7 @@ class FavoriteStoreFragment : Fragment() {
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
     private val favoriteStoreList: MutableList<NearStore> = ArrayList()
     private var isMoreLoad = true
+    private val disposables = CompositeDisposable()
 
     private val onItemClickListener = OnItemClickListener { item, _ ->
         // どのitemがクリックされたかindexを取得
@@ -60,7 +63,7 @@ class FavoriteStoreFragment : Fragment() {
                 GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
         }
 
-        if(favoriteStoreList.isEmpty()) {
+        if (favoriteStoreList.isEmpty()) {
             viewModel.fetchLocalStoresId()
         }
 
@@ -72,7 +75,7 @@ class FavoriteStoreFragment : Fragment() {
                 }
                 stores.results.store.map { favoriteStoreList.add(it) }
                 groupAdapter.update(favoriteStoreList.map { StoreItem(it, requireContext()) })
-            }
+            }.addTo(disposables)
 
         viewModel.errorStream
             .observeOn(AndroidSchedulers.mainThread())
@@ -81,7 +84,7 @@ class FavoriteStoreFragment : Fragment() {
                     .setAction(R.string.retry) {
                         viewModel.favoriteStoreIds?.let { ids -> viewModel.fetchFavoriteStores(ids) }
                     }.show()
-            }
+            }.addTo(disposables)
 
         groupAdapter.setOnItemClickListener(onItemClickListener)
 
