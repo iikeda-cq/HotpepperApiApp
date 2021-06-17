@@ -22,7 +22,7 @@ class FavoriteStoreViewModel : ViewModel() {
     fun fetchLocalStoresId() {
         usecase.fetchLocalStoreIds()
             .subscribeBy { favoriteStoresList ->
-                StoreMapper.transform(favoriteStoresList).drop(currentStoresCount)
+                favoriteStoresList.drop(currentStoresCount)
                     .forEachIndexed { index, store ->
                         // APIの仕様上、一度に20件までのデータしか取得できないため
                         if (index < 20) {

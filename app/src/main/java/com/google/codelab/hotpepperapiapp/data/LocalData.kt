@@ -11,6 +11,7 @@ import io.realm.RealmResults
 
 class LocalData {
     fun fetchLocalStoreIds(): RealmResults<Store> {
+        // Caused by: java.lang.IllegalStateException: This Realm instance has already been closed, making it unusable.
         val realm = Realm.getDefaultInstance()
         return realm.fetchStores()
     }

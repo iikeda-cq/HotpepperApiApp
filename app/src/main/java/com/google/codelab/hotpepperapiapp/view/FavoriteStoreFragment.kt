@@ -60,7 +60,9 @@ class FavoriteStoreFragment : Fragment() {
                 GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
         }
 
-        viewModel.fetchLocalStoresId()
+        if(favoriteStoreList.isEmpty()) {
+            viewModel.fetchLocalStoresId()
+        }
 
         viewModel.favoriteStoresList
             .observeOn(AndroidSchedulers.mainThread())
