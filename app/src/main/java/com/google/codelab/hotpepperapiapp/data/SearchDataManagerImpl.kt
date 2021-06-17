@@ -34,4 +34,8 @@ class SearchDataManagerImpl : SearchDataManager {
     override fun deleteFavoriteStore(storeId: String): Completable {
         return local.deleteFavoriteStore(storeId)
     }
+
+    override fun fetchFavoriteStore(storeId: String): Single<Boolean> {
+        return Single.just(local.fetchFavoriteStore(storeId))
+    }
 }

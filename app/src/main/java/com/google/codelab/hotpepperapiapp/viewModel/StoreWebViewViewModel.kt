@@ -1,7 +1,6 @@
 package com.google.codelab.hotpepperapiapp.viewModel
 
 import androidx.lifecycle.ViewModel
-import com.google.codelab.hotpepperapiapp.FailureType
 import com.google.codelab.hotpepperapiapp.Signal
 import com.google.codelab.hotpepperapiapp.usecase.StoreWebViewUseCaseImpl
 import io.reactivex.rxkotlin.subscribeBy
@@ -11,6 +10,7 @@ class StoreWebViewViewModel : ViewModel() {
     private val usecase = StoreWebViewUseCaseImpl()
     val addFavoriteStore: PublishSubject<Signal> = PublishSubject.create()
     val deleteFavoriteStore: PublishSubject<Signal> = PublishSubject.create()
+    val hasFavoriteStore: PublishSubject<Boolean> = PublishSubject.create()
     val errorStream: PublishSubject<Signal> = PublishSubject.create()
     val onClickFab: PublishSubject<Signal> = PublishSubject.create()
 
@@ -31,6 +31,18 @@ class StoreWebViewViewModel : ViewModel() {
             .subscribeBy(
                 onComplete = {
                     deleteFavoriteStore.onNext(Signal)
+                },
+                onError = {
+                    errorStream.onNext(Signal)
+                }
+            )
+    }
+
+    fun fetchFavoriteStore(storeId: String) {
+        usecase.fetchFavoriteStore(storeId)
+            .subscribeBy(
+                onSuccess = { isFavorite ->
+                    hasFavoriteStore.onNext(isFavorite)
                 },
                 onError = {
                     errorStream.onNext(Signal)

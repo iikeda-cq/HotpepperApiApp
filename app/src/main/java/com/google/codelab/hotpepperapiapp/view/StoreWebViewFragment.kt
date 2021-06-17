@@ -10,12 +10,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.google.codelab.hotpepperapiapp.R
-import com.google.codelab.hotpepperapiapp.RealmClient.fetchFirstStore
 import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreWebViewBinding
 import com.google.codelab.hotpepperapiapp.viewModel.StoreWebViewViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
-import io.realm.Realm
 
 class StoreWebViewFragment : Fragment() {
     private lateinit var binding: FragmentStoreWebViewBinding
@@ -28,6 +28,7 @@ class StoreWebViewFragment : Fragment() {
         get() = checkNotNull(arguments?.getString(URL))
 
     private var isFavorite = false
+    private val disposables = CompositeDisposable()
 
     companion object {
         private const val STORE_ID = "store_id"
@@ -61,12 +62,10 @@ class StoreWebViewFragment : Fragment() {
 
         binding.storeWebView.loadUrl(url)
 
-        // すでにお気に入りに追加済みかどうかをチェックする
-        checkAlreadyAdd()
-
         viewModel.onClickFab
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy { changeFavoriteStore(isFavorite) }
+            .subscribeBy { toggleFavoriteStore(isFavorite) }
+            .addTo(disposables)
 
         viewModel.addFavoriteStore
             .observeOn(AndroidSchedulers.mainThread())
@@ -74,7 +73,7 @@ class StoreWebViewFragment : Fragment() {
                 Toast.makeText(requireContext(), R.string.add_favorite, Toast.LENGTH_SHORT).show()
                 binding.isFab = !isFavorite
                 isFavorite = !isFavorite
-            }
+            }.addTo(disposables)
 
         viewModel.deleteFavoriteStore
             .observeOn(AndroidSchedulers.mainThread())
@@ -83,36 +82,37 @@ class StoreWebViewFragment : Fragment() {
                     .show()
                 binding.isFab = !isFavorite
                 isFavorite = !isFavorite
-            }
+            }.addTo(disposables)
+
+        // すでにお気に入りに追加済みかどうかをチェックする
+        viewModel.hasFavoriteStore
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy { isFav ->
+                isFavorite = isFav
+                binding.isFab = isFav
+            }.addTo(disposables)
 
         viewModel.errorStream
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy {
                 Toast.makeText(requireContext(), R.string.unexpected_error, Toast.LENGTH_SHORT)
                     .show()
-            }
+            }.addTo(disposables)
 
         return binding.root
     }
 
-    private fun changeFavoriteStore(isFav: Boolean) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewModel.fetchFavoriteStore(storeId)
+    }
+
+    private fun toggleFavoriteStore(isFav: Boolean) {
         if (isFav) {
             viewModel.deleteFavoriteStore(storeId)
         } else {
             viewModel.addFavoriteStore(storeId)
-        }
-    }
-
-    private fun checkAlreadyAdd() {
-        Realm.getDefaultInstance().use { realm ->
-            val store = realm.fetchFirstStore(storeId)
-
-            if (store != null) {
-                binding.apply {
-                    isFavorite = true
-                    binding.isFab = true
-                }
-            }
         }
     }
 

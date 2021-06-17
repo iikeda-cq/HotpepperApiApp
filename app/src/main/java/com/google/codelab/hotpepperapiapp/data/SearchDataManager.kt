@@ -22,4 +22,6 @@ interface SearchDataManager {
     fun addFavoriteStore(storeId: String): Completable
 
     fun deleteFavoriteStore(storeId: String): Completable
+
+    fun fetchFavoriteStore(storeId: String): Single<Boolean>
 }

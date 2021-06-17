@@ -11,10 +11,11 @@ import io.realm.kotlin.where
 // ToDo classに変更する
 object RealmClient {
     private const val STORE_ID = "storeId"
+    private const val ID = "id"
 
     fun Realm.addStore(storeId: String): Completable {
         this.executeTransaction { realm ->
-            val currentId = realm.where<Store>().max("id")
+            val currentId = realm.where<Store>().max(ID)
             val nextId = (currentId?.toLong() ?: 0L) + 1L
             val store = realm.createObject<Store>(nextId)
 
@@ -38,12 +39,14 @@ object RealmClient {
         return this.where(Store::class.java)
             .distinct(STORE_ID)
             .findAll()
-            .sort("id", Sort.ASCENDING)
+            .sort(ID, Sort.ASCENDING)
     }
 
-    fun Realm.fetchFirstStore(storeId: String): Store? {
-        return this.where(Store::class.java)
+    fun Realm.fetchFavoriteStore(storeId: String): Boolean {
+        val favorite = this.where(Store::class.java)
             .equalTo(STORE_ID, storeId)
             .findFirst()
+
+        return favorite != null
     }
 }

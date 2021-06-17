@@ -1,7 +1,8 @@
 package com.google.codelab.hotpepperapiapp
 
-import com.google.android.gms.common.api.ApiException
+import com.google.gson.JsonIOException
 import retrofit2.HttpException
+import java.net.UnknownHostException
 
 data class Failure(
     val message: FailureType,
@@ -15,9 +16,10 @@ enum class FailureType(val message: Int) {
 }
 
 fun getMessage(e: Throwable): FailureType {
-    if (e is HttpException) {
-        return FailureType.UnexpectedError
+    return when (e) {
+        is UnknownHostException -> FailureType.NetworkError
+        is JsonIOException -> FailureType.NotFoundError
+        else -> FailureType.UnexpectedError
     }
-    return FailureType.NetworkError
 }
 
