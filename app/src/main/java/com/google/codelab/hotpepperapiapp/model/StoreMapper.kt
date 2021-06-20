@@ -1,7 +1,5 @@
-package com.google.codelab.hotpepperapiapp
+package com.google.codelab.hotpepperapiapp.model
 
-import com.google.codelab.hotpepperapiapp.model.Store
-import com.google.codelab.hotpepperapiapp.model.StoreModel
 import io.realm.RealmResults
 import java.util.*
 

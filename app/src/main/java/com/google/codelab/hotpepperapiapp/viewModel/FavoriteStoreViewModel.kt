@@ -3,7 +3,6 @@ package com.google.codelab.hotpepperapiapp.viewModel
 import androidx.lifecycle.ViewModel
 import com.google.codelab.hotpepperapiapp.Failure
 import com.google.codelab.hotpepperapiapp.FailureType
-import com.google.codelab.hotpepperapiapp.StoreMapper
 import com.google.codelab.hotpepperapiapp.getMessage
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 import com.google.codelab.hotpepperapiapp.usecase.FavoriteStoreUseCase

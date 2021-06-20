@@ -93,7 +93,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
                 Toast.makeText(
                     requireContext(),
-                    "周辺の店舗が${it.results.store.size}件見つかりました",
+                    getString(R.string.around_stores_count, it.results.store.size),
                     Toast.LENGTH_SHORT
                 ).show()
             }.addTo(disposables)
