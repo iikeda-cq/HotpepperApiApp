@@ -13,7 +13,7 @@ import io.reactivex.subjects.PublishSubject
 class FavoriteStoreViewModel : ViewModel() {
     private val usecase: FavoriteStoreUseCase = FavoriteStoresUseCaseImpl()
     val favoriteStoresList: PublishSubject<StoresResponse> = PublishSubject.create()
-    val errorStream: PublishSubject<FailureType> = PublishSubject.create()
+    val errorStream: PublishSubject<Failure> = PublishSubject.create()
 
     var currentStoresCount: Int = 0
     var favoriteStoreIds: String? = null
@@ -48,7 +48,7 @@ class FavoriteStoreViewModel : ViewModel() {
                     val f = Failure(getMessage(it)) {
                         fetchFavoriteStores(storeId)
                     }
-                    errorStream.onNext(f.message)
+                    errorStream.onNext(f)
                 }
             )
     }

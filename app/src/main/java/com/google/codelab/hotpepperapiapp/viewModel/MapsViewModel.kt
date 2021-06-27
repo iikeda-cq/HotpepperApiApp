@@ -13,7 +13,7 @@ import io.reactivex.subjects.PublishSubject
 class MapsViewModel : ViewModel() {
     private val usecase: MapsUseCase = MapsUseCaseImpl()
     val storesList: PublishSubject<StoresResponse> = PublishSubject.create()
-    val errorStream: PublishSubject<FailureType> = PublishSubject.create()
+    val errorStream: PublishSubject<Failure> = PublishSubject.create()
 
     fun fetchStores(lat: Double, lng: Double) {
         usecase.fetchStores(lat, lng)
@@ -25,7 +25,7 @@ class MapsViewModel : ViewModel() {
                     val f = Failure(getMessage(it)) {
                         fetchStores(lat, lng)
                     }
-                    errorStream.onNext(f.message)
+                    errorStream.onNext(f)
                 }
             )
     }

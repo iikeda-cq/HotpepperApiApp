@@ -96,13 +96,9 @@ class StoreListFragment : Fragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy { failure ->
                 binding.isLoading = false
-                Snackbar.make(view, failure.message, Snackbar.LENGTH_SHORT)
+                Snackbar.make(view, failure.message.message, Snackbar.LENGTH_SHORT)
                     .setAction(R.string.retry) {
-                        viewModel.fetchStores(
-                            lat,
-                            lng,
-                            startPage
-                        )
+                        failure.retry
                     }.show()
             }.addTo(disposables)
 

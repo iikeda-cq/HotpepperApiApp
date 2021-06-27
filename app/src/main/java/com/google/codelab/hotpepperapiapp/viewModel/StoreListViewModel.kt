@@ -13,7 +13,7 @@ import io.reactivex.subjects.PublishSubject
 class StoreListViewModel : ViewModel() {
     private val usecase: StoreListUseCase = StoreListUseCaseImpl()
     val storesList: PublishSubject<StoresResponse> = PublishSubject.create()
-    val errorStream: PublishSubject<FailureType> = PublishSubject.create()
+    val errorStream: PublishSubject<Failure> = PublishSubject.create()
 
     fun fetchStores(lat: Double, lng: Double, start: Int = 1) {
         usecase.fetchStores(lat, lng, start)
@@ -25,7 +25,7 @@ class StoreListViewModel : ViewModel() {
                     val f = Failure(getMessage(it)) {
                         fetchStores(lat, lng, start)
                     }
-                    errorStream.onNext(f.message)
+                    errorStream.onNext(f)
                 }
             )
     }

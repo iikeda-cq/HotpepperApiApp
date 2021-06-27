@@ -102,12 +102,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy { failure ->
                 binding.isLoading = false
-                Snackbar.make(view, failure.message, Snackbar.LENGTH_SHORT)
+                Snackbar.make(view, failure.message.message, Snackbar.LENGTH_SHORT)
                     .setAction(R.string.retry) {
-                        viewModel.fetchStores(
-                            CurrentLatLng.lat ?: return@setAction ,
-                            CurrentLatLng.lng ?: return@setAction
-                        )
+                       failure.retry
                     }.show()
             }.addTo(disposables)
 

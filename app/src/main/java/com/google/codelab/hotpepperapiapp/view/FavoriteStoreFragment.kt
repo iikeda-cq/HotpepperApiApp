@@ -80,9 +80,9 @@ class FavoriteStoreFragment : Fragment() {
         viewModel.errorStream
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy { failure ->
-                Snackbar.make(view, failure.message, Snackbar.LENGTH_SHORT)
+                Snackbar.make(view, failure.message.message, Snackbar.LENGTH_SHORT)
                     .setAction(R.string.retry) {
-                        viewModel.favoriteStoreIds?.let { ids -> viewModel.fetchFavoriteStores(ids) }
+                        failure.retry
                     }.show()
             }.addTo(disposables)
 
