@@ -26,7 +26,7 @@
         <ImageView
             android:id="@+id/store_image"
             android:layout_width="match_parent"
-            android:layout_height="170dp"
+            android:layout_height="@dimen/image_default_size"
             android:layout_marginStart="@dimen/s_spacing"
             android:layout_marginTop="@dimen/s_spacing"
             android:layout_marginEnd="@dimen/s_spacing"
