@@ -1,0 +1,126 @@
+package com.google.codelab.hotpepperapiapp.view
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import com.google.codelab.hotpepperapiapp.R
+import com.google.codelab.hotpepperapiapp.RealmClient
+import com.google.codelab.hotpepperapiapp.RealmClient.addStore
+import com.google.codelab.hotpepperapiapp.RealmClient.deleteStore
+import com.google.codelab.hotpepperapiapp.RealmClient.fetchFirstStore
+import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreWebViewBinding
+import io.realm.Realm
+
+class StoreWebViewFragment : Fragment() {
+    private lateinit var binding: FragmentStoreWebViewBinding
+
+    private val storeId: String
+        get() = checkNotNull(arguments?.getString(STORE_ID))
+
+    private val url: String
+        get() = checkNotNull(arguments?.getString(URL))
+
+    private val name: String
+        get() = checkNotNull(arguments?.getString(NAME))
+
+    private val price: String
+        get() = checkNotNull(arguments?.getString(PRICE))
+
+    var isFavorite = false
+
+    companion object {
+        private const val STORE_ID = "store_id"
+        private const val URL = "url"
+        private const val NAME = "name"
+        private const val PRICE = "price"
+        fun newInstance(
+            storeId: String,
+            name: String,
+            url: String,
+            price: String
+        ): StoreWebViewFragment {
+            return StoreWebViewFragment().apply {
+                arguments = Bundle().apply {
+                    putString(STORE_ID, storeId)
+                    putString(NAME, name)
+                    putString(URL, url)
+                    putString(PRICE, price)
+                }
+            }
+        }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentStoreWebViewBinding.inflate(inflater)
+        binding.isFab = isFavorite
+
+        requireActivity().title = name
+        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        setHasOptionsMenu(true)
+
+        binding.storeWebView.loadUrl(url)
+
+
+        // すでにお気に入りに追加済みかどうかをチェックする
+        checkAlreadyAdd()
+
+        binding.fabFavorite.setOnClickListener {
+            changeFavoriteStore(isFavorite)
+        }
+
+        return binding.root
+    }
+
+    private fun changeFavoriteStore(isFav: Boolean) {
+        Realm.getDefaultInstance().use { realm ->
+            if (isFav) {
+                realm.deleteStore(storeId)
+                Toast.makeText(requireContext(), R.string.delete_favorite, Toast.LENGTH_SHORT)
+                    .show()
+            } else {
+                realm.addStore(storeId, name, url, price)
+                Toast.makeText(requireContext(), R.string.add_favorite, Toast.LENGTH_SHORT).show()
+            }
+        }
+        binding.isFab = !isFav
+        isFavorite = !isFav
+    }
+
+    private fun checkAlreadyAdd() {
+        Realm.getDefaultInstance().use { realm ->
+            val store = realm.fetchFirstStore(storeId)
+
+            if (store != null) {
+                binding.apply {
+                    isFavorite = true
+                    binding.isFab = true
+                }
+            }
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                parentFragmentManager.popBackStack()
+                true
+            }
+            else -> {
+                true
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+    }
+}

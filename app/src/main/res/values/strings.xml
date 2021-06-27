@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">HotpepperApiApp</string>
+    <!--navigation-->
+    <string name="navigation_list">一覧</string>
+    <string name="navigation_map">地図</string>
+    <string name="navigation_favorite">お気に入り</string>
+
+    <!--title-->
+    <string name="view_map">現在地周辺の店舗</string>
+    <string name="view_list">店舗一覧</string>
+
+    <string name="store_name">店舗名</string>
+    <string name="store_charge">金額</string>
+    <string name="store_genre">ジャンル</string>
+    <string name="store_budget">予算：</string>
+    <string name="add_favorite">お気に入りに追加しました</string>
+    <string name="delete_favorite">お気に入りから削除しました</string>
+    <string name="no_locations">現在地は表示できません</string>
 </resources>

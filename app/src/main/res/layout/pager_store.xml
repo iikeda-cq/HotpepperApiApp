@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="8dp"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/pager_image"
+            android:layout_width="@dimen/image_default_size"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/s_spacing"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/pager_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/m_spacing"
+            android:layout_marginTop="@dimen/m_spacing"
+            android:text="@string/store_name"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            app:layout_constraintStart_toEndOf="@+id/pager_image"
+            app:layout_constraintTop_toTopOf="@id/pager_image" />
+
+        <TextView
+            android:id="@+id/pager_charge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/m_spacing"
+            android:layout_marginBottom="@dimen/s_spacing"
+            android:text="@string/store_charge"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            app:layout_constraintBottom_toBottomOf="@+id/pager_image"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/pager_genre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/s_spacing"
+            android:text="@string/store_genre"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            app:layout_constraintBottom_toTopOf="@+id/pager_charge"
+            app:layout_constraintEnd_toEndOf="@+id/pager_charge" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
