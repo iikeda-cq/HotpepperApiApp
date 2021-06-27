@@ -1,9 +1,9 @@
 package com.google.codelab.hotpepperapiapp.data
 
-import com.google.codelab.hotpepperapiapp.RealmClient.addStore
-import com.google.codelab.hotpepperapiapp.RealmClient.deleteStore
-import com.google.codelab.hotpepperapiapp.RealmClient.fetchFavoriteStore
-import com.google.codelab.hotpepperapiapp.RealmClient.fetchStores
+import com.google.codelab.hotpepperapiapp.ext.addStore
+import com.google.codelab.hotpepperapiapp.ext.deleteStore
+import com.google.codelab.hotpepperapiapp.ext.fetchFavoriteStore
+import com.google.codelab.hotpepperapiapp.ext.fetchStores
 import com.google.codelab.hotpepperapiapp.model.Store
 import io.reactivex.Completable
 import io.realm.Realm

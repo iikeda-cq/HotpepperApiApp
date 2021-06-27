@@ -1,7 +1,7 @@
-package com.google.codelab.hotpepperapiapp
+package com.google.codelab.hotpepperapiapp.model
 
+import com.google.codelab.hotpepperapiapp.R
 import com.google.gson.JsonIOException
-import retrofit2.HttpException
 import java.net.UnknownHostException
 
 data class Failure(
