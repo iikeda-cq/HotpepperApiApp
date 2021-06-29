@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="item"
+            type="com.google.codelab.hotpepperapiapp.model.response.NearStore" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/s_spacing"
             android:layout_marginTop="@dimen/s_spacing"
-            android:text="@string/store_name"
+            android:text="@{item.name}"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -26,6 +32,8 @@
         <ImageView
             android:id="@+id/store_image"
             android:layout_width="match_parent"
+            app:imageUrl="@{item.photo.photo.logo}"
+            app:defaultImage="@{@drawable/ic_launcher_background}"
             android:layout_height="@dimen/image_default_size"
             android:layout_marginStart="@dimen/s_spacing"
             android:layout_marginTop="@dimen/s_spacing"
@@ -44,7 +52,7 @@
             android:ellipsize="end"
             android:maxLength="7"
             android:maxLines="2"
-            android:text="@string/store_charge"
+            android:text="@{item.budget.average}"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/store_image"
@@ -57,7 +65,7 @@
             android:ellipsize="end"
             android:maxLength="10"
             android:maxLines="2"
-            android:text="@string/store_genre"
+            android:text="@{item.genre.name}"
             app:layout_constraintBottom_toBottomOf="@+id/store_price"
             app:layout_constraintStart_toStartOf="@+id/store_name"
             app:layout_constraintTop_toTopOf="@+id/store_price" />

@@ -3,6 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+        <variable
+            name="url"
+            type="String" />
 
         <variable
             name="isFab"
@@ -21,6 +24,7 @@
             android:id="@+id/store_web_view"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            app:url="@{url}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

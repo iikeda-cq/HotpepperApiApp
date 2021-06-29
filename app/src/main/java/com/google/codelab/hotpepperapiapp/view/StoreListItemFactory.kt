@@ -14,10 +14,7 @@ class StoreItem(private val store: NearStore, val context: Context) : BindableIt
     override fun getLayout() = R.layout.cell_store
 
     override fun bind(viewBinding: CellStoreBinding, position: Int) {
-        Glide.with(context).load(store.photo.photo.logo).into(viewBinding.storeImage)
-        viewBinding.storeName.text = store.name
-        viewBinding.storePrice.text = store.budget.average
-        viewBinding.storeGenre.text = store.genre.name
+        viewBinding.item = store
     }
 
     override fun initializeViewBinding(view: View): CellStoreBinding {

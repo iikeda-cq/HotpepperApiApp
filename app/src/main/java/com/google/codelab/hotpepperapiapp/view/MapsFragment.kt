@@ -71,7 +71,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             LocationServices.getFusedLocationProviderClient(requireContext())
 
         binding.storePager.adapter =
-            PagerStoreAdapter(storeList, requireContext()) {
+            PagerStoreAdapter(storeList) {
                 val position = binding.storePager.currentItem
 
                 StoreWebViewFragment.newInstance(
@@ -104,7 +104,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 binding.isLoading = false
                 Snackbar.make(view, failure.message.message, Snackbar.LENGTH_SHORT)
                     .setAction(R.string.retry) {
-                       failure.retry
+                        failure.retry
                     }.show()
             }.addTo(disposables)
 

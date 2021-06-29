@@ -58,9 +58,8 @@ class StoreWebViewFragment : Fragment() {
         setHasOptionsMenu(true)
 
         binding.viewModel = viewModel
+        binding.url = url
         binding.isFab = isFavorite
-
-        binding.storeWebView.loadUrl(url)
 
         viewModel.onClickFab
             .observeOn(AndroidSchedulers.mainThread())

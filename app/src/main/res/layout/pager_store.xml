@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="item"
+            type="com.google.codelab.hotpepperapiapp.model.response.NearStore" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -11,10 +18,12 @@
 
         <ImageView
             android:id="@+id/pager_image"
-            android:layout_marginTop="@dimen/s_spacing"
             android:layout_width="@dimen/image_default_size"
             android:layout_height="@dimen/image_default_size"
             android:layout_marginStart="@dimen/s_spacing"
+            android:layout_marginTop="@dimen/s_spacing"
+            app:defaultImage="@{@drawable/ic_launcher_background}"
+            app:imageUrl="@{item.photo.photo.logo}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:srcCompat="@tools:sample/avatars" />
@@ -23,10 +32,10 @@
             android:id="@+id/pager_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/s_spacing"
             android:ellipsize="end"
             android:maxLines="2"
-            android:text="@string/store_name"
-            android:layout_marginStart="@dimen/s_spacing"
+            android:text="@{item.name}"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             app:layout_constraintStart_toEndOf="@+id/pager_image"
             app:layout_constraintTop_toTopOf="@id/pager_image" />
@@ -35,10 +44,10 @@
             android:id="@+id/pager_charge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxLength="20"
             android:layout_marginEnd="@dimen/m_spacing"
             android:layout_marginBottom="@dimen/s_spacing"
-            android:text="@string/store_charge"
+            android:maxLength="20"
+            android:text="@{item.budget.average}"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             app:layout_constraintBottom_toBottomOf="@+id/pager_image"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -48,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/s_spacing"
-            android:text="@string/store_genre"
+            android:text="@{item.genre.name}"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             app:layout_constraintBottom_toTopOf="@+id/pager_charge"
             app:layout_constraintEnd_toEndOf="@+id/pager_charge" />
