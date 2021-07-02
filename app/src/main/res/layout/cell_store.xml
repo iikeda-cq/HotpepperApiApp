@@ -32,14 +32,15 @@
 
         <ImageView
             android:id="@+id/store_image"
-            android:layout_width="match_parent"
-            app:imageUrl="@{item.photo.photo.logo}"
-            app:defaultImage="@{@drawable/ic_launcher_background}"
+            android:layout_width="0dp"
             android:layout_height="@dimen/image_default_size"
             android:layout_marginStart="@dimen/s_spacing"
             android:layout_marginTop="@dimen/s_spacing"
             android:layout_marginEnd="@dimen/s_spacing"
-            app:layout_constraintStart_toStartOf="@id/store_name"
+            app:defaultImage="@{@drawable/ic_launcher_background}"
+            app:imageUrl="@{item.photo.photo.logo}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/store_name"
             tools:srcCompat="@tools:sample/avatars" />
 
