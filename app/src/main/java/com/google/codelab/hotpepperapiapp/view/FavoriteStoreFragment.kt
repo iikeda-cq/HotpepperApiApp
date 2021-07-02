@@ -48,6 +48,7 @@ class FavoriteStoreFragment : Fragment() {
     ): View {
         binding = FragmentFavoriteStoreBinding.inflate(inflater)
         viewModel = ViewModelProviders.of(this).get(FavoriteStoreViewModel::class.java)
+        binding.isLoading = false
 
         requireActivity().setTitle(R.string.navigation_favorite)
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
@@ -65,6 +66,7 @@ class FavoriteStoreFragment : Fragment() {
 
         if (favoriteStoreList.isEmpty()) {
             viewModel.setup()
+            binding.isLoading = true
         }
 
         viewModel.favoriteStoresList
@@ -75,11 +77,13 @@ class FavoriteStoreFragment : Fragment() {
                 }
                 favoriteStoreList.addAll(stores.results.store)
                 groupAdapter.update(favoriteStoreList.map { StoreItem(it, requireContext()) })
+                binding.isLoading = false
             }.addTo(disposables)
 
         viewModel.errorStream
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy { failure ->
+                binding.isLoading = false
                 Snackbar.make(view, failure.message.message, Snackbar.LENGTH_SHORT)
                     .setAction(R.string.retry) {
                         failure.retry
@@ -93,6 +97,7 @@ class FavoriteStoreFragment : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (!recyclerView.canScrollVertically(1) && isMoreLoad) {
+                    binding.isLoading = true
                     viewModel.fetchFavoriteStores()
                 }
             }

@@ -18,13 +18,15 @@ class FavoriteStoreViewModel : ViewModel() {
     private val localStoreIdList: MutableList<StoreModel> = ArrayList()
 
     fun setup() {
-        // Realのお気に入りストアのIDを取得する
+        // Realmのお気に入りストアのIDを取得する
         usecase.fetchLocalStoreIds()
 
         usecase.getLocalStoresIdsStream()
             .subscribeBy {
                 localStoreIdList.addAll(it)
-                usecase.fetchFavoriteStores(it)
+                if (localStoreIdList.isNotEmpty()) {
+                    usecase.fetchFavoriteStores(it)
+                }
             }
 
         usecase.getFavoriteStoresStream()
@@ -39,6 +41,9 @@ class FavoriteStoreViewModel : ViewModel() {
                     errorStream.onNext(f)
                 }
             )
+
+        usecase.getErrorStream()
+            .subscribeBy { errorStream.onNext(it) }
     }
 
     fun fetchFavoriteStores() {

@@ -14,7 +14,7 @@ class RemoteData {
         start: Int = 1
     ): Single<Response<StoresResponse>> {
         return retrofit.create(ApiRequest::class.java).fetchNearStores(
-            KEY, COUNT, lat, lng, start, RANGE, JSON
+            KEY, COUNT, lat, lng, start, RANGE, FORMAT
         )
     }
 
@@ -22,13 +22,13 @@ class RemoteData {
         storeId: String
     ): Single<Response<StoresResponse>> {
         return retrofit.create(ApiRequest::class.java).fetchFavoriteStores(
-            KEY, COUNT, storeId, JSON
+            KEY, COUNT, storeId, FORMAT
         )
     }
 
     companion object {
         private const val KEY = "970479567de67028"
-        private const val JSON = "json"
+        private const val FORMAT = "json"
         private const val COUNT = 20
         private const val RANGE = 3
     }
