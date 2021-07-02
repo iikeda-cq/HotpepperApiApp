@@ -64,7 +64,7 @@ class FavoriteStoreFragment : Fragment() {
         }
 
         if (favoriteStoreList.isEmpty()) {
-            viewModel.fetchLocalStoresId()
+            viewModel.setup()
         }
 
         viewModel.favoriteStoresList
@@ -73,7 +73,7 @@ class FavoriteStoreFragment : Fragment() {
                 if (stores.results.totalPages < 20) {
                     isMoreLoad = false
                 }
-                stores.results.store.map { favoriteStoreList.add(it) }
+                favoriteStoreList.addAll(stores.results.store)
                 groupAdapter.update(favoriteStoreList.map { StoreItem(it, requireContext()) })
             }.addTo(disposables)
 
@@ -93,8 +93,7 @@ class FavoriteStoreFragment : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (!recyclerView.canScrollVertically(1) && isMoreLoad) {
-                    viewModel.fetchLocalStoresId()
-                    viewModel.favoriteStoreIds?.let { viewModel.fetchFavoriteStores(it) }
+                    viewModel.fetchFavoriteStores()
                 }
             }
         })

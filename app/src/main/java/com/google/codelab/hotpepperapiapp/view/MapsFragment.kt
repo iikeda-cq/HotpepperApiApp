@@ -90,12 +90,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 }
                 binding.storePager.adapter?.notifyDataSetChanged()
                 binding.isLoading = false
-
-                Toast.makeText(
-                    requireContext(),
-                    getString(R.string.around_stores_count, it.results.store.size),
-                    Toast.LENGTH_SHORT
-                ).show()
             }.addTo(disposables)
 
         viewModel.errorStream

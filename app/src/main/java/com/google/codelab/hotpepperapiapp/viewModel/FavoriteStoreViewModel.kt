@@ -2,6 +2,7 @@ package com.google.codelab.hotpepperapiapp.viewModel
 
 import androidx.lifecycle.ViewModel
 import com.google.codelab.hotpepperapiapp.model.Failure
+import com.google.codelab.hotpepperapiapp.model.StoreModel
 import com.google.codelab.hotpepperapiapp.model.getMessage
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 import com.google.codelab.hotpepperapiapp.usecase.FavoriteStoreUseCase
@@ -14,41 +15,33 @@ class FavoriteStoreViewModel : ViewModel() {
     val favoriteStoresList: PublishSubject<StoresResponse> = PublishSubject.create()
     val errorStream: PublishSubject<Failure> = PublishSubject.create()
 
-    var currentStoresCount: Int = 0
-    var favoriteStoreIds: String? = null
+    private val localStoreIdList: MutableList<StoreModel> = ArrayList()
 
-    fun fetchLocalStoresId() {
+    fun setup() {
+        // Realのお気に入りストアのIDを取得する
         usecase.fetchLocalStoreIds()
-            .subscribeBy { favoriteStoresList ->
-                favoriteStoresList.drop(currentStoresCount)
-                    .forEachIndexed { index, store ->
-                        // APIの仕様上、一度に20件までのデータしか取得できないため
-                        if (index < 20) {
-                            favoriteStoreIds = if (favoriteStoreIds.isNullOrBlank()) {
-                                store.storeId
-                            } else {
-                                favoriteStoreIds + "," + store.storeId
-                            }
-                        }
-                    }
-                favoriteStoreIds?.let { fetchFavoriteStores(it) }
-                favoriteStoreIds = null
-            }
-    }
 
-    fun fetchFavoriteStores(storeId: String) {
-        usecase.fetchFavoriteStores(storeId)
+        usecase.getLocalStoresIdsStream()
+            .subscribeBy {
+                localStoreIdList.addAll(it)
+                usecase.fetchFavoriteStores(it)
+            }
+
+        usecase.getFavoriteStoresStream()
             .subscribeBy(
-                onSuccess = { stores ->
-                    currentStoresCount += stores.results.totalPages
+                onNext = { stores ->
                     favoriteStoresList.onNext(stores)
                 },
                 onError = {
                     val f = Failure(getMessage(it)) {
-                        fetchFavoriteStores(storeId)
+                        usecase.getLocalStoresIdsStream()
                     }
                     errorStream.onNext(f)
                 }
             )
+    }
+
+    fun fetchFavoriteStores() {
+        usecase.fetchFavoriteStores(localStoreIdList)
     }
 }

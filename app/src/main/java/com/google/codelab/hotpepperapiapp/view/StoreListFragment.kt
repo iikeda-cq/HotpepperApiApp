@@ -85,7 +85,7 @@ class StoreListFragment : Fragment() {
                 if (stores.results.totalPages < 20) {
                     isMoreLoad = false
                 }
-                stores.results.store.map { storeList.add(it) }
+                storeList.addAll(stores.results.store)
                 groupAdapter.update(storeList.map { StoreItem(it, requireContext()) })
 
                 startPage += stores.results.totalPages

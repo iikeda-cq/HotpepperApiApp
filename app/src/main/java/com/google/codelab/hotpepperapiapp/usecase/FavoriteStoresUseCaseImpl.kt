@@ -5,25 +5,56 @@ import com.google.codelab.hotpepperapiapp.model.StoreMapper
 import com.google.codelab.hotpepperapiapp.model.StoreModel
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 class FavoriteStoresUseCaseImpl : FavoriteStoreUseCase {
     private val dataManager: SearchDataManagerImpl = SearchDataManagerImpl()
 
-    override fun fetchFavoriteStores(storeId: String): Single<StoresResponse> {
-        return dataManager.fetchFavoriteStores(storeId)
+    private val localStoreIdList: PublishSubject<List<StoreModel>> = PublishSubject.create()
+    private val favoriteStoreList: PublishSubject<StoresResponse> = PublishSubject.create()
+    private val responseTotalPages: PublishSubject<Int> = PublishSubject.create()
+
+    private var currentStoresCount: Int = 0 // 現在何件まで取得済みかを格納する変数
+
+    override fun fetchFavoriteStores(storeIdList: List<StoreModel>) {
+        var favoriteStoreIds: String? = null
+
+        responseTotalPages.subscribeBy {
+            currentStoresCount += it
+        }
+
+        storeIdList.drop(currentStoresCount)
+            .forEachIndexed { index, store ->
+                // APIの仕様上、一度に20件までのデータしか取得できないため
+                if (index < 20) {
+                    favoriteStoreIds = if (favoriteStoreIds.isNullOrBlank()) {
+                        store.storeId
+                    } else {
+                        favoriteStoreIds + "," + store.storeId
+                    }
+                }
+            }
+
+        dataManager.fetchFavoriteStores(favoriteStoreIds ?: return)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .map {
-                it.body()
+            .subscribeBy {
+                responseTotalPages.onNext(it.body()?.results?.totalPages)
+                favoriteStoreList.onNext(it.body())
             }
     }
 
-    override fun fetchLocalStoreIds(): Single<MutableList<StoreModel>> {
-        return dataManager.fetchLocalStoreIds()
+    override fun fetchLocalStoreIds() {
+        dataManager.fetchLocalStoreIds()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .map { StoreMapper.transform(it) }
+            .subscribeBy { localStoreIdList.onNext(StoreMapper.transform(it)) }
     }
+
+    override fun getLocalStoresIdsStream(): Observable<List<StoreModel>> = localStoreIdList.hide()
+
+    override fun getFavoriteStoresStream(): Observable<StoresResponse> = favoriteStoreList.hide()
 }
