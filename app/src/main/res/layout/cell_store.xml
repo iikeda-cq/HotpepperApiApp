@@ -25,6 +25,7 @@
             android:layout_marginStart="@dimen/s_spacing"
             android:layout_marginTop="@dimen/s_spacing"
             android:text="@{item.name}"
+            tools:text="お店の名前"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -53,6 +54,7 @@
             android:maxLength="7"
             android:maxLines="2"
             android:text="@{item.budget.average}"
+            tools:text="平均：5000円"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/store_image"
@@ -66,6 +68,7 @@
             android:maxLength="10"
             android:maxLines="2"
             android:text="@{item.genre.name}"
+            tools:text="ジャンル"
             app:layout_constraintBottom_toBottomOf="@+id/store_price"
             app:layout_constraintStart_toStartOf="@+id/store_name"
             app:layout_constraintTop_toTopOf="@+id/store_price" />

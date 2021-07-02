@@ -18,6 +18,7 @@
 
         <ImageView
             android:id="@+id/pager_image"
+            style="@"
             android:layout_width="@dimen/image_default_size"
             android:layout_height="@dimen/image_default_size"
             android:layout_marginStart="@dimen/s_spacing"
@@ -36,6 +37,7 @@
             android:ellipsize="end"
             android:maxLines="2"
             android:text="@{item.name}"
+            tools:text="お店の名前"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             app:layout_constraintStart_toEndOf="@+id/pager_image"
             app:layout_constraintTop_toTopOf="@id/pager_image" />
@@ -48,6 +50,7 @@
             android:layout_marginBottom="@dimen/s_spacing"
             android:maxLength="20"
             android:text="@{item.budget.average}"
+            tools:text="平均：3000円"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             app:layout_constraintBottom_toBottomOf="@+id/pager_image"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -58,6 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/s_spacing"
             android:text="@{item.genre.name}"
+            tools:text="ジャンル"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             app:layout_constraintBottom_toTopOf="@+id/pager_charge"
             app:layout_constraintEnd_toEndOf="@+id/pager_charge" />
