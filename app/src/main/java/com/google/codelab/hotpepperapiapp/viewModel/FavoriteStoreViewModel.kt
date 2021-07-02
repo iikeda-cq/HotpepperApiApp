@@ -6,8 +6,8 @@ import com.google.codelab.hotpepperapiapp.model.getMessage
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 import com.google.codelab.hotpepperapiapp.usecase.FavoriteStoreUseCase
 import com.google.codelab.hotpepperapiapp.usecase.FavoriteStoresUseCaseImpl
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 class FavoriteStoreViewModel : ViewModel() {
     private val usecase: FavoriteStoreUseCase = FavoriteStoresUseCaseImpl()

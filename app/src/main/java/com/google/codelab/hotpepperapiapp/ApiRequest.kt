@@ -1,7 +1,7 @@
 package com.google.codelab.hotpepperapiapp
 
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

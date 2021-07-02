@@ -3,8 +3,8 @@ package com.google.codelab.hotpepperapiapp.viewModel
 import androidx.lifecycle.ViewModel
 import com.google.codelab.hotpepperapiapp.Signal
 import com.google.codelab.hotpepperapiapp.usecase.StoreWebViewUseCaseImpl
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 class StoreWebViewViewModel : ViewModel() {
     private val usecase = StoreWebViewUseCaseImpl()

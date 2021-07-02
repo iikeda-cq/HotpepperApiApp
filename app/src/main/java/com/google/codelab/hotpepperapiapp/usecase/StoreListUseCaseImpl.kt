@@ -2,10 +2,9 @@ package com.google.codelab.hotpepperapiapp.usecase
 
 import com.google.codelab.hotpepperapiapp.data.SearchDataManagerImpl
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
-import java.io.IOException
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class StoreListUseCaseImpl : StoreListUseCase {
     private val dataManager: SearchDataManagerImpl = SearchDataManagerImpl()

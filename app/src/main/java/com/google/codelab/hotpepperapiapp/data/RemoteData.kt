@@ -3,7 +3,7 @@ package com.google.codelab.hotpepperapiapp.data
 import com.google.codelab.hotpepperapiapp.ApiClient.retrofit
 import com.google.codelab.hotpepperapiapp.ApiRequest
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Single
 import retrofit2.Response
 
 class RemoteData {

@@ -2,8 +2,8 @@ package com.google.codelab.hotpepperapiapp.data
 
 import com.google.codelab.hotpepperapiapp.model.Store
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
-import io.reactivex.Completable
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Single
 import io.realm.RealmResults
 import retrofit2.Response
 

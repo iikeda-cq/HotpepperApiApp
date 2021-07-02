@@ -6,8 +6,8 @@ import com.google.codelab.hotpepperapiapp.model.getMessage
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 import com.google.codelab.hotpepperapiapp.usecase.StoreListUseCase
 import com.google.codelab.hotpepperapiapp.usecase.StoreListUseCaseImpl
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 class StoreListViewModel : ViewModel() {
     private val usecase: StoreListUseCase = StoreListUseCaseImpl()

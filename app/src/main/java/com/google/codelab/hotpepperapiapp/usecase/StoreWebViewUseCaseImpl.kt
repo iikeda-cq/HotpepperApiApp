@@ -1,11 +1,10 @@
 package com.google.codelab.hotpepperapiapp.usecase
 
 import com.google.codelab.hotpepperapiapp.data.SearchDataManagerImpl
-import com.google.codelab.hotpepperapiapp.model.Store
-import io.reactivex.Completable
-import io.reactivex.Single
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Single
 
-class StoreWebViewUseCaseImpl: StoreWebViewUseCase {
+class StoreWebViewUseCaseImpl : StoreWebViewUseCase {
     private val dataManager = SearchDataManagerImpl()
 
     override fun addFavoriteStore(storeId: String): Completable {

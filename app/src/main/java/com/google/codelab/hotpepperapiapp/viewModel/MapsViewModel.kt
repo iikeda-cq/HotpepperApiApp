@@ -6,8 +6,8 @@ import com.google.codelab.hotpepperapiapp.model.getMessage
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 import com.google.codelab.hotpepperapiapp.usecase.MapsUseCase
 import com.google.codelab.hotpepperapiapp.usecase.MapsUseCaseImpl
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.subjects.PublishSubject
+import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.subjects.PublishSubject
 
 class MapsViewModel : ViewModel() {
     private val usecase: MapsUseCase = MapsUseCaseImpl()

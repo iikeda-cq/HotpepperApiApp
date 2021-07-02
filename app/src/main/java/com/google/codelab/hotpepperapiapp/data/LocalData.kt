@@ -5,7 +5,7 @@ import com.google.codelab.hotpepperapiapp.ext.deleteStore
 import com.google.codelab.hotpepperapiapp.ext.fetchFavoriteStore
 import com.google.codelab.hotpepperapiapp.ext.fetchStores
 import com.google.codelab.hotpepperapiapp.model.Store
-import io.reactivex.Completable
+import io.reactivex.rxjava3.core.Completable
 import io.realm.Realm
 import io.realm.RealmResults
 
