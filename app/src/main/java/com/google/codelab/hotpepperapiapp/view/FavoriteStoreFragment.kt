@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
@@ -13,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.FragmentFavoriteStoreBinding
+import com.google.codelab.hotpepperapiapp.ext.showAlertDialog
 import com.google.codelab.hotpepperapiapp.ext.showFragment
 import com.google.codelab.hotpepperapiapp.model.response.NearStore
 import com.google.codelab.hotpepperapiapp.viewModel.FavoriteStoreViewModel
@@ -91,13 +91,11 @@ class FavoriteStoreFragment : Fragment() {
             .subscribeBy {
                 binding.isLoading = false
 
-                AlertDialog.Builder(requireContext())
-                    .setTitle(R.string.no_favorite_title)
-                    .setMessage(R.string.no_favorite_message)
-                    .setPositiveButton(R.string.ok) { _, _ ->
-                        MapsFragment.newInstance().showFragment(parentFragmentManager, true)
-                    }
-                    .show()
+                requireContext().showAlertDialog(
+                    R.string.no_favorite_title,
+                    R.string.no_favorite_message,
+                    parentFragmentManager
+                )
             }.addTo(disposables)
 
         viewModel.errorStream

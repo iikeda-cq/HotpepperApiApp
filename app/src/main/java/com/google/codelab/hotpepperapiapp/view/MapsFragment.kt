@@ -150,7 +150,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                     // 許可された
                     enableMyLocation()
                 } else {
-                    Toast.makeText(context, R.string.no_locations, Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, R.string.no_locations_message, Toast.LENGTH_LONG).show()
                 }
             }
         }

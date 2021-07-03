@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
@@ -14,6 +13,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.codelab.hotpepperapiapp.CurrentLatLng
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreListBinding
+import com.google.codelab.hotpepperapiapp.ext.showAlertDialog
 import com.google.codelab.hotpepperapiapp.ext.showFragment
 import com.google.codelab.hotpepperapiapp.model.response.NearStore
 import com.google.codelab.hotpepperapiapp.viewModel.StoreListViewModel
@@ -62,7 +62,11 @@ class StoreListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if (CurrentLatLng.lat == null || CurrentLatLng.lng == null) {
-            Toast.makeText(requireContext(), R.string.no_locations, Toast.LENGTH_LONG).show()
+            requireContext().showAlertDialog(
+                R.string.no_locations_title,
+                R.string.no_locations_message,
+                parentFragmentManager
+            )
         }
 
         val lat = CurrentLatLng.lat ?: return

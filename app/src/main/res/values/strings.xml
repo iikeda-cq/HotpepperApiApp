@@ -17,7 +17,8 @@
     <string name="add_favorite">お気に入りに追加しました</string>
     <string name="delete_favorite">お気に入りから削除しました</string>
     <string name="ok">OK</string>
-    <string name="no_locations">位置情報がオフになっているため、現在地を取得できません。</string>
+    <string name="no_locations_title">位置情報がオフになっています。</string>
+    <string name="no_locations_message">位置情報がオフになっているため、現在地を取得できません。</string>
     <string name="no_favorite_title">お気に入り登録しているお店はありません。</string>
     <string name="no_favorite_message">気になるお店を登録するとここに表示されます。</string>
     <string name="offline_error">ネットワークに接続できません。</string>
