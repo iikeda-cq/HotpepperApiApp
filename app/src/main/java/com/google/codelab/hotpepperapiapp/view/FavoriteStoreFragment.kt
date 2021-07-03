@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
@@ -64,6 +65,11 @@ class FavoriteStoreFragment : Fragment() {
                 GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
         }
 
+        /**
+         * WebViewからお気に入り画面に戻るとsetup()が走り、同じ内容が複数RecyclerViewに表示されてしまったため、
+         * favoriteStoreListが空の時だけ実行するようにしている。
+         * ただ、これのせいでお気に入り画面→店舗一覧で適当なお店をお気に入り登録する→お気に入り画面と遷移しても最新のおきに入り情報が反映されません。。。
+          */
         if (favoriteStoreList.isEmpty()) {
             viewModel.setup()
             binding.isLoading = true
@@ -78,6 +84,20 @@ class FavoriteStoreFragment : Fragment() {
                 favoriteStoreList.addAll(stores.results.store)
                 groupAdapter.update(favoriteStoreList.map { StoreItem(it, requireContext()) })
                 binding.isLoading = false
+            }.addTo(disposables)
+
+        viewModel.hasNoFavoriteStores
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy {
+                binding.isLoading = false
+
+                AlertDialog.Builder(requireContext())
+                    .setTitle(R.string.no_favorite_title)
+                    .setMessage(R.string.no_favorite_message)
+                    .setPositiveButton(R.string.ok) { _, _ ->
+                        MapsFragment.newInstance().showFragment(parentFragmentManager, true)
+                    }
+                    .show()
             }.addTo(disposables)
 
         viewModel.errorStream

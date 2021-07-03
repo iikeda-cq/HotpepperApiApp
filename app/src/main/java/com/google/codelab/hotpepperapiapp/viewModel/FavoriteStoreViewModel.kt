@@ -1,6 +1,7 @@
 package com.google.codelab.hotpepperapiapp.viewModel
 
 import androidx.lifecycle.ViewModel
+import com.google.codelab.hotpepperapiapp.Signal
 import com.google.codelab.hotpepperapiapp.model.Failure
 import com.google.codelab.hotpepperapiapp.model.StoreModel
 import com.google.codelab.hotpepperapiapp.model.getMessage
@@ -13,18 +14,21 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 class FavoriteStoreViewModel : ViewModel() {
     private val usecase: FavoriteStoreUseCase = FavoriteStoresUseCaseImpl()
     val favoriteStoresList: PublishSubject<StoresResponse> = PublishSubject.create()
+    val hasNoFavoriteStores: PublishSubject<Signal> = PublishSubject.create()
     val errorStream: PublishSubject<Failure> = PublishSubject.create()
 
     private val localStoreIdList: MutableList<StoreModel> = ArrayList()
 
     fun setup() {
-        // Realmのお気に入りストアのIDを取得する
+        // Realmに登録されているお気に入りストアのIDを取得する
         usecase.fetchLocalStoreIds()
 
         usecase.getLocalStoresIdsStream()
             .subscribeBy {
-                localStoreIdList.addAll(it)
-                if (localStoreIdList.isNotEmpty()) {
+                if (it.isEmpty()) {
+                    hasNoFavoriteStores.onNext(Signal)
+                } else {
+                    localStoreIdList.addAll(it)
                     usecase.fetchFavoriteStores(it)
                 }
             }

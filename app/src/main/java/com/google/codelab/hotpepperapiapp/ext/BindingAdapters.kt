@@ -1,11 +1,10 @@
-package com.google.codelab.hotpepperapiapp.util
+package com.google.codelab.hotpepperapiapp.ext
 
 import android.graphics.drawable.Drawable
 import android.webkit.WebView
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 
 object BindingAdapters {
     @JvmStatic

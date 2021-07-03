@@ -14,10 +14,12 @@
     <string name="store_charge">金額</string>
     <string name="store_genre">ジャンル</string>
     <string name="store_budget">予算：</string>
-    <string name="around_stores_count">周辺の店舗が%1$d件見つかりました</string>
     <string name="add_favorite">お気に入りに追加しました</string>
     <string name="delete_favorite">お気に入りから削除しました</string>
+    <string name="ok">OK</string>
     <string name="no_locations">位置情報がオフになっているため、現在地を取得できません。</string>
+    <string name="no_favorite_title">お気に入り登録しているお店はありません。</string>
+    <string name="no_favorite_message">気になるお店を登録するとここに表示されます。</string>
     <string name="offline_error">ネットワークに接続できません。</string>
     <string name="unexpected_error">予期せぬエラーが発生しました。</string>
     <string name="not_fond_error">データが見つかりませんでした。</string>
