@@ -189,4 +189,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             )
         }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        disposables.clear()
+    }
 }

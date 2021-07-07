@@ -129,6 +129,7 @@ class StoreWebViewFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        disposables.clear()
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
 }

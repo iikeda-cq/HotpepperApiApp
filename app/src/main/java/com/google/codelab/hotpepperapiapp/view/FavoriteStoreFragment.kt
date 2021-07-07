@@ -121,4 +121,9 @@ class FavoriteStoreFragment : Fragment() {
             }
         })
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        disposables.clear()
+    }
 }

@@ -122,5 +122,10 @@ class StoreListFragment : Fragment() {
             }
         })
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        disposables.clear()
+    }
 }
 
