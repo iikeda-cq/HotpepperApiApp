@@ -2,12 +2,15 @@ package com.google.codelab.hotpepperapiapp.viewModel
 
 import androidx.lifecycle.ViewModel
 import com.google.codelab.hotpepperapiapp.Signal
-import com.google.codelab.hotpepperapiapp.usecase.StoreWebViewUseCaseImpl
+import com.google.codelab.hotpepperapiapp.usecase.StoreWebViewUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.PublishSubject
+import javax.inject.Inject
 
-class StoreWebViewViewModel : ViewModel() {
-    private val usecase = StoreWebViewUseCaseImpl()
+@HiltViewModel
+class StoreWebViewViewModel @Inject constructor(private val usecase: StoreWebViewUseCase) :
+    ViewModel() {
     val addFavoriteStore: PublishSubject<Signal> = PublishSubject.create()
     val deleteFavoriteStore: PublishSubject<Signal> = PublishSubject.create()
     val hasFavoriteStore: PublishSubject<Boolean> = PublishSubject.create()

@@ -4,13 +4,16 @@ import androidx.lifecycle.ViewModel
 import com.google.codelab.hotpepperapiapp.model.Failure
 import com.google.codelab.hotpepperapiapp.model.getMessage
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
-import com.google.codelab.hotpepperapiapp.usecase.StoreListUseCase
 import com.google.codelab.hotpepperapiapp.usecase.StoreListUseCaseImpl
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.PublishSubject
+import javax.inject.Inject
 
-class StoreListViewModel : ViewModel() {
-    private val usecase: StoreListUseCase = StoreListUseCaseImpl()
+@HiltViewModel
+class StoreListViewModel @Inject constructor(
+    private val usecase: StoreListUseCaseImpl
+) : ViewModel() {
     val storesList: PublishSubject<StoresResponse> = PublishSubject.create()
     val errorStream: PublishSubject<Failure> = PublishSubject.create()
 

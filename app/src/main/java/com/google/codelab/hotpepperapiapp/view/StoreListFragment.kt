@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,14 +21,16 @@ import com.google.codelab.hotpepperapiapp.viewModel.StoreListViewModel
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.OnItemClickListener
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
 
+@AndroidEntryPoint
 class StoreListFragment : Fragment() {
     private lateinit var binding: FragmentStoreListBinding
-    private lateinit var viewModel: StoreListViewModel
+    private val viewModel: StoreListViewModel by viewModels()
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
     private val storeList: MutableList<NearStore> = ArrayList()
     private var startPage = 1
@@ -52,7 +55,6 @@ class StoreListFragment : Fragment() {
         requireActivity().setTitle(R.string.view_list)
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
-        viewModel = ViewModelProviders.of(this).get(StoreListViewModel::class.java)
         binding.isLoading = false
 
         return binding.root

@@ -6,10 +6,12 @@ import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import io.realm.RealmResults
 import retrofit2.Response
+import javax.inject.Inject
 
-class SearchDataManagerImpl : SearchDataManager {
-    private val remote: RemoteData = RemoteData()
-    private val local: LocalData = LocalData()
+class SearchDataManagerImpl @Inject constructor(
+    private val remote: RemoteData,
+    private val local: LocalData
+) : SearchDataManager {
 
     override fun fetchFavoriteStores(storeId: String): Single<Response<StoresResponse>> {
         return remote.fetchFavoriteStores(storeId)

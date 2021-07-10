@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,14 +20,16 @@ import com.google.codelab.hotpepperapiapp.viewModel.FavoriteStoreViewModel
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
 import com.xwray.groupie.OnItemClickListener
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
 
+@AndroidEntryPoint
 class FavoriteStoreFragment : Fragment() {
     private lateinit var binding: FragmentFavoriteStoreBinding
-    private lateinit var viewModel: FavoriteStoreViewModel
+    private val viewModel: FavoriteStoreViewModel by viewModels()
 
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
     private val favoriteStoreList: MutableList<NearStore> = ArrayList()
@@ -48,7 +51,6 @@ class FavoriteStoreFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentFavoriteStoreBinding.inflate(inflater)
-        viewModel = ViewModelProviders.of(this).get(FavoriteStoreViewModel::class.java)
         binding.isLoading = false
 
         requireActivity().setTitle(R.string.navigation_favorite)

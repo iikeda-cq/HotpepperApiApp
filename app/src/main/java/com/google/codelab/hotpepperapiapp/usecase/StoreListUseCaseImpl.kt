@@ -5,9 +5,11 @@ import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
+import javax.inject.Inject
 
-class StoreListUseCaseImpl : StoreListUseCase {
-    private val dataManager: SearchDataManagerImpl = SearchDataManagerImpl()
+class StoreListUseCaseImpl @Inject constructor(
+    private val dataManager: SearchDataManagerImpl
+): StoreListUseCase {
 
     override fun fetchStores(
         lat: Double,
