@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'realm-android'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -41,6 +42,10 @@ android {
         enabled = true
     }
 
+    kapt {
+        correctErrorTypes = true
+    }
+
 }
 
 dependencies {
@@ -55,6 +60,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation 'com.google.android.gms:play-services-location:18.0.0'
     implementation 'com.google.code.gson:gson:2.8.6'
+    implementation "com.google.dagger:hilt-android:$rootProject.hilt_version"
+    kapt "com.google.dagger:hilt-android-compiler:$rootProject.hilt_version"
     implementation "com.xwray:groupie:2.9.0"
     implementation "com.xwray:groupie-viewbinding:2.9.0"
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
