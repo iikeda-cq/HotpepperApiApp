@@ -56,4 +56,9 @@ class FavoriteStoreViewModel @Inject constructor(
     fun fetchFavoriteStores() {
         usecase.fetchFavoriteStores(localStoreIdList)
     }
+
+    fun resetHasFavoriteIds() {
+        localStoreIdList.clear()
+        usecase.resetCurrentCount()
+    }
 }

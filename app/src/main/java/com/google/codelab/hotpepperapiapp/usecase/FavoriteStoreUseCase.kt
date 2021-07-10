@@ -11,6 +11,8 @@ interface FavoriteStoreUseCase {
 
     fun fetchLocalStoreIds()
 
+    fun resetCurrentCount()
+
     fun getLocalStoresIdsStream(): Observable<List<StoreModel>>
 
     fun getFavoriteStoresStream(): Observable<StoresResponse>

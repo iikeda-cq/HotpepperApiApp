@@ -45,7 +45,6 @@ class FavoriteStoresUseCaseImpl @Inject constructor(
 
         dataManager.fetchFavoriteStores(favoriteStoreIds ?: return)
             .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy(
                 onSuccess = {
                     responseTotalPages.onNext(it.body()?.results?.totalPages)
@@ -65,6 +64,10 @@ class FavoriteStoresUseCaseImpl @Inject constructor(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy { localStoreIdList.onNext(StoreMapper.transform(it)) }
+    }
+
+    override fun resetCurrentCount() {
+        currentStoresCount = 0
     }
 
     override fun getLocalStoresIdsStream(): Observable<List<StoreModel>> = localStoreIdList.hide()
