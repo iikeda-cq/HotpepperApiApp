@@ -10,6 +10,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.location.*
@@ -27,11 +29,14 @@ import com.google.codelab.hotpepperapiapp.model.response.NearStore
 import com.google.codelab.hotpepperapiapp.util.MapUtils
 import com.google.codelab.hotpepperapiapp.util.MapUtils.addMarker
 import com.google.codelab.hotpepperapiapp.viewModel.MapsViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MapsFragment : Fragment(), OnMapReadyCallback {
     private val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
     private var locationCallback: LocationCallback? = null
@@ -42,7 +47,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     private var mapMarkerPosition = 0
 
     private lateinit var binding: FragmentMapsBinding
-    private lateinit var viewModel: MapsViewModel
+    private val viewModel: MapsViewModel by viewModels()
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
@@ -60,8 +65,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         binding = FragmentMapsBinding.inflate(layoutInflater)
         requireActivity().setTitle(R.string.view_map)
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
-
-        viewModel = ViewModelProviders.of(this).get(MapsViewModel::class.java)
 
         binding.isLoading = false
 

@@ -8,11 +8,11 @@ import com.google.codelab.hotpepperapiapp.model.Store
 import io.reactivex.rxjava3.core.Completable
 import io.realm.Realm
 import io.realm.RealmResults
+import javax.inject.Inject
 
-class LocalData {
+class LocalData @Inject constructor(private val realm: Realm){
     fun fetchLocalStoreIds(): RealmResults<Store> {
         // Caused by: java.lang.IllegalStateException: This Realm instance has already been closed, making it unusable.
-        val realm = Realm.getDefaultInstance()
         return realm.fetchStores()
     }
 

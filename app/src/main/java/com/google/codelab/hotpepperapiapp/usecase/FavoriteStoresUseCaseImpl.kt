@@ -11,10 +11,11 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
+import javax.inject.Inject
 
-class FavoriteStoresUseCaseImpl : FavoriteStoreUseCase {
-    private val dataManager: SearchDataManagerImpl = SearchDataManagerImpl()
-
+class FavoriteStoresUseCaseImpl @Inject constructor(
+    private val dataManager: SearchDataManagerImpl
+) : FavoriteStoreUseCase {
     private val localStoreIdList: PublishSubject<List<StoreModel>> = PublishSubject.create()
     private val favoriteStoreList: PublishSubject<StoresResponse> = PublishSubject.create()
     private val responseTotalPages: PublishSubject<Int> = PublishSubject.create()
@@ -44,9 +45,8 @@ class FavoriteStoresUseCaseImpl : FavoriteStoreUseCase {
 
         dataManager.fetchFavoriteStores(favoriteStoreIds ?: return)
             .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy (
-                onSuccess= {
+            .subscribeBy(
+                onSuccess = {
                     responseTotalPages.onNext(it.body()?.results?.totalPages)
                     favoriteStoreList.onNext(it.body())
                 },
@@ -64,6 +64,10 @@ class FavoriteStoresUseCaseImpl : FavoriteStoreUseCase {
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy { localStoreIdList.onNext(StoreMapper.transform(it)) }
+    }
+
+    override fun resetCurrentCount() {
+        currentStoresCount = 0
     }
 
     override fun getLocalStoresIdsStream(): Observable<List<StoreModel>> = localStoreIdList.hide()

@@ -7,12 +7,15 @@ import com.google.codelab.hotpepperapiapp.model.StoreModel
 import com.google.codelab.hotpepperapiapp.model.getMessage
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 import com.google.codelab.hotpepperapiapp.usecase.FavoriteStoreUseCase
-import com.google.codelab.hotpepperapiapp.usecase.FavoriteStoresUseCaseImpl
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.PublishSubject
+import javax.inject.Inject
 
-class FavoriteStoreViewModel : ViewModel() {
-    private val usecase: FavoriteStoreUseCase = FavoriteStoresUseCaseImpl()
+@HiltViewModel
+class FavoriteStoreViewModel @Inject constructor(
+    private val usecase: FavoriteStoreUseCase
+) : ViewModel() {
     val favoriteStoresList: PublishSubject<StoresResponse> = PublishSubject.create()
     val hasNoFavoriteStores: PublishSubject<Signal> = PublishSubject.create()
     val errorStream: PublishSubject<Failure> = PublishSubject.create()
@@ -52,5 +55,10 @@ class FavoriteStoreViewModel : ViewModel() {
 
     fun fetchFavoriteStores() {
         usecase.fetchFavoriteStores(localStoreIdList)
+    }
+
+    fun resetHasFavoriteIds() {
+        localStoreIdList.clear()
+        usecase.resetCurrentCount()
     }
 }

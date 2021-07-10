@@ -5,12 +5,13 @@ import com.google.codelab.hotpepperapiapp.model.Failure
 import com.google.codelab.hotpepperapiapp.model.getMessage
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 import com.google.codelab.hotpepperapiapp.usecase.MapsUseCase
-import com.google.codelab.hotpepperapiapp.usecase.MapsUseCaseImpl
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.PublishSubject
+import javax.inject.Inject
 
-class MapsViewModel : ViewModel() {
-    private val usecase: MapsUseCase = MapsUseCaseImpl()
+@HiltViewModel
+class MapsViewModel @Inject constructor(private val usecase: MapsUseCase) : ViewModel() {
     val storesList: PublishSubject<StoresResponse> = PublishSubject.create()
     val errorStream: PublishSubject<Failure> = PublishSubject.create()
 

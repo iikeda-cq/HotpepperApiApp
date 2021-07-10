@@ -8,18 +8,21 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProviders
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreWebViewBinding
 import com.google.codelab.hotpepperapiapp.viewModel.StoreWebViewViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
 
+@AndroidEntryPoint
 class StoreWebViewFragment : Fragment() {
     private lateinit var binding: FragmentStoreWebViewBinding
-    private lateinit var viewModel: StoreWebViewViewModel
+    private val viewModel: StoreWebViewViewModel by viewModels()
 
     private val storeId: String
         get() = checkNotNull(arguments?.getString(STORE_ID))
@@ -51,7 +54,6 @@ class StoreWebViewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentStoreWebViewBinding.inflate(inflater)
-        viewModel = ViewModelProviders.of(this).get(StoreWebViewViewModel::class.java)
 
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
         requireActivity().setTitle(R.string.view_store_detail)
