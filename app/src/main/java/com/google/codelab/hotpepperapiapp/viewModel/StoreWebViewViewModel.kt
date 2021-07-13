@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import com.google.codelab.hotpepperapiapp.Signal
 import com.google.codelab.hotpepperapiapp.usecase.StoreWebViewUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.PublishSubject
 import javax.inject.Inject
@@ -17,6 +19,8 @@ class StoreWebViewViewModel @Inject constructor(private val usecase: StoreWebVie
     val errorStream: PublishSubject<Signal> = PublishSubject.create()
     val onClickFab: PublishSubject<Signal> = PublishSubject.create()
 
+    private val disposables = CompositeDisposable()
+
     fun addFavoriteStore(storeId: String) {
         usecase.addFavoriteStore(storeId)
             .subscribeBy(
@@ -26,7 +30,7 @@ class StoreWebViewViewModel @Inject constructor(private val usecase: StoreWebVie
                 onError = {
                     errorStream.onNext(Signal)
                 }
-            )
+            ).addTo(disposables)
     }
 
     fun deleteFavoriteStore(storeId: String) {
@@ -38,7 +42,7 @@ class StoreWebViewViewModel @Inject constructor(private val usecase: StoreWebVie
                 onError = {
                     errorStream.onNext(Signal)
                 }
-            )
+            ).addTo(disposables)
     }
 
     fun fetchFavoriteStore(storeId: String) {
@@ -50,7 +54,7 @@ class StoreWebViewViewModel @Inject constructor(private val usecase: StoreWebVie
                 onError = {
                     errorStream.onNext(Signal)
                 }
-            )
+            ).addTo(disposables)
     }
 
     fun onClickFab() {

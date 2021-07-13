@@ -8,6 +8,8 @@ import com.google.codelab.hotpepperapiapp.model.getMessage
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
@@ -22,6 +24,8 @@ class FavoriteStoresUseCaseImpl @Inject constructor(
     private val errorStream: PublishSubject<Failure> = PublishSubject.create()
 
     private var currentStoresCount: Int = 0 // 現在何件まで取得済みかを格納する変数
+
+    private val disposables = CompositeDisposable()
 
     override fun fetchFavoriteStores(storeIdList: List<StoreModel>) {
         var favoriteStoreIds: String? = null
@@ -56,7 +60,7 @@ class FavoriteStoresUseCaseImpl @Inject constructor(
                     }
                     errorStream.onNext(f)
                 }
-            )
+            ).addTo(disposables)
     }
 
     override fun fetchLocalStoreIds() {
@@ -64,6 +68,7 @@ class FavoriteStoresUseCaseImpl @Inject constructor(
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy { localStoreIdList.onNext(StoreMapper.transform(it)) }
+            .addTo(disposables)
     }
 
     override fun resetCurrentCount() {

@@ -8,6 +8,8 @@ import com.google.codelab.hotpepperapiapp.model.getMessage
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 import com.google.codelab.hotpepperapiapp.usecase.FavoriteStoreUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.PublishSubject
 import javax.inject.Inject
@@ -21,6 +23,7 @@ class FavoriteStoreViewModel @Inject constructor(
     val errorStream: PublishSubject<Failure> = PublishSubject.create()
 
     private val localStoreIdList: MutableList<StoreModel> = ArrayList()
+    private val disposables = CompositeDisposable()
 
     fun setup() {
         // Realmに登録されているお気に入りストアのIDを取得する
@@ -34,7 +37,7 @@ class FavoriteStoreViewModel @Inject constructor(
                     localStoreIdList.addAll(it)
                     usecase.fetchFavoriteStores(it)
                 }
-            }
+            }.addTo(disposables)
 
         usecase.getFavoriteStoresStream()
             .subscribeBy(
@@ -47,10 +50,10 @@ class FavoriteStoreViewModel @Inject constructor(
                     }
                     errorStream.onNext(f)
                 }
-            )
+            ).addTo(disposables)
 
         usecase.getErrorStream()
-            .subscribeBy { errorStream.onNext(it) }
+            .subscribeBy { errorStream.onNext(it) }.addTo(disposables)
     }
 
     fun fetchFavoriteStores() {

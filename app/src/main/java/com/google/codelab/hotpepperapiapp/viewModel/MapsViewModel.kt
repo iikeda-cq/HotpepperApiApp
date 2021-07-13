@@ -6,6 +6,8 @@ import com.google.codelab.hotpepperapiapp.model.getMessage
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 import com.google.codelab.hotpepperapiapp.usecase.MapsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.subjects.PublishSubject
 import javax.inject.Inject
@@ -14,6 +16,8 @@ import javax.inject.Inject
 class MapsViewModel @Inject constructor(private val usecase: MapsUseCase) : ViewModel() {
     val storesList: PublishSubject<StoresResponse> = PublishSubject.create()
     val errorStream: PublishSubject<Failure> = PublishSubject.create()
+
+    private val disposables = CompositeDisposable()
 
     fun fetchStores(lat: Double, lng: Double) {
         usecase.fetchStores(lat, lng)
@@ -27,6 +31,6 @@ class MapsViewModel @Inject constructor(private val usecase: MapsUseCase) : View
                     }
                     errorStream.onNext(f)
                 }
-            )
+            ).addTo(disposables)
     }
 }
