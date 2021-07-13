@@ -53,7 +53,7 @@ object ApiClient {
     }
 
     @Provides
-    fun provideHotPepperApi(retrofit: Retrofit): ApiRequest{
+    fun provideHotPepperApi(retrofit: Retrofit): ApiRequest {
         return retrofit.create(ApiRequest::class.java)
     }
 

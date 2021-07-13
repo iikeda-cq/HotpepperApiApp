@@ -9,6 +9,13 @@ import javax.inject.Inject
 class RemoteData @Inject constructor(
     private val api: ApiRequest
 ) {
+    companion object {
+        private const val KEY = "970479567de67028"
+        private const val FORMAT = "json"
+        private const val COUNT = 20
+        private const val RANGE = 3
+    }
+
     // 参考：https://tech.mti.co.jp/entry/2020/03/31/163321
     fun fetchStores(
         lat: Double,
@@ -26,12 +33,5 @@ class RemoteData @Inject constructor(
         return api.fetchFavoriteStores(
             KEY, COUNT, storeId, FORMAT
         )
-    }
-
-    companion object {
-        private const val KEY = "970479567de67028"
-        private const val FORMAT = "json"
-        private const val COUNT = 20
-        private const val RANGE = 3
     }
 }

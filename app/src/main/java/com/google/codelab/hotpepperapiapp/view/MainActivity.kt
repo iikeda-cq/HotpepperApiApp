@@ -8,9 +8,6 @@ import com.google.codelab.hotpepperapiapp.databinding.ActivityMainBinding
 import com.google.codelab.hotpepperapiapp.ext.actionBarColorToStatusBarColor
 import com.google.codelab.hotpepperapiapp.ext.showFragment
 import dagger.hilt.android.AndroidEntryPoint
-import io.realm.Realm
-import io.realm.RealmConfiguration
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {

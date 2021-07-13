@@ -121,9 +121,13 @@ class FavoriteStoreFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        disposables.clear()
         favoriteStoreList.clear()
         viewModel.resetHasFavoriteIds()
         isMoreLoad = true
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        disposables.clear()
     }
 }

@@ -15,7 +15,7 @@ fun Context.showAlertDialog(
     AlertDialog.Builder(this)
         .setTitle(title)
         .setMessage(message)
-        .setPositiveButton(R.string.ok) { _, _ ->
+        .setPositiveButton(android.R.string.ok) { _, _ ->
             MapsFragment.newInstance().showFragment(fragmentManager, true)
         }
         .show()
