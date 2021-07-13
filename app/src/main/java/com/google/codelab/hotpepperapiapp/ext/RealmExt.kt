@@ -12,25 +12,27 @@ private const val STORE_ID = "storeId"
 private const val ID = "id"
 
 fun Realm.addStore(storeId: String): Completable {
-    this.executeTransaction { realm ->
-        val currentId = realm.where<Store>().max(ID)
-        val nextId = (currentId?.toLong() ?: 0L) + 1L
-        val store = realm.createObject<Store>(nextId)
+    return Completable.fromAction {
+        this.executeTransaction { realm ->
+            val currentId = realm.where<Store>().max(ID)
+            val nextId = (currentId?.toLong() ?: 0L) + 1L
+            val store = realm.createObject<Store>(nextId)
 
-        store.storeId = storeId
+            store.storeId = storeId
+        }
     }
-    return Completable.complete()
 }
 
 fun Realm.deleteStore(id: String): Completable {
-    val target = this.where(Store::class.java)
-        .equalTo(STORE_ID, id)
-        .findAll()
+    return Completable.fromAction {
+        val target = this.where(Store::class.java)
+            .equalTo(STORE_ID, id)
+            .findAll()
 
-    this.executeTransaction {
-        target.deleteFromRealm(0)
+        this.executeTransaction {
+            target.deleteFromRealm(0)
+        }
     }
-    return Completable.complete()
 }
 
 fun Realm.fetchStores(): RealmResults<Store> {
