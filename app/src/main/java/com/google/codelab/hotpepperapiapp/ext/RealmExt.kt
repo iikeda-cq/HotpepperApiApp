@@ -40,7 +40,7 @@ fun Realm.fetchStores(): RealmResults<Store> {
         .sort(ID, Sort.ASCENDING)
 }
 
-fun Realm.fetchFavoriteStore(storeId: String): Boolean {
+fun Realm.hasFavoriteStore(storeId: String): Boolean {
     val favorite = this.where(Store::class.java)
         .equalTo(STORE_ID, storeId)
         .findFirst()

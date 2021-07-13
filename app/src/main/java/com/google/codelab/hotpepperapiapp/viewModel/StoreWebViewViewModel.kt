@@ -42,7 +42,7 @@ class StoreWebViewViewModel @Inject constructor(private val usecase: StoreWebVie
     }
 
     fun fetchFavoriteStore(storeId: String) {
-        usecase.fetchFavoriteStore(storeId)
+        usecase.hasFavoriteStore(storeId)
             .subscribeBy(
                 onSuccess = { isFavorite ->
                     hasFavoriteStore.onNext(isFavorite)

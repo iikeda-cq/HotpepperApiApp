@@ -16,7 +16,7 @@ class StoreWebViewUseCaseImpl @Inject constructor(
         return dataManager.deleteFavoriteStore(storeId)
     }
 
-    override fun fetchFavoriteStore(storeId: String): Single<Boolean> {
-        return dataManager.fetchFavoriteStore(storeId)
+    override fun hasFavoriteStore(storeId: String): Single<Boolean> {
+        return dataManager.hasFavoriteStore(storeId)
     }
 }

@@ -2,7 +2,7 @@ package com.google.codelab.hotpepperapiapp.data
 
 import com.google.codelab.hotpepperapiapp.ext.addStore
 import com.google.codelab.hotpepperapiapp.ext.deleteStore
-import com.google.codelab.hotpepperapiapp.ext.fetchFavoriteStore
+import com.google.codelab.hotpepperapiapp.ext.hasFavoriteStore
 import com.google.codelab.hotpepperapiapp.ext.fetchStores
 import com.google.codelab.hotpepperapiapp.model.Store
 import io.reactivex.rxjava3.core.Completable
@@ -28,9 +28,9 @@ class LocalData @Inject constructor(private val realm: Realm){
         }
     }
 
-    fun fetchFavoriteStore(storeId: String): Boolean {
+    fun hasFavoriteStore(storeId: String): Boolean {
         return Realm.getDefaultInstance().use { realm ->
-            realm.fetchFavoriteStore(storeId)
+            realm.hasFavoriteStore(storeId)
         }
     }
 }

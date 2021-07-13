@@ -8,5 +8,5 @@ interface StoreWebViewUseCase {
 
     fun deleteFavoriteStore(storeId: String): Completable
 
-    fun fetchFavoriteStore(storeId: String): Single<Boolean>
+    fun hasFavoriteStore(storeId: String): Single<Boolean>
 }

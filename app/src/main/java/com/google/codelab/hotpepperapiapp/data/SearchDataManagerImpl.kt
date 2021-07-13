@@ -37,7 +37,7 @@ class SearchDataManagerImpl @Inject constructor(
         return local.deleteFavoriteStore(storeId)
     }
 
-    override fun fetchFavoriteStore(storeId: String): Single<Boolean> {
-        return Single.just(local.fetchFavoriteStore(storeId))
+    override fun hasFavoriteStore(storeId: String): Single<Boolean> {
+        return Single.just(local.hasFavoriteStore(storeId))
     }
 }
