@@ -51,10 +51,9 @@ class StoreListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentStoreListBinding.inflate(layoutInflater)
+        binding.viewModel = viewModel
         requireActivity().setTitle(R.string.view_list)
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
-
-        binding.isLoading = false
 
         return binding.root
     }
@@ -80,7 +79,6 @@ class StoreListFragment : Fragment() {
         }
 
         if (storeList.isEmpty()) {
-            binding.isLoading = true
             viewModel.fetchStores(lat, lng)
         }
 
@@ -94,13 +92,11 @@ class StoreListFragment : Fragment() {
                 groupAdapter.update(storeList.map { StoreItem(it, requireContext()) })
 
                 startPage += stores.results.totalPages
-                binding.isLoading = false
             }.addTo(disposables)
 
         viewModel.errorStream
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy { failure ->
-                binding.isLoading = false
                 Snackbar.make(view, failure.message.message, Snackbar.LENGTH_SHORT)
                     .setAction(R.string.retry) {
                         failure.retry
@@ -118,7 +114,6 @@ class StoreListFragment : Fragment() {
                         lng,
                         startPage
                     )
-                    binding.isLoading = true
                 }
             }
         })

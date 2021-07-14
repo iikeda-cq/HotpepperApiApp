@@ -3,6 +3,8 @@ package com.google.codelab.hotpepperapiapp.ext
 import android.graphics.drawable.Drawable
 import android.webkit.WebView
 import android.widget.ImageView
+import android.widget.ProgressBar
+import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 
@@ -23,5 +25,11 @@ object BindingAdapters {
             .circleCrop()
             .error(defaultImage)
             .into(this)
+    }
+
+    @JvmStatic
+    @BindingAdapter("showProgress")
+    fun ProgressBar.isShowProgressBar(isShow: Boolean) {
+        this.isVisible = isShow
     }
 }

@@ -18,4 +18,6 @@ interface FavoriteStoreUseCase {
     fun getFavoriteStoresStream(): Observable<StoresResponse>
 
     fun getErrorStream(): Observable<Failure>
+
+    fun dispose()
 }

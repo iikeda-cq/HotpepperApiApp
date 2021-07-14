@@ -1,5 +1,6 @@
 package com.google.codelab.hotpepperapiapp.viewModel
 
+import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.ViewModel
 import com.google.codelab.hotpepperapiapp.Signal
 import com.google.codelab.hotpepperapiapp.model.Failure
@@ -21,6 +22,7 @@ class FavoriteStoreViewModel @Inject constructor(
     val favoriteStoresList: PublishSubject<StoresResponse> = PublishSubject.create()
     val hasNoFavoriteStores: PublishSubject<Signal> = PublishSubject.create()
     val errorStream: PublishSubject<Failure> = PublishSubject.create()
+    val showProgress = ObservableBoolean()
 
     private val localStoreIdList: MutableList<StoreModel> = ArrayList()
     private val disposables = CompositeDisposable()
@@ -30,9 +32,11 @@ class FavoriteStoreViewModel @Inject constructor(
         usecase.fetchLocalStoreIds()
 
         usecase.getLocalStoresIdsStream()
+            .doOnSubscribe { showProgress.set(true) }
             .subscribeBy {
                 if (it.isEmpty()) {
                     hasNoFavoriteStores.onNext(Signal)
+                    showProgress.set(false)
                 } else {
                     localStoreIdList.addAll(it)
                     usecase.fetchFavoriteStores(it)
@@ -43,12 +47,14 @@ class FavoriteStoreViewModel @Inject constructor(
             .subscribeBy(
                 onNext = { stores ->
                     favoriteStoresList.onNext(stores)
+                    showProgress.set(false)
                 },
                 onError = {
                     val f = Failure(getMessage(it)) {
                         usecase.getLocalStoresIdsStream()
                     }
                     errorStream.onNext(f)
+                    showProgress.set(false)
                 }
             ).addTo(disposables)
 
@@ -58,10 +64,17 @@ class FavoriteStoreViewModel @Inject constructor(
 
     fun fetchFavoriteStores() {
         usecase.fetchFavoriteStores(localStoreIdList)
+        showProgress.set(true)
     }
 
     fun resetHasFavoriteIds() {
         localStoreIdList.clear()
         usecase.resetCurrentCount()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        disposables.clear()
+        usecase.dispose()
     }
 }

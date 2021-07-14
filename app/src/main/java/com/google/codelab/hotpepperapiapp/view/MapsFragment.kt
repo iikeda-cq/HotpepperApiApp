@@ -60,10 +60,10 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMapsBinding.inflate(layoutInflater)
+        binding.viewModel = viewModel
+
         requireActivity().setTitle(R.string.view_map)
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
-
-        binding.isLoading = false
 
         return binding.root
     }
@@ -95,13 +95,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                     storeList.add(store)
                 }
                 binding.storePager.adapter?.notifyDataSetChanged()
-                binding.isLoading = false
             }.addTo(disposables)
 
         viewModel.errorStream
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy { failure ->
-                binding.isLoading = false
                 Snackbar.make(view, failure.message.message, Snackbar.LENGTH_SHORT)
                     .setAction(R.string.retry) {
                         failure.retry
@@ -143,7 +141,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        binding.isLoading = true
         when (requestCode) {
             MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION -> {
                 if (permissions.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -178,7 +175,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
                         // APIからお店の情報を取得する
                         viewModel.fetchStores(lastLocation.latitude, lastLocation.longitude)
-                        binding.isLoading = true
                     }
                 }
             }

@@ -51,7 +51,6 @@ class FavoriteStoreFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentFavoriteStoreBinding.inflate(inflater)
-        binding.isLoading = false
 
         requireActivity().setTitle(R.string.navigation_favorite)
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
@@ -69,7 +68,6 @@ class FavoriteStoreFragment : Fragment() {
         
         if (favoriteStoreList.isEmpty()) {
             viewModel.setup()
-            binding.isLoading = true
         }
 
         viewModel.favoriteStoresList
@@ -80,14 +78,11 @@ class FavoriteStoreFragment : Fragment() {
                 }
                 favoriteStoreList.addAll(stores.results.store)
                 groupAdapter.update(favoriteStoreList.distinct().map { StoreItem(it, requireContext()) })
-                binding.isLoading = false
             }.addTo(disposables)
 
         viewModel.hasNoFavoriteStores
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy {
-                binding.isLoading = false
-
                 requireContext().showAlertDialog(
                     R.string.no_favorite_title,
                     R.string.no_favorite_message,
@@ -98,7 +93,6 @@ class FavoriteStoreFragment : Fragment() {
         viewModel.errorStream
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy { failure ->
-                binding.isLoading = false
                 Snackbar.make(view, failure.message.message, Snackbar.LENGTH_SHORT)
                     .setAction(R.string.retry) {
                         failure.retry
@@ -112,7 +106,6 @@ class FavoriteStoreFragment : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (!recyclerView.canScrollVertically(1) && isMoreLoad) {
-                    binding.isLoading = true
                     viewModel.fetchFavoriteStores()
                 }
             }

@@ -1,5 +1,6 @@
 package com.google.codelab.hotpepperapiapp.viewModel
 
+import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.ViewModel
 import com.google.codelab.hotpepperapiapp.model.Failure
 import com.google.codelab.hotpepperapiapp.model.getMessage
@@ -18,21 +19,29 @@ class StoreListViewModel @Inject constructor(
 ) : ViewModel() {
     val storesList: PublishSubject<StoresResponse> = PublishSubject.create()
     val errorStream: PublishSubject<Failure> = PublishSubject.create()
-
+    val showProgress = ObservableBoolean()
     private val disposables = CompositeDisposable()
 
     fun fetchStores(lat: Double, lng: Double, start: Int = 1) {
         usecase.fetchStores(lat, lng, start)
+            .doOnSubscribe { showProgress.set(true) }
             .subscribeBy(
                 onSuccess = { stores ->
                     storesList.onNext(stores)
+                    showProgress.set(false)
                 },
                 onError = {
                     val f = Failure(getMessage(it)) {
                         fetchStores(lat, lng, start)
                     }
                     errorStream.onNext(f)
+                    showProgress.set(false)
                 }
             ).addTo(disposables)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        disposables.clear()
     }
 }

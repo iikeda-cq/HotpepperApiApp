@@ -1,5 +1,6 @@
 package com.google.codelab.hotpepperapiapp.usecase
 
+import androidx.annotation.CallSuper
 import com.google.codelab.hotpepperapiapp.data.SearchDataManagerImpl
 import com.google.codelab.hotpepperapiapp.model.Failure
 import com.google.codelab.hotpepperapiapp.model.StoreMapper
@@ -80,4 +81,8 @@ class FavoriteStoresUseCaseImpl @Inject constructor(
     override fun getFavoriteStoresStream(): Observable<StoresResponse> = favoriteStoreList.hide()
 
     override fun getErrorStream(): Observable<Failure> = errorStream.hide()
+
+    override fun dispose() {
+        disposables.clear()
+    }
 }
