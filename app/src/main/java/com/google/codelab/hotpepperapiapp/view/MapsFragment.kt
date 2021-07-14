@@ -100,7 +100,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         viewModel.errorStream
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy { failure ->
-                Snackbar.make(view, failure.message.message, Snackbar.LENGTH_SHORT)
+                Snackbar.make(view, failure.message.message, Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.retry) {
                         failure.retry
                     }.show()

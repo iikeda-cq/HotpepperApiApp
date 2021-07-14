@@ -1,5 +1,6 @@
 package com.google.codelab.hotpepperapiapp.viewModel
 
+import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.ViewModel
 import com.google.codelab.hotpepperapiapp.Signal
 import com.google.codelab.hotpepperapiapp.usecase.StoreWebViewUseCase
@@ -15,41 +16,16 @@ class StoreWebViewViewModel @Inject constructor(private val usecase: StoreWebVie
     ViewModel() {
     val addFavoriteStore: PublishSubject<Signal> = PublishSubject.create()
     val deleteFavoriteStore: PublishSubject<Signal> = PublishSubject.create()
-    val hasFavoriteStore: PublishSubject<Boolean> = PublishSubject.create()
     val errorStream: PublishSubject<Signal> = PublishSubject.create()
-    val onClickFab: PublishSubject<Signal> = PublishSubject.create()
+    val hasFavoriteStore = ObservableBoolean()
 
     private val disposables = CompositeDisposable()
-
-    fun addFavoriteStore(storeId: String) {
-        usecase.addFavoriteStore(storeId)
-            .subscribeBy(
-                onComplete = {
-                    addFavoriteStore.onNext(Signal)
-                },
-                onError = {
-                    errorStream.onNext(Signal)
-                }
-            ).addTo(disposables)
-    }
-
-    fun deleteFavoriteStore(storeId: String) {
-        usecase.deleteFavoriteStore(storeId)
-            .subscribeBy(
-                onComplete = {
-                    deleteFavoriteStore.onNext(Signal)
-                },
-                onError = {
-                    errorStream.onNext(Signal)
-                }
-            ).addTo(disposables)
-    }
 
     fun fetchFavoriteStore(storeId: String) {
         usecase.hasFavoriteStore(storeId)
             .subscribeBy(
                 onSuccess = { isFavorite ->
-                    hasFavoriteStore.onNext(isFavorite)
+                    hasFavoriteStore.set(isFavorite)
                 },
                 onError = {
                     errorStream.onNext(Signal)
@@ -57,7 +33,46 @@ class StoreWebViewViewModel @Inject constructor(private val usecase: StoreWebVie
             ).addTo(disposables)
     }
 
-    fun onClickFab() {
-        onClickFab.onNext(Signal)
+    fun onClickFab(storeId: String) {
+        if (hasFavoriteStore.get()) {
+            deleteFavoriteStore(storeId)
+        } else {
+            addFavoriteStore(storeId)
+        }
+    }
+
+    private fun toggleFavorite(isFavorite: Boolean) {
+        hasFavoriteStore.set(!isFavorite)
+    }
+
+    private fun addFavoriteStore(storeId: String) {
+        usecase.addFavoriteStore(storeId)
+            .subscribeBy(
+                onComplete = {
+                    addFavoriteStore.onNext(Signal)
+                    toggleFavorite(hasFavoriteStore.get())
+                },
+                onError = {
+                    errorStream.onNext(Signal)
+                }
+            ).addTo(disposables)
+    }
+
+    private fun deleteFavoriteStore(storeId: String) {
+        usecase.deleteFavoriteStore(storeId)
+            .subscribeBy(
+                onComplete = {
+                    deleteFavoriteStore.onNext(Signal)
+                    toggleFavorite(hasFavoriteStore.get())
+                },
+                onError = {
+                    errorStream.onNext(Signal)
+                }
+            ).addTo(disposables)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        disposables.clear()
     }
 }

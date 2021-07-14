@@ -29,7 +29,6 @@ class StoreWebViewFragment : Fragment() {
     private val url: String
         get() = checkNotNull(arguments?.getString(URL))
 
-    private var isFavorite = false
     private val disposables = CompositeDisposable()
 
     companion object {
@@ -60,19 +59,12 @@ class StoreWebViewFragment : Fragment() {
 
         binding.viewModel = viewModel
         binding.url = url
-        binding.isFab = isFavorite
-
-        viewModel.onClickFab
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy { toggleFavoriteStore(isFavorite) }
-            .addTo(disposables)
+        binding.storeId = storeId
 
         viewModel.addFavoriteStore
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy {
                 Toast.makeText(requireContext(), R.string.add_favorite, Toast.LENGTH_SHORT).show()
-                binding.isFab = !isFavorite
-                isFavorite = !isFavorite
             }.addTo(disposables)
 
         viewModel.deleteFavoriteStore
@@ -80,16 +72,6 @@ class StoreWebViewFragment : Fragment() {
             .subscribeBy {
                 Toast.makeText(requireContext(), R.string.delete_favorite, Toast.LENGTH_SHORT)
                     .show()
-                binding.isFab = !isFavorite
-                isFavorite = !isFavorite
-            }.addTo(disposables)
-
-        // すでにお気に入りに追加済みかどうかをチェックする
-        viewModel.hasFavoriteStore
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy { isFav ->
-                isFavorite = isFav
-                binding.isFab = isFav
             }.addTo(disposables)
 
         viewModel.errorStream
@@ -106,14 +88,6 @@ class StoreWebViewFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.fetchFavoriteStore(storeId)
-    }
-
-    private fun toggleFavoriteStore(isFav: Boolean) {
-        if (isFav) {
-            viewModel.deleteFavoriteStore(storeId)
-        } else {
-            viewModel.addFavoriteStore(storeId)
-        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
