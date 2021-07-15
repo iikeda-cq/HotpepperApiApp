@@ -33,7 +33,6 @@ class StoreListFragment : Fragment() {
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
     private val storeList: MutableList<NearStore> = ArrayList()
     private var startPage = 1
-    private var isMoreLoad = true
     private val disposables = CompositeDisposable()
 
     private val onItemClickListener = OnItemClickListener { item, _ ->
@@ -85,9 +84,6 @@ class StoreListFragment : Fragment() {
         viewModel.storesList
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy { stores ->
-                if (stores.results.totalPages < 20) {
-                    isMoreLoad = false
-                }
                 storeList.addAll(stores.results.store)
                 groupAdapter.update(storeList.map { StoreItem(it, requireContext()) })
 
@@ -108,7 +104,7 @@ class StoreListFragment : Fragment() {
         binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                if (!recyclerView.canScrollVertically(1) && isMoreLoad) {
+                if (!recyclerView.canScrollVertically(1) && viewModel.moreLoad.get()) {
                     viewModel.fetchStores(
                         lat,
                         lng,

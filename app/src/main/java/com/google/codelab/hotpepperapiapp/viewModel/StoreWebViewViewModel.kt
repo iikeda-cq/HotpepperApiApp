@@ -21,6 +21,7 @@ class StoreWebViewViewModel @Inject constructor(private val usecase: StoreWebVie
 
     private val disposables = CompositeDisposable()
 
+    // すでにお気に入りに登録済みかどうかをチェックする
     fun fetchFavoriteStore(storeId: String) {
         usecase.hasFavoriteStore(storeId)
             .subscribeBy(
@@ -39,10 +40,6 @@ class StoreWebViewViewModel @Inject constructor(private val usecase: StoreWebVie
         } else {
             addFavoriteStore(storeId)
         }
-    }
-
-    private fun toggleFavorite(isFavorite: Boolean) {
-        hasFavoriteStore.set(!isFavorite)
     }
 
     private fun addFavoriteStore(storeId: String) {
@@ -69,6 +66,10 @@ class StoreWebViewViewModel @Inject constructor(private val usecase: StoreWebVie
                     errorStream.onNext(Signal)
                 }
             ).addTo(disposables)
+    }
+
+    private fun toggleFavorite(isFavorite: Boolean) {
+        hasFavoriteStore.set(!isFavorite)
     }
 
     override fun onCleared() {

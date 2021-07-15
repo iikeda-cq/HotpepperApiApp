@@ -33,7 +33,6 @@ class FavoriteStoreFragment : Fragment() {
 
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
     private val favoriteStoreList: MutableList<NearStore> = ArrayList()
-    private var isMoreLoad = true
     private val disposables = CompositeDisposable()
 
     private val onItemClickListener = OnItemClickListener { item, _ ->
@@ -73,16 +72,15 @@ class FavoriteStoreFragment : Fragment() {
         viewModel.favoriteStoresList
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy { stores ->
-                if (stores.results.totalPages < 20) {
-                    isMoreLoad = false
-                }
                 favoriteStoreList.addAll(stores.results.store)
                 groupAdapter.update(favoriteStoreList.distinct().map { StoreItem(it, requireContext()) })
             }.addTo(disposables)
 
         viewModel.hasNoFavoriteStores
             .observeOn(AndroidSchedulers.mainThread())
+            .firstElement()
             .subscribeBy {
+                groupAdapter.update(favoriteStoreList.map { StoreItem(it, requireContext()) })
                 requireContext().showAlertDialog(
                     R.string.no_favorite_title,
                     R.string.no_favorite_message,
@@ -105,7 +103,7 @@ class FavoriteStoreFragment : Fragment() {
         binding.recyclerViewFavorite.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                if (!recyclerView.canScrollVertically(1) && isMoreLoad) {
+                if (!recyclerView.canScrollVertically(1) && viewModel.moreLoad.get()) {
                     viewModel.fetchFavoriteStores()
                 }
             }
@@ -116,7 +114,6 @@ class FavoriteStoreFragment : Fragment() {
         super.onPause()
         favoriteStoreList.clear()
         viewModel.resetHasFavoriteIds()
-        isMoreLoad = true
     }
 
     override fun onDestroyView() {

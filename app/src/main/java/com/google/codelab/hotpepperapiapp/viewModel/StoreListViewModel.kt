@@ -20,13 +20,20 @@ class StoreListViewModel @Inject constructor(
     val storesList: PublishSubject<StoresResponse> = PublishSubject.create()
     val errorStream: PublishSubject<Failure> = PublishSubject.create()
     val showProgress = ObservableBoolean()
+    val moreLoad = ObservableBoolean()
     private val disposables = CompositeDisposable()
 
     fun fetchStores(lat: Double, lng: Double, start: Int = 1) {
         usecase.fetchStores(lat, lng, start)
-            .doOnSubscribe { showProgress.set(true) }
+            .doOnSubscribe {
+                showProgress.set(true)
+                moreLoad.set(true)
+            }
             .subscribeBy(
                 onSuccess = { stores ->
+                    if (stores.results.store.size < 20){
+                        moreLoad.set(false)
+                    }
                     storesList.onNext(stores)
                     showProgress.set(false)
                 },

@@ -23,6 +23,7 @@ class FavoriteStoreViewModel @Inject constructor(
     val hasNoFavoriteStores: PublishSubject<Signal> = PublishSubject.create()
     val errorStream: PublishSubject<Failure> = PublishSubject.create()
     val showProgress = ObservableBoolean()
+    val moreLoad = ObservableBoolean()
 
     private val localStoreIdList: MutableList<StoreModel> = ArrayList()
     private val disposables = CompositeDisposable()
@@ -44,8 +45,12 @@ class FavoriteStoreViewModel @Inject constructor(
             }.addTo(disposables)
 
         usecase.getFavoriteStoresStream()
+            .doOnSubscribe { moreLoad.set(true) }
             .subscribeBy(
                 onNext = { stores ->
+                    if (stores.results.store.size < 20) {
+                        moreLoad.set(false)
+                    }
                     favoriteStoresList.onNext(stores)
                     showProgress.set(false)
                 },

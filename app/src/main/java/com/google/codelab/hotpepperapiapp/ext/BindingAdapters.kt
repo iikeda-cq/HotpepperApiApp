@@ -29,7 +29,7 @@ object BindingAdapters {
 
     @JvmStatic
     @BindingAdapter("showProgress")
-    fun ProgressBar.isShowProgressBar(isShow: Boolean) {
+    fun ProgressBar.showProgressBar(isShow: Boolean) {
         this.isVisible = isShow
     }
 }
