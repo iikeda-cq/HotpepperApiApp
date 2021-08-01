@@ -1,5 +1,6 @@
-package com.google.codelab.hotpepperapiapp
+package com.google.codelab.hotpepperapiapp.di
 
+import com.google.codelab.hotpepperapiapp.ApiRequest
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -16,7 +17,7 @@ import java.util.concurrent.TimeUnit
 
 @Module
 @InstallIn(SingletonComponent::class)
-object ApiClient {
+object ApiModule {
     private const val URL = "http://webservice.recruit.co.jp/hotpepper/gourmet/v1/" // BaseUrlを指定
 
     // Okhttp

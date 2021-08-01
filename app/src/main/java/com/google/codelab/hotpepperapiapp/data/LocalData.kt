@@ -5,12 +5,15 @@ import com.google.codelab.hotpepperapiapp.ext.deleteStore
 import com.google.codelab.hotpepperapiapp.ext.fetchStores
 import com.google.codelab.hotpepperapiapp.ext.hasFavoriteStore
 import com.google.codelab.hotpepperapiapp.model.Store
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Single
 import io.realm.Realm
 import io.realm.RealmResults
 import javax.inject.Inject
 
-class LocalData @Inject constructor(private val realm: Realm) {
+// java.lang.IllegalStateException: Call `Realm.init(Context)` before calling this method.
+class LocalData @Inject constructor(realm: Realm) {
     fun fetchLocalStoreIds(): RealmResults<Store> {
         return Realm.getDefaultInstance().use { realm ->
             realm.fetchStores()
