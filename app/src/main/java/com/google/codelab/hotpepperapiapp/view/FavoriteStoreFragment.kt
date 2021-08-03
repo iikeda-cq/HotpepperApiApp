@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
@@ -64,10 +63,8 @@ class FavoriteStoreFragment : Fragment() {
             layoutManager =
                 GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
         }
-        
-        if (favoriteStoreList.isEmpty()) {
-            viewModel.setup()
-        }
+
+        viewModel.fetchFavoriteStores(true)
 
         viewModel.favoriteStoresList
             .observeOn(AndroidSchedulers.mainThread())
@@ -80,6 +77,7 @@ class FavoriteStoreFragment : Fragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .firstElement()
             .subscribeBy {
+                favoriteStoreList.clear()
                 groupAdapter.update(favoriteStoreList.map { StoreItem(it, requireContext()) })
                 requireContext().showAlertDialog(
                     R.string.no_favorite_title,
@@ -110,11 +108,6 @@ class FavoriteStoreFragment : Fragment() {
         })
     }
 
-    override fun onPause() {
-        super.onPause()
-        favoriteStoreList.clear()
-        viewModel.resetHasFavoriteIds()
-    }
 
     override fun onDestroyView() {
         super.onDestroyView()

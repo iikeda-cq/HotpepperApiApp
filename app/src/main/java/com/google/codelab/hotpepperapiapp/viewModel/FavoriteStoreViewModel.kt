@@ -4,7 +4,6 @@ import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.ViewModel
 import com.google.codelab.hotpepperapiapp.Signal
 import com.google.codelab.hotpepperapiapp.model.Failure
-import com.google.codelab.hotpepperapiapp.model.StoreModel
 import com.google.codelab.hotpepperapiapp.model.getMessage
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 import com.google.codelab.hotpepperapiapp.usecase.FavoriteStoreUseCase
@@ -25,56 +24,32 @@ class FavoriteStoreViewModel @Inject constructor(
     val showProgress = ObservableBoolean()
     val moreLoad = ObservableBoolean()
 
-    private val localStoreIdList: MutableList<StoreModel> = ArrayList()
     private val disposables = CompositeDisposable()
 
-    fun setup() {
-        // Realmに登録されているお気に入りストアのIDを取得する
-        usecase.fetchLocalStoreIds()
+    fun fetchFavoriteStores(forceRefresh: Boolean = false) {
+        usecase.fetchFavoriteStores(forceRefresh)
+        showProgress.set(true)
+        moreLoad.set(true)
 
-        usecase.getLocalStoresIdsStream()
-            .doOnSubscribe { showProgress.set(true) }
-            .subscribeBy {
-                if (it.isEmpty()) {
-                    hasNoFavoriteStores.onNext(Signal)
-                    showProgress.set(false)
-                } else {
-                    localStoreIdList.addAll(it)
-                    usecase.fetchFavoriteStores(it)
-                }
-            }.addTo(disposables)
-
-        usecase.getFavoriteStoresStream()
-            .doOnSubscribe { moreLoad.set(true) }
+        usecase.getFavoriteStoreStream()
+            .doFinally { showProgress.set(false) }
             .subscribeBy(
-                onNext = { stores ->
-                    if (stores.results.store.size < 20) {
+                onNext = {
+                    if (it.results.store.size < 20) {
                         moreLoad.set(false)
                     }
-                    favoriteStoresList.onNext(stores)
-                    showProgress.set(false)
+                    favoriteStoresList.onNext(it)
                 },
                 onError = {
                     val f = Failure(getMessage(it)) {
-                        usecase.getLocalStoresIdsStream()
+                        fetchFavoriteStores(forceRefresh)
                     }
-                    errorStream.onNext(f)
-                    showProgress.set(false)
-                }
+                    errorStream.onNext(f)}
             ).addTo(disposables)
 
-        usecase.getErrorStream()
-            .subscribeBy { errorStream.onNext(it) }.addTo(disposables)
-    }
-
-    fun fetchFavoriteStores() {
-        usecase.fetchFavoriteStores(localStoreIdList)
-        showProgress.set(true)
-    }
-
-    fun resetHasFavoriteIds() {
-        localStoreIdList.clear()
-        usecase.resetCurrentCount()
+        usecase.getHasNoFavoriteStream()
+            .subscribeBy { hasNoFavoriteStores.onNext(Signal) }
+            .addTo(disposables)
     }
 
     override fun onCleared() {

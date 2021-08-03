@@ -1,11 +1,9 @@
 package com.google.codelab.hotpepperapiapp.usecase
 
-import androidx.annotation.CallSuper
+import com.google.codelab.hotpepperapiapp.Signal
 import com.google.codelab.hotpepperapiapp.data.SearchDataManagerImpl
 import com.google.codelab.hotpepperapiapp.model.Failure
 import com.google.codelab.hotpepperapiapp.model.StoreMapper
-import com.google.codelab.hotpepperapiapp.model.StoreModel
-import com.google.codelab.hotpepperapiapp.model.getMessage
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
@@ -19,68 +17,74 @@ import javax.inject.Inject
 class FavoriteStoresUseCaseImpl @Inject constructor(
     private val dataManager: SearchDataManagerImpl
 ) : FavoriteStoreUseCase {
-    private val localStoreIdList: PublishSubject<List<StoreModel>> = PublishSubject.create()
     private val favoriteStoreList: PublishSubject<StoresResponse> = PublishSubject.create()
-    private val responseTotalPages: PublishSubject<Int> = PublishSubject.create()
+    private val hasNoFavoriteStores: PublishSubject<Signal> = PublishSubject.create()
     private val errorStream: PublishSubject<Failure> = PublishSubject.create()
 
     private var currentStoresCount: Int = 0 // 現在何件まで取得済みかを格納する変数
+    private val favoriteIds: MutableList<String> = ArrayList()
 
     private val disposables = CompositeDisposable()
 
-    override fun fetchFavoriteStores(storeIdList: List<StoreModel>) {
-        var favoriteStoreIds: String? = null
+    companion object {
+        private const val LIMIT = 20
+    }
 
-        responseTotalPages.subscribeBy {
-            currentStoresCount += it
+    override fun fetchFavoriteStores(forceRefresh: Boolean) {
+        if (forceRefresh) {
+            favoriteIds.clear()
+            currentStoresCount = 0
         }
 
-        // queryに含められるstore_idが20件までのため、すでにフェッチ済みのstore_idの数だけリストから削除する
-        storeIdList.drop(currentStoresCount)
-            .forEachIndexed { index, store ->
-                // APIの仕様上、一度に20件までのデータしか取得できないため
-                if (index < 20) {
-                    favoriteStoreIds = if (favoriteStoreIds.isNullOrBlank()) {
-                        store.storeId
-                    } else {
-                        favoriteStoreIds + "," + store.storeId
+        if (favoriteIds.isEmpty()) {
+            dataManager.fetchLocalStoreIds()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy { storeIds ->
+                    if (storeIds.isEmpty()) {
+                        hasNoFavoriteStores.onNext(Signal)
                     }
-                }
-            }
-
-        dataManager.fetchFavoriteStores(favoriteStoreIds ?: return)
-            .subscribeOn(Schedulers.io())
-            .subscribeBy(
-                onSuccess = {
-                    responseTotalPages.onNext(it.body()?.results?.totalPages)
-                    favoriteStoreList.onNext(it.body())
-                },
-                onError = {
-                    val f = Failure(getMessage(it)) {
-                        fetchFavoriteStores(storeIdList)
-                    }
-                    errorStream.onNext(f)
-                }
-            ).addTo(disposables)
+                    StoreMapper.transform(storeIds).map { favoriteIds.add(it.storeId) }
+                    createStoreIdQuery(favoriteIds)?.let { fetchStores(it) }
+                }.addTo(disposables)
+        } else {
+            createStoreIdQuery(favoriteIds)?.let { fetchStores(it) }
+        }
     }
 
-    override fun fetchLocalStoreIds() {
-        dataManager.fetchLocalStoreIds()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy { localStoreIdList.onNext(StoreMapper.transform(it)) }
-            .addTo(disposables)
-    }
+    override fun getFavoriteStoreStream(): Observable<StoresResponse> = favoriteStoreList.hide()
 
-    override fun resetCurrentCount() {
-        currentStoresCount = 0
-    }
-
-    override fun getLocalStoresIdsStream(): Observable<List<StoreModel>> = localStoreIdList.hide()
-
-    override fun getFavoriteStoresStream(): Observable<StoresResponse> = favoriteStoreList.hide()
+    override fun getHasNoFavoriteStream(): Observable<Signal> = hasNoFavoriteStores.hide()
 
     override fun getErrorStream(): Observable<Failure> = errorStream.hide()
+
+    private fun createStoreIdQuery(storeIds: MutableList<String>): String? {
+        var favoriteStoreIds: String? = null
+
+        val nextListCount = if (storeIds.size - currentStoresCount < LIMIT) {
+            storeIds.size - currentStoresCount
+        } else {
+            LIMIT
+        }
+
+        // queryに含められるstore_idが20件までのため
+        storeIds.subList(currentStoresCount, nextListCount).forEach { storeId ->
+            favoriteStoreIds = if (favoriteStoreIds.isNullOrBlank()) {
+                storeId
+            } else {
+                "$favoriteStoreIds,${storeId}"
+            }
+        }
+        return favoriteStoreIds
+    }
+
+    private fun fetchStores(ids: String) {
+        dataManager.fetchFavoriteStores(ids)
+            .subscribeBy { response ->
+                favoriteStoreList.onNext(response.body())
+                response.body()?.results?.totalPages?.let { currentStoresCount = it }
+            }.addTo(disposables)
+    }
 
     override fun dispose() {
         disposables.clear()
