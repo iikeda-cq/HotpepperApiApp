@@ -4,20 +4,21 @@ import com.google.codelab.hotpepperapiapp.ext.addStore
 import com.google.codelab.hotpepperapiapp.ext.deleteStore
 import com.google.codelab.hotpepperapiapp.ext.fetchStores
 import com.google.codelab.hotpepperapiapp.ext.hasFavoriteStore
-import com.google.codelab.hotpepperapiapp.model.Store
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import com.google.codelab.hotpepperapiapp.model.StoreMapper
 import io.reactivex.rxjava3.core.Completable
-import io.reactivex.rxjava3.core.Single
 import io.realm.Realm
-import io.realm.RealmResults
 import javax.inject.Inject
 
 // java.lang.IllegalStateException: Call `Realm.init(Context)` before calling this method.
 class LocalData @Inject constructor(realm: Realm) {
-    fun fetchLocalStoreIds(): RealmResults<Store> {
-        return Realm.getDefaultInstance().use { realm ->
-            realm.fetchStores()
+    fun fetchLocalStoreIds(): List<String> {
+        val favoriteIds: MutableList<String> = ArrayList()
+        Realm.getDefaultInstance().use { realm ->
+            val storeIds = realm.fetchStores()
+            StoreMapper.transform(storeIds).map { favoriteIds.add(it.storeId) }
         }
+
+        return favoriteIds
     }
 
     fun addFavoriteStore(storeId: String): Completable {

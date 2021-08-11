@@ -44,8 +44,7 @@ class FavoriteStoresUseCaseImpl @Inject constructor(
                     if (storeIds.isEmpty()) {
                         hasNoFavoriteStores.onNext(Signal)
                     }
-                    StoreMapper.transform(storeIds).map { favoriteIds.add(it.storeId) }
-                    createStoreIdQuery(favoriteIds)?.let { fetchStores(it) }
+                    createStoreIdQuery(storeIds)?.let { fetchStores(it) }
                 }.addTo(disposables)
         } else {
             createStoreIdQuery(favoriteIds)?.let { fetchStores(it) }
@@ -58,7 +57,7 @@ class FavoriteStoresUseCaseImpl @Inject constructor(
 
     override fun getErrorStream(): Observable<Failure> = errorStream.hide()
 
-    private fun createStoreIdQuery(storeIds: MutableList<String>): String? {
+    private fun createStoreIdQuery(storeIds: List<String>): String? {
         var favoriteStoreIds: String? = null
 
         val nextListCount = if (storeIds.size - currentStoresCount < LIMIT) {

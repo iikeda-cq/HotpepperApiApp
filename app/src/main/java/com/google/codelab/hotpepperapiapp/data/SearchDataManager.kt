@@ -16,7 +16,7 @@ interface SearchDataManager {
 
     fun fetchFavoriteStores(storeId: String): Single<Response<StoresResponse>>
 
-    fun fetchLocalStoreIds(): Single<RealmResults<Store>>
+    fun fetchLocalStoreIds(): Single<List<String>>
 
     fun addFavoriteStore(storeId: String): Completable
 
