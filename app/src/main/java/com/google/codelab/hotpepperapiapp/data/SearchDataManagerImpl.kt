@@ -38,6 +38,6 @@ class SearchDataManagerImpl @Inject constructor(
     }
 
     override fun hasFavoriteStore(storeId: String): Single<Boolean> {
-        return Single.just(local.hasFavoriteStore(storeId))
+        return Single.fromCallable { local.hasFavoriteStore(storeId) }
     }
 }
