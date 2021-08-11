@@ -8,11 +8,17 @@ import io.realm.RealmResults
 import retrofit2.Response
 
 interface SearchDataManager {
+//    fun fetchStores(
+//        lat: Double,
+//        lng: Double,
+//        start: Int = 1
+//    ): Single<Response<StoresResponse>>
+
     fun fetchStores(
         lat: Double,
         lng: Double,
         start: Int = 1
-    ): Single<Response<StoresResponse>>
+    ): Single<StoresResponse>
 
     fun fetchFavoriteStores(storeId: String): Single<Response<StoresResponse>>
 

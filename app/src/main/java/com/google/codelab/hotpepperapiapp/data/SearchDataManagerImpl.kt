@@ -21,8 +21,8 @@ class SearchDataManagerImpl @Inject constructor(
         lat: Double,
         lng: Double,
         start: Int
-    ): Single<Response<StoresResponse>> {
-        return remote.fetchStores(lat, lng, start)
+    ): Single<StoresResponse> {
+        return remote.fetchStores(lat, lng, start).flatMap { Single.just(it.body()) }
     }
 
     override fun fetchLocalStoreIds(): Single<RealmResults<Store>> {
