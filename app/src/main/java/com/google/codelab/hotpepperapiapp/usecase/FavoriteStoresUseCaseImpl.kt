@@ -1,9 +1,9 @@
 package com.google.codelab.hotpepperapiapp.usecase
 
 import com.google.codelab.hotpepperapiapp.Signal
+import com.google.codelab.hotpepperapiapp.data.SearchDataManager
 import com.google.codelab.hotpepperapiapp.data.SearchDataManagerImpl
 import com.google.codelab.hotpepperapiapp.model.Failure
-import com.google.codelab.hotpepperapiapp.model.StoreMapper
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
@@ -12,10 +12,11 @@ import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.PublishSubject
+import java.lang.Integer.min
 import javax.inject.Inject
 
 class FavoriteStoresUseCaseImpl @Inject constructor(
-    private val dataManager: SearchDataManagerImpl
+    private val dataManager: SearchDataManager
 ) : FavoriteStoreUseCase {
     private val favoriteStoreList: PublishSubject<StoresResponse> = PublishSubject.create()
     private val hasNoFavoriteStores: PublishSubject<Signal> = PublishSubject.create()
@@ -44,10 +45,10 @@ class FavoriteStoresUseCaseImpl @Inject constructor(
                     if (storeIds.isEmpty()) {
                         hasNoFavoriteStores.onNext(Signal)
                     }
-                    createStoreIdQuery(storeIds)?.let { fetchStores(it) }
+                    fetchStores(createStoreIdQuery(storeIds))
                 }.addTo(disposables)
         } else {
-            createStoreIdQuery(favoriteIds)?.let { fetchStores(it) }
+            fetchStores(createStoreIdQuery(favoriteIds))
         }
     }
 
@@ -57,24 +58,15 @@ class FavoriteStoresUseCaseImpl @Inject constructor(
 
     override fun getErrorStream(): Observable<Failure> = errorStream.hide()
 
-    private fun createStoreIdQuery(storeIds: List<String>): String? {
-        var favoriteStoreIds: String? = null
-
-        val nextListCount = if (storeIds.size - currentStoresCount < LIMIT) {
+    private fun createStoreIdQuery(storeIds: List<String>): String {
+        val nextListCount = if (min(storeIds.size - currentStoresCount, LIMIT) > 0) {
             storeIds.size - currentStoresCount
         } else {
             LIMIT
         }
 
         // queryに含められるstore_idが20件までのため
-        storeIds.subList(currentStoresCount, nextListCount).forEach { storeId ->
-            favoriteStoreIds = if (favoriteStoreIds.isNullOrBlank()) {
-                storeId
-            } else {
-                "$favoriteStoreIds,${storeId}"
-            }
-        }
-        return favoriteStoreIds
+        return storeIds.subList(currentStoresCount, nextListCount).joinToString(",")
     }
 
     private fun fetchStores(ids: String) {
