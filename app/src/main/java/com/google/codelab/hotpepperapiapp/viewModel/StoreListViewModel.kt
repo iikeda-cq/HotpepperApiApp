@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.kotlin.subscribeBy
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
 import javax.inject.Inject
 
@@ -21,10 +22,11 @@ class StoreListViewModel @Inject constructor(
     val errorStream: PublishSubject<Failure> = PublishSubject.create()
     val showProgress = ObservableBoolean()
     val moreLoad = ObservableBoolean()
+    val hasLocation: BehaviorSubject<Boolean> = BehaviorSubject.create()
     private val disposables = CompositeDisposable()
 
-    fun fetchStores(lat: Double, lng: Double, start: Int = 1) {
-        usecase.fetchStores(lat, lng, start)
+    fun fetchStores(start: Int = 1) {
+        usecase.fetchStores(start)
             .doOnSubscribe {
                 showProgress.set(true)
                 moreLoad.set(true)
@@ -39,12 +41,18 @@ class StoreListViewModel @Inject constructor(
                 },
                 onError = {
                     val f = Failure(getMessage(it)) {
-                        fetchStores(lat, lng, start)
+                        fetchStores(start)
                     }
                     errorStream.onNext(f)
                     showProgress.set(false)
                 }
             ).addTo(disposables)
+    }
+
+    fun checkLocationPermission() {
+        usecase.checkLocationPermission()
+            .subscribeBy { hasLocation.onNext(it) }
+            .addTo(disposables)
     }
 
     override fun onCleared() {

@@ -10,7 +10,6 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
-import com.google.codelab.hotpepperapiapp.CurrentLatLng
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreListBinding
 import com.google.codelab.hotpepperapiapp.ext.showAlertDialog
@@ -60,26 +59,27 @@ class StoreListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (CurrentLatLng.lat == null || CurrentLatLng.lng == null) {
-            requireContext().showAlertDialog(
-                R.string.no_locations_title,
-                R.string.no_locations_message,
-                parentFragmentManager
-            )
-        }
-
-        val lat = CurrentLatLng.lat ?: return
-        val lng = CurrentLatLng.lng ?: return
-
         binding.recyclerView.apply {
             adapter = groupAdapter
             layoutManager =
                 GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
         }
 
-        if (storeList.isEmpty()) {
-            viewModel.fetchStores(lat, lng)
-        }
+        viewModel.checkLocationPermission()
+
+        viewModel.hasLocation
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy { hasLocation ->
+                if (hasLocation) {
+                    viewModel.fetchStores()
+                } else {
+                    requireContext().showAlertDialog(
+                        R.string.no_locations_title,
+                        R.string.no_locations_message,
+                        parentFragmentManager
+                    )
+                }
+            }.addTo(disposables)
 
         viewModel.storesList
             .observeOn(AndroidSchedulers.mainThread())
@@ -106,8 +106,6 @@ class StoreListFragment : Fragment() {
                 super.onScrolled(recyclerView, dx, dy)
                 if (!recyclerView.canScrollVertically(1) && viewModel.moreLoad.get()) {
                     viewModel.fetchStores(
-                        lat,
-                        lng,
                         startPage
                     )
                 }

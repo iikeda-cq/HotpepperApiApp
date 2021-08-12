@@ -19,7 +19,6 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.snackbar.Snackbar
-import com.google.codelab.hotpepperapiapp.CurrentLatLng
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
 import com.google.codelab.hotpepperapiapp.ext.showFragment
@@ -167,14 +166,13 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 override fun onLocationResult(locationResult: LocationResult?) {
                     super.onLocationResult(locationResult)
                     locationResult?.lastLocation?.let { lastLocation ->
-                        CurrentLatLng.lat = lastLocation.latitude
-                        CurrentLatLng.lng = lastLocation.longitude
                         val currentLatLng =
                             LatLng(lastLocation.latitude, lastLocation.longitude)
                         map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 18.0f))
 
+                        viewModel.saveLocation(lastLocation.latitude, lastLocation.longitude)
                         // APIからお店の情報を取得する
-                        viewModel.fetchStores(lastLocation.latitude, lastLocation.longitude)
+                        viewModel.fetchStores()
                     }
                 }
             }

@@ -21,8 +21,8 @@ class MapsViewModel @Inject constructor(private val usecase: MapsUseCase) : View
 
     private val disposables = CompositeDisposable()
 
-    fun fetchStores(lat: Double, lng: Double) {
-        usecase.fetchStores(lat, lng)
+    fun fetchStores() {
+        usecase.fetchStores()
             .doOnSubscribe { showProgress.set(true) }
             .subscribeBy(
                 onSuccess = { stores ->
@@ -31,12 +31,16 @@ class MapsViewModel @Inject constructor(private val usecase: MapsUseCase) : View
                 },
                 onError = {
                     val f = Failure(getMessage(it)) {
-                        fetchStores(lat, lng)
+                        fetchStores()
                     }
                     errorStream.onNext(f)
                     showProgress.set(false)
                 }
             ).addTo(disposables)
+    }
+
+    fun saveLocation(lat: Double, lng: Double) {
+        usecase.saveLocation(lat,lng)
     }
 
     override fun onCleared() {

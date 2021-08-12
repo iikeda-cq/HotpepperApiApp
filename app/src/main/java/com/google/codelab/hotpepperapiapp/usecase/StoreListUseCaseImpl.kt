@@ -13,15 +13,17 @@ class StoreListUseCaseImpl @Inject constructor(
 ): StoreListUseCase {
 
     override fun fetchStores(
-        lat: Double,
-        lng: Double,
         start: Int
     ): Single<StoresResponse> {
-        return dataManager.fetchStores(lat, lng, start)
+        return dataManager.fetchStores(start)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map {
                 it.body()
             }
+    }
+
+    override fun checkLocationPermission(): Single<Boolean> {
+        return dataManager.hasLocation()
     }
 }

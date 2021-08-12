@@ -10,15 +10,16 @@ import javax.inject.Inject
 class MapsUseCaseImpl @Inject constructor(
     private val dataManager: SearchDataManager
 ) : MapsUseCase {
-    override fun fetchStores(
-        lat: Double,
-        lng: Double
-    ): Single<StoresResponse> {
-        return dataManager.fetchStores(lat, lng)
+    override fun fetchStores(): Single<StoresResponse> {
+        return dataManager.fetchStores()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .map {
                 it.body()
             }
+    }
+
+    override fun saveLocation(lat: Double, lng: Double) {
+        dataManager.saveLocation(lat, lng)
     }
 }
