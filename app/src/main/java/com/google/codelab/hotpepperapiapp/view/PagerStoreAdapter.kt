@@ -5,10 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.google.codelab.hotpepperapiapp.databinding.PagerStoreBinding
 import com.google.codelab.hotpepperapiapp.model.response.NearStore
+import com.google.codelab.hotpepperapiapp.model.businessmodel.Store
 
 class PagerStoreAdapter(
-    private val store: List<NearStore>,
-    private val onCellClick: (NearStore) -> Unit
+    private val store: List<Store>,
+    private val onCellClick: (Store) -> Unit
 ) :
     RecyclerView.Adapter<PagerViewHolder>() {
 
@@ -31,7 +32,7 @@ class PagerStoreAdapter(
 
 class PagerViewHolder(val binding: PagerStoreBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(store: NearStore) {
+    fun bind(store: Store) {
         binding.item = store
     }
 }

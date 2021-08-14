@@ -23,6 +23,7 @@ import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
 import com.google.codelab.hotpepperapiapp.ext.showFragment
 import com.google.codelab.hotpepperapiapp.model.response.NearStore
+import com.google.codelab.hotpepperapiapp.model.businessmodel.Store
 import com.google.codelab.hotpepperapiapp.util.MapUtils
 import com.google.codelab.hotpepperapiapp.util.MapUtils.addMarker
 import com.google.codelab.hotpepperapiapp.viewModel.MapsViewModel
@@ -36,7 +37,7 @@ import io.reactivex.rxjava3.kotlin.subscribeBy
 class MapsFragment : Fragment(), OnMapReadyCallback {
     private val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
     private var locationCallback: LocationCallback? = null
-    private val storeList: MutableList<NearStore> = ArrayList()
+    private val storeList: MutableList<Store> = ArrayList()
     private val disposables = CompositeDisposable()
 
     // マーカーとViewPagerを紐づけるための変数
@@ -81,7 +82,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
                 StoreWebViewFragment.newInstance(
                     storeList[position].id,
-                    storeList[position].urls.url
+                    storeList[position].urls
                 ).showFragment(parentFragmentManager)
             }
 
@@ -89,7 +90,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         viewModel.storesList
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy {
-                it.results.store.map { store ->
+                it.store.map { store ->
                     mapMarkerPosition = addMarker(map, store, mapMarkerPosition)
                     storeList.add(store)
                 }

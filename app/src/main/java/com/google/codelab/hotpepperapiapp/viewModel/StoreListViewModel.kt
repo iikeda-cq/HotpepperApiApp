@@ -4,8 +4,8 @@ import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.ViewModel
 import com.google.codelab.hotpepperapiapp.model.Failure
 import com.google.codelab.hotpepperapiapp.model.getMessage
-import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 import com.google.codelab.hotpepperapiapp.usecase.StoreListUseCaseImpl
+import com.google.codelab.hotpepperapiapp.model.businessmodel.StoreListBusinessModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
@@ -18,7 +18,7 @@ import javax.inject.Inject
 class StoreListViewModel @Inject constructor(
     private val usecase: StoreListUseCaseImpl
 ) : ViewModel() {
-    val storesList: PublishSubject<StoresResponse> = PublishSubject.create()
+    val storesList: PublishSubject<StoreListBusinessModel> = PublishSubject.create()
     val errorStream: PublishSubject<Failure> = PublishSubject.create()
     val showProgress = ObservableBoolean()
     val moreLoad = ObservableBoolean()
@@ -33,7 +33,7 @@ class StoreListViewModel @Inject constructor(
             }
             .subscribeBy(
                 onSuccess = { stores ->
-                    if (stores.results.store.size < 20){
+                    if (stores.store.size < 20){
                         moreLoad.set(false)
                     }
                     storesList.onNext(stores)

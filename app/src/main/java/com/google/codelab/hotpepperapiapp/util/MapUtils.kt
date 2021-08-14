@@ -8,6 +8,7 @@ import androidx.core.app.ActivityCompat
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.*
 import com.google.codelab.hotpepperapiapp.model.response.NearStore
+import com.google.codelab.hotpepperapiapp.model.businessmodel.Store
 
 object MapUtils {
     private const val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
@@ -40,7 +41,7 @@ object MapUtils {
         }
     }
 
-    fun addMarker(map: GoogleMap, store: NearStore, position: Int): Int {
+    fun addMarker(map: GoogleMap, store: Store, position: Int): Int {
         val pin: Marker = map.addMarker(
             MarkerOptions()
                 .position(LatLng(store.lat, store.lng))

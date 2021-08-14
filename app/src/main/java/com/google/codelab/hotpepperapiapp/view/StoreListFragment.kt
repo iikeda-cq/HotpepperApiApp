@@ -15,6 +15,7 @@ import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreListBinding
 import com.google.codelab.hotpepperapiapp.ext.showAlertDialog
 import com.google.codelab.hotpepperapiapp.ext.showFragment
 import com.google.codelab.hotpepperapiapp.model.response.NearStore
+import com.google.codelab.hotpepperapiapp.model.businessmodel.Store
 import com.google.codelab.hotpepperapiapp.viewModel.StoreListViewModel
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
@@ -30,7 +31,7 @@ class StoreListFragment : Fragment() {
     private lateinit var binding: FragmentStoreListBinding
     private val viewModel: StoreListViewModel by viewModels()
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
-    private val storeList: MutableList<NearStore> = ArrayList()
+    private val storeList: MutableList<Store> = ArrayList()
     private var startPage = 1
     private val disposables = CompositeDisposable()
 
@@ -40,7 +41,7 @@ class StoreListFragment : Fragment() {
 
         StoreWebViewFragment.newInstance(
             storeList[index].id,
-            storeList[index].urls.url
+            storeList[index].urls
         ).showFragment(parentFragmentManager)
     }
 
@@ -84,10 +85,10 @@ class StoreListFragment : Fragment() {
         viewModel.storesList
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy { stores ->
-                storeList.addAll(stores.results.store)
+                storeList.addAll(stores.store)
                 groupAdapter.update(storeList.map { StoreItem(it, requireContext()) })
 
-                startPage += stores.results.totalPages
+                startPage += stores.totalPages
             }.addTo(disposables)
 
         viewModel.errorStream
