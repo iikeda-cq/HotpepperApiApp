@@ -6,6 +6,7 @@ import com.google.codelab.hotpepperapiapp.model.Failure
 import com.google.codelab.hotpepperapiapp.model.getMessage
 import com.google.codelab.hotpepperapiapp.usecase.StoreListUseCaseImpl
 import com.google.codelab.hotpepperapiapp.model.businessmodel.StoreListBusinessModel
+import com.google.codelab.hotpepperapiapp.usecase.StoreListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
@@ -16,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StoreListViewModel @Inject constructor(
-    private val usecase: StoreListUseCaseImpl
+    private val usecase: StoreListUseCase
 ) : ViewModel() {
     val storesList: PublishSubject<StoreListBusinessModel> = PublishSubject.create()
     val errorStream: PublishSubject<Failure> = PublishSubject.create()

@@ -2,6 +2,7 @@ package com.google.codelab.hotpepperapiapp.data
 
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 import com.google.codelab.hotpepperapiapp.model.businessmodel.StoreListBusinessModel
+import com.google.codelab.hotpepperapiapp.model.businessmodel.StoreListMapper
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.subjects.BehaviorSubject
@@ -23,7 +24,7 @@ class SearchDataManagerImpl @Inject constructor(
      */
     override fun fetchFavoriteStores(storeId: String): Single<StoreListBusinessModel> {
         return remote.fetchFavoriteStores(storeId)
-            .map { StoreListBusinessModel.transform(it) }
+            .map { StoreListMapper.transform(it) }
     }
 
     // 修正前
@@ -32,7 +33,7 @@ class SearchDataManagerImpl @Inject constructor(
 
     override fun fetchStores(start: Int): Single<StoreListBusinessModel> {
         return remote.fetchStores(lat.value, lng.value, start)
-            .map { StoreListBusinessModel.transform(it) }
+            .map { StoreListMapper.transform(it) }
     }
 
     override fun fetchLocalStoreIds(): Single<List<String>> {
