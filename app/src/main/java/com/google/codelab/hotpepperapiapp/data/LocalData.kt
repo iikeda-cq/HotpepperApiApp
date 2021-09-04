@@ -10,7 +10,7 @@ import io.realm.Realm
 import javax.inject.Inject
 
 // java.lang.IllegalStateException: Call `Realm.init(Context)` before calling this method.
-class LocalData @Inject constructor(realm: Realm) {
+class LocalData @Inject constructor() {
     fun fetchLocalStoreIds(): List<String> {
         val favoriteIds: MutableList<String> = ArrayList()
         Realm.getDefaultInstance().use { realm ->

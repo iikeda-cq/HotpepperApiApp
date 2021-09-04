@@ -32,18 +32,19 @@ class FavoriteStoreViewModel @Inject constructor(
         moreLoad.set(true)
 
         usecase.getFavoriteStoreStream()
-            .doFinally { showProgress.set(false) }
             .subscribeBy(
                 onNext = {
                     if (it.results.store.size < 20) {
                         moreLoad.set(false)
                     }
                     favoriteStoresList.onNext(it)
+                    showProgress.set(false)
                 },
                 onError = {
                     val f = Failure(getMessage(it)) {
                         fetchFavoriteStores(forceRefresh)
                     }
+                    showProgress.set(false)
                     errorStream.onNext(f)}
             ).addTo(disposables)
 
