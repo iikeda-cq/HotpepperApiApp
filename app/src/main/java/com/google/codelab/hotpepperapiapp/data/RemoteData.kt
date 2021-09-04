@@ -1,6 +1,7 @@
 package com.google.codelab.hotpepperapiapp.data
 
 import com.google.codelab.hotpepperapiapp.ApiRequest
+import com.google.codelab.hotpepperapiapp.BuildConfig
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 import io.reactivex.rxjava3.core.Single
 import retrofit2.Response
@@ -10,7 +11,6 @@ class RemoteData @Inject constructor(
     private val api: ApiRequest
 ) {
     companion object {
-        private const val KEY = "970479567de67028"
         private const val FORMAT = "json"
         private const val COUNT = 20
         private const val RANGE = 3
@@ -23,7 +23,7 @@ class RemoteData @Inject constructor(
         start: Int = 1
     ): Single<Response<StoresResponse>> {
         return api.fetchNearStores(
-            KEY, COUNT, lat, lng, start, RANGE, FORMAT
+            BuildConfig.API_KEY, COUNT, lat, lng, start, RANGE, FORMAT
         )
     }
 
@@ -31,7 +31,7 @@ class RemoteData @Inject constructor(
         storeId: String
     ): Single<Response<StoresResponse>> {
         return api.fetchFavoriteStores(
-            KEY, COUNT, storeId, FORMAT
+            BuildConfig.API_KEY, COUNT, storeId, FORMAT
         )
     }
 }

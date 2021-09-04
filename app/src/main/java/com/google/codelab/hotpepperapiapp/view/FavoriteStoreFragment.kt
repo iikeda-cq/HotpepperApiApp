@@ -50,6 +50,7 @@ class FavoriteStoreFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentFavoriteStoreBinding.inflate(inflater)
+        binding.viewModel = viewModel
 
         requireActivity().setTitle(R.string.navigation_favorite)
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)

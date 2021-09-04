@@ -39,19 +39,3 @@ abstract class RepositoryModule {
     abstract fun bindFavoriteStoreListUseCase(favoriteStoresUseCaseImpl: FavoriteStoresUseCaseImpl): FavoriteStoreUseCase
 }
 
-@Module
-@InstallIn(SingletonComponent::class)
-object RealmModule {
-    @Provides
-    @Singleton
-    fun providesRealmDatabase(
-        @ApplicationContext context: Context
-    ): Realm {
-        Realm.init(context)
-        val realmConfiguration = RealmConfiguration
-            .Builder()
-            .build()
-        Realm.setDefaultConfiguration(realmConfiguration)
-        return Realm.getDefaultInstance()
-    }
-}
