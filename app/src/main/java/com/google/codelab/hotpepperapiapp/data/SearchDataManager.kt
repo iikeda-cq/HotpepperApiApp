@@ -1,16 +1,15 @@
 package com.google.codelab.hotpepperapiapp.data
 
-import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
+import com.google.codelab.hotpepperapiapp.model.businessmodel.StoreListBusinessModel
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
-import retrofit2.Response
 
 interface SearchDataManager {
     fun fetchStores(
         start: Int = 1
-    ): Single<Response<StoresResponse>>
+    ): Single<StoreListBusinessModel>
 
-    fun fetchFavoriteStores(storeId: String): Single<Response<StoresResponse>>
+    fun fetchFavoriteStores(storeId: String): Single<StoreListBusinessModel>
 
     fun fetchLocalStoreIds(): Single<List<String>>
 

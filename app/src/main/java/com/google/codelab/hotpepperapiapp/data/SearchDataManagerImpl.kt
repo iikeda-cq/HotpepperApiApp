@@ -1,10 +1,10 @@
 package com.google.codelab.hotpepperapiapp.data
 
-import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
+import com.google.codelab.hotpepperapiapp.model.businessmodel.StoreListBusinessModel
+import com.google.codelab.hotpepperapiapp.model.businessmodel.StoreListMapper
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.subjects.BehaviorSubject
-import retrofit2.Response
 import javax.inject.Inject
 
 class SearchDataManagerImpl @Inject constructor(
@@ -14,14 +14,21 @@ class SearchDataManagerImpl @Inject constructor(
     val lat: BehaviorSubject<Double> = BehaviorSubject.create()
     val lng: BehaviorSubject<Double> = BehaviorSubject.create()
 
-    override fun fetchFavoriteStores(storeId: String): Single<Response<StoresResponse>> {
+    /**
+     * 修正前は戻り値の型が Response<StoresResponse> であり、UseCaseがRepositoryやAPI側に依存していた。
+     * 戻り値を[StoreListBusinessModel]にすることで
+     *  1. アプリでレスポンスのデータが扱いやすくなる
+     *  2. UseCaseがRepositoryに依存することがなくなる
+     *  3. UseCaseがAPI側の仕様変更を気にしなくてよくなった
+     */
+    override fun fetchFavoriteStores(storeId: String): Single<StoreListBusinessModel> {
         return remote.fetchFavoriteStores(storeId)
+            .map { StoreListMapper.transform(it) }
     }
 
-    override fun fetchStores(
-        start: Int
-    ): Single<Response<StoresResponse>> {
+    override fun fetchStores(start: Int): Single<StoreListBusinessModel> {
         return remote.fetchStores(lat.value, lng.value, start)
+            .map { StoreListMapper.transform(it) }
     }
 
     override fun fetchLocalStoreIds(): Single<List<String>> {

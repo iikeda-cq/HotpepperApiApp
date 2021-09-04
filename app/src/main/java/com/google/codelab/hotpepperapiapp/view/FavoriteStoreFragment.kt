@@ -15,6 +15,7 @@ import com.google.codelab.hotpepperapiapp.databinding.FragmentFavoriteStoreBindi
 import com.google.codelab.hotpepperapiapp.ext.showAlertDialog
 import com.google.codelab.hotpepperapiapp.ext.showFragment
 import com.google.codelab.hotpepperapiapp.model.response.NearStore
+import com.google.codelab.hotpepperapiapp.model.businessmodel.Store
 import com.google.codelab.hotpepperapiapp.viewModel.FavoriteStoreViewModel
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.GroupieViewHolder
@@ -31,7 +32,7 @@ class FavoriteStoreFragment : Fragment() {
     private val viewModel: FavoriteStoreViewModel by viewModels()
 
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
-    private val favoriteStoreList: MutableList<NearStore> = ArrayList()
+    private val favoriteStoreList: MutableList<Store> = ArrayList()
     private val disposables = CompositeDisposable()
 
     private val onItemClickListener = OnItemClickListener { item, _ ->
@@ -40,7 +41,7 @@ class FavoriteStoreFragment : Fragment() {
 
         StoreWebViewFragment.newInstance(
             favoriteStoreList[index].id,
-            favoriteStoreList[index].urls.url
+            favoriteStoreList[index].urls
         ).showFragment(parentFragmentManager)
     }
 
@@ -70,7 +71,7 @@ class FavoriteStoreFragment : Fragment() {
         viewModel.favoriteStoresList
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeBy { stores ->
-                favoriteStoreList.addAll(stores.results.store)
+                favoriteStoreList.addAll(stores)
                 groupAdapter.update(favoriteStoreList.distinct().map { StoreItem(it, requireContext()) })
             }.addTo(disposables)
 

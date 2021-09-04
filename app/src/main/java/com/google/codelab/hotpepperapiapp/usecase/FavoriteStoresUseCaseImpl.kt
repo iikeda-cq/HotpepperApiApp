@@ -5,6 +5,7 @@ import com.google.codelab.hotpepperapiapp.data.SearchDataManager
 import com.google.codelab.hotpepperapiapp.data.SearchDataManagerImpl
 import com.google.codelab.hotpepperapiapp.model.Failure
 import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
+import com.google.codelab.hotpepperapiapp.model.businessmodel.Store
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -18,7 +19,7 @@ import javax.inject.Inject
 class FavoriteStoresUseCaseImpl @Inject constructor(
     private val dataManager: SearchDataManager
 ) : FavoriteStoreUseCase {
-    private val favoriteStoreList: PublishSubject<StoresResponse> = PublishSubject.create()
+    private val favoriteStoreList: PublishSubject<List<Store>> = PublishSubject.create()
     private val hasNoFavoriteStores: PublishSubject<Signal> = PublishSubject.create()
     private val errorStream: PublishSubject<Failure> = PublishSubject.create()
 
@@ -52,7 +53,7 @@ class FavoriteStoresUseCaseImpl @Inject constructor(
         }
     }
 
-    override fun getFavoriteStoreStream(): Observable<StoresResponse> = favoriteStoreList.hide()
+    override fun getFavoriteStoreStream(): Observable<List<Store>> = favoriteStoreList.hide()
 
     override fun getHasNoFavoriteStream(): Observable<Signal> = hasNoFavoriteStores.hide()
 
@@ -71,9 +72,9 @@ class FavoriteStoresUseCaseImpl @Inject constructor(
 
     private fun fetchStores(ids: String) {
         dataManager.fetchFavoriteStores(ids)
-            .subscribeBy { response ->
-                favoriteStoreList.onNext(response.body())
-                response.body()?.results?.totalPages?.let { currentStoresCount = it }
+            .subscribeBy { model ->
+                favoriteStoreList.onNext(model.store)
+                currentStoresCount = model.totalPages
             }.addTo(disposables)
     }
 

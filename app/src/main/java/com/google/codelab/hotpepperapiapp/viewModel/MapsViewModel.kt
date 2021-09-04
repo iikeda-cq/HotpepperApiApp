@@ -4,8 +4,8 @@ import androidx.databinding.ObservableBoolean
 import androidx.lifecycle.ViewModel
 import com.google.codelab.hotpepperapiapp.model.Failure
 import com.google.codelab.hotpepperapiapp.model.getMessage
-import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 import com.google.codelab.hotpepperapiapp.usecase.MapsUseCase
+import com.google.codelab.hotpepperapiapp.model.businessmodel.StoreListBusinessModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MapsViewModel @Inject constructor(private val usecase: MapsUseCase) : ViewModel() {
-    val storesList: PublishSubject<StoresResponse> = PublishSubject.create()
+    val storesList: PublishSubject<StoreListBusinessModel> = PublishSubject.create()
     val errorStream: PublishSubject<Failure> = PublishSubject.create()
     val showProgress = ObservableBoolean()
 

@@ -7,7 +7,7 @@
 
         <variable
             name="item"
-            type="com.google.codelab.hotpepperapiapp.model.response.NearStore" />
+            type="com.google.codelab.hotpepperapiapp.model.businessmodel.Store" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -39,7 +39,7 @@
             android:layout_marginTop="@dimen/s_spacing"
             android:layout_marginEnd="@dimen/s_spacing"
             app:defaultImage="@{@drawable/ic_launcher_background}"
-            app:imageUrl="@{item.photo.photo.logo}"
+            app:imageUrl="@{item.photo}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/store_name"
@@ -63,7 +63,7 @@
                 android:ellipsize="end"
                 android:maxLength="10"
                 android:maxLines="2"
-                android:text="@{item.genre.name}"
+                android:text="@{item.genre}"
                 tools:text="ジャンル" />
 
             <TextView
@@ -77,7 +77,7 @@
                 android:gravity="end"
                 android:maxLength="10"
                 android:maxLines="2"
-                android:text="@{item.budget.average}"
+                android:text="@{item.budget}"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 tools:text="平均：5000円" />
         </LinearLayout>

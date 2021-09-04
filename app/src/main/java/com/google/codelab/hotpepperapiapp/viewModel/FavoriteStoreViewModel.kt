@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import com.google.codelab.hotpepperapiapp.Signal
 import com.google.codelab.hotpepperapiapp.model.Failure
 import com.google.codelab.hotpepperapiapp.model.getMessage
-import com.google.codelab.hotpepperapiapp.model.response.StoresResponse
 import com.google.codelab.hotpepperapiapp.usecase.FavoriteStoreUseCase
+import com.google.codelab.hotpepperapiapp.model.businessmodel.Store
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.addTo
@@ -18,7 +18,8 @@ import javax.inject.Inject
 class FavoriteStoreViewModel @Inject constructor(
     private val usecase: FavoriteStoreUseCase
 ) : ViewModel() {
-    val favoriteStoresList: PublishSubject<StoresResponse> = PublishSubject.create()
+    val favoriteStoresList: PublishSubject<List<Store>> =
+        PublishSubject.create()
     val hasNoFavoriteStores: PublishSubject<Signal> = PublishSubject.create()
     val errorStream: PublishSubject<Failure> = PublishSubject.create()
     val showProgress = ObservableBoolean()
@@ -34,7 +35,7 @@ class FavoriteStoreViewModel @Inject constructor(
         usecase.getFavoriteStoreStream()
             .subscribeBy(
                 onNext = {
-                    if (it.results.store.size < 20) {
+                    if (it.size < 20) {
                         moreLoad.set(false)
                     }
                     favoriteStoresList.onNext(it)
