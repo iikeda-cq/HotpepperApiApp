@@ -24,6 +24,7 @@ class StoreListViewModel @Inject constructor(
     val showProgress = ObservableBoolean()
     val moreLoad = ObservableBoolean()
     val hasLocation: BehaviorSubject<Boolean> = BehaviorSubject.create()
+    var startPage = 1
     private val disposables = CompositeDisposable()
 
     fun fetchStores(start: Int = 1) {
@@ -37,6 +38,7 @@ class StoreListViewModel @Inject constructor(
                     if (stores.store.size < 20){
                         moreLoad.set(false)
                     }
+                    startPage += stores.totalPages
                     storesList.onNext(stores)
                     showProgress.set(false)
                 },

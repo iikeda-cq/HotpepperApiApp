@@ -32,7 +32,6 @@ class StoreListFragment : Fragment() {
     private val viewModel: StoreListViewModel by viewModels()
     private val groupAdapter = GroupAdapter<GroupieViewHolder>()
     private val storeList: MutableList<Store> = ArrayList()
-    private var startPage = 1
     private val disposables = CompositeDisposable()
 
     private val onItemClickListener = OnItemClickListener { item, _ ->
@@ -87,8 +86,6 @@ class StoreListFragment : Fragment() {
             .subscribeBy { stores ->
                 storeList.addAll(stores.store)
                 groupAdapter.update(storeList.map { StoreItem(it, requireContext()) })
-
-                startPage += stores.totalPages
             }.addTo(disposables)
 
         viewModel.errorStream
@@ -106,9 +103,7 @@ class StoreListFragment : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (!recyclerView.canScrollVertically(1) && viewModel.moreLoad.get()) {
-                    viewModel.fetchStores(
-                        startPage
-                    )
+                    viewModel.fetchStores(viewModel.startPage)
                 }
             }
         })
