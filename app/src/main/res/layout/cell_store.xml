@@ -3,9 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="item"
+            type="com.google.codelab.hotpepperapiapp.model.businessmodel.Store" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/s_spacing"
+        android:layout_marginTop="@dimen/xs_spacing"
+        android:layout_marginEnd="@dimen/s_spacing"
+        android:layout_marginBottom="@dimen/xs_spacing"
+        android:background="@drawable/shape_rounded_corners_10dp">
 
         <TextView
             android:id="@+id/store_name"
@@ -13,40 +25,62 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/s_spacing"
             android:layout_marginTop="@dimen/s_spacing"
-            android:text="@string/store_name"
+            android:text="@{item.name}"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="お店の名前" />
 
         <ImageView
             android:id="@+id/store_image"
             android:layout_width="0dp"
             android:layout_height="@dimen/image_default_size"
-            app:layout_constraintStart_toStartOf="@id/store_name"
+            android:layout_marginStart="@dimen/s_spacing"
+            android:layout_marginTop="@dimen/s_spacing"
+            android:layout_marginEnd="@dimen/s_spacing"
+            app:defaultImage="@{@drawable/ic_launcher_background}"
+            app:imageUrl="@{item.photo}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/store_name"
             tools:srcCompat="@tools:sample/avatars" />
 
-        <TextView
-            android:id="@+id/store_price"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/s_spacing"
-            android:layout_marginEnd="@dimen/l_spacing"
             android:layout_marginBottom="@dimen/s_spacing"
-            android:text="@string/store_charge"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/store_image"
-            app:layout_constraintTop_toBottomOf="@+id/store_image" />
+            app:layout_constraintTop_toBottomOf="@id/store_image">
 
-        <TextView
-            android:id="@+id/store_genre"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/store_genre"
-            app:layout_constraintBottom_toBottomOf="@+id/store_price"
-            app:layout_constraintStart_toStartOf="@+id/store_name"
-            app:layout_constraintTop_toTopOf="@+id/store_price" />
+            <TextView
+                android:id="@+id/store_genre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/s_spacing"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLength="10"
+                android:maxLines="2"
+                android:text="@{item.genre}"
+                tools:text="ジャンル" />
+
+            <TextView
+                android:id="@+id/store_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/s_spacing"
+                android:layout_marginEnd="@dimen/s_spacing"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:gravity="end"
+                android:maxLength="10"
+                android:maxLines="2"
+                android:text="@{item.budget}"
+                android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                tools:text="平均：5000円" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

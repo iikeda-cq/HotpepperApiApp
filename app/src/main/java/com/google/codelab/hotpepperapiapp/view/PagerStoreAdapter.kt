@@ -1,14 +1,16 @@
 package com.google.codelab.hotpepperapiapp.view
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.PagerStoreBinding
-import com.google.codelab.hotpepperapiapp.model.StoreModel
+import com.google.codelab.hotpepperapiapp.model.response.NearStore
+import com.google.codelab.hotpepperapiapp.model.businessmodel.Store
 
-class PagerStoreAdapter(private val store: List<StoreModel>, private val onCellClick: (StoreModel) -> Unit) :
+class PagerStoreAdapter(
+    private val store: List<Store>,
+    private val onCellClick: (Store) -> Unit
+) :
     RecyclerView.Adapter<PagerViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PagerViewHolder {
@@ -30,10 +32,7 @@ class PagerStoreAdapter(private val store: List<StoreModel>, private val onCellC
 
 class PagerViewHolder(val binding: PagerStoreBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(store: StoreModel) {
-        binding.pagerImage.setImageResource(R.drawable.store_image)
-        binding.pagerName.text = store.name
-        binding.pagerCharge.text = store.price
-        binding.pagerGenre.text = store.genre
+    fun bind(store: Store) {
+        binding.item = store
     }
 }

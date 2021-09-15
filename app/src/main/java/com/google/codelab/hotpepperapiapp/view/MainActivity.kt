@@ -7,7 +7,9 @@ import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.ActivityMainBinding
 import com.google.codelab.hotpepperapiapp.ext.actionBarColorToStatusBarColor
 import com.google.codelab.hotpepperapiapp.ext.showFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val storeListFragment = StoreListFragment()

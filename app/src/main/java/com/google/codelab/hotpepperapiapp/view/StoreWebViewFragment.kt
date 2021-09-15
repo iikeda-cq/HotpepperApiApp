@@ -8,16 +8,20 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.google.codelab.hotpepperapiapp.R
-import com.google.codelab.hotpepperapiapp.RealmClient
-import com.google.codelab.hotpepperapiapp.RealmClient.addStore
-import com.google.codelab.hotpepperapiapp.RealmClient.deleteStore
-import com.google.codelab.hotpepperapiapp.RealmClient.fetchFirstStore
 import com.google.codelab.hotpepperapiapp.databinding.FragmentStoreWebViewBinding
-import io.realm.Realm
+import com.google.codelab.hotpepperapiapp.viewModel.StoreWebViewViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
+import io.reactivex.rxjava3.kotlin.subscribeBy
 
+@AndroidEntryPoint
 class StoreWebViewFragment : Fragment() {
     private lateinit var binding: FragmentStoreWebViewBinding
+    private val viewModel: StoreWebViewViewModel by viewModels()
 
     private val storeId: String
         get() = checkNotNull(arguments?.getString(STORE_ID))
@@ -25,31 +29,19 @@ class StoreWebViewFragment : Fragment() {
     private val url: String
         get() = checkNotNull(arguments?.getString(URL))
 
-    private val name: String
-        get() = checkNotNull(arguments?.getString(NAME))
-
-    private val price: String
-        get() = checkNotNull(arguments?.getString(PRICE))
-
-    var isFavorite = false
+    private val disposables = CompositeDisposable()
 
     companion object {
         private const val STORE_ID = "store_id"
         private const val URL = "url"
-        private const val NAME = "name"
-        private const val PRICE = "price"
         fun newInstance(
             storeId: String,
-            name: String,
-            url: String,
-            price: String
+            url: String
         ): StoreWebViewFragment {
             return StoreWebViewFragment().apply {
                 arguments = Bundle().apply {
                     putString(STORE_ID, storeId)
-                    putString(NAME, name)
                     putString(URL, url)
-                    putString(PRICE, price)
                 }
             }
         }
@@ -60,51 +52,42 @@ class StoreWebViewFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentStoreWebViewBinding.inflate(inflater)
-        binding.isFab = isFavorite
 
-        requireActivity().title = name
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        requireActivity().setTitle(R.string.view_store_detail)
         setHasOptionsMenu(true)
 
-        binding.storeWebView.loadUrl(url)
+        binding.viewModel = viewModel
+        binding.url = url
+        binding.storeId = storeId
 
+        viewModel.addFavoriteStore
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy {
+                Toast.makeText(requireContext(), R.string.add_favorite, Toast.LENGTH_SHORT).show()
+            }.addTo(disposables)
 
-        // すでにお気に入りに追加済みかどうかをチェックする
-        checkAlreadyAdd()
+        viewModel.deleteFavoriteStore
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy {
+                Toast.makeText(requireContext(), R.string.delete_favorite, Toast.LENGTH_SHORT)
+                    .show()
+            }.addTo(disposables)
 
-        binding.fabFavorite.setOnClickListener {
-            changeFavoriteStore(isFavorite)
-        }
+        viewModel.errorStream
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy {
+                Toast.makeText(requireContext(), R.string.unexpected_error, Toast.LENGTH_SHORT)
+                    .show()
+            }.addTo(disposables)
 
         return binding.root
     }
 
-    private fun changeFavoriteStore(isFav: Boolean) {
-        Realm.getDefaultInstance().use { realm ->
-            if (isFav) {
-                realm.deleteStore(storeId)
-                Toast.makeText(requireContext(), R.string.delete_favorite, Toast.LENGTH_SHORT)
-                    .show()
-            } else {
-                realm.addStore(storeId, name, url, price)
-                Toast.makeText(requireContext(), R.string.add_favorite, Toast.LENGTH_SHORT).show()
-            }
-        }
-        binding.isFab = !isFav
-        isFavorite = !isFav
-    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    private fun checkAlreadyAdd() {
-        Realm.getDefaultInstance().use { realm ->
-            val store = realm.fetchFirstStore(storeId)
-
-            if (store != null) {
-                binding.apply {
-                    isFavorite = true
-                    binding.isFab = true
-                }
-            }
-        }
+        viewModel.fetchFavoriteStore(storeId)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -121,6 +104,7 @@ class StoreWebViewFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        disposables.clear()
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
 }

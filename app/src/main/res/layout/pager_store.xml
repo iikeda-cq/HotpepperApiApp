@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    >
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.google.codelab.hotpepperapiapp.model.businessmodel.Store" />
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="8dp"
-        android:background="@color/white">
+        android:layout_margin="@dimen/s_spacing"
+        android:background="@drawable/shape_rounded_corners_10dp">
 
         <ImageView
             android:id="@+id/pager_image"
             android:layout_width="@dimen/image_default_size"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/image_default_size"
             android:layout_marginStart="@dimen/s_spacing"
+            android:layout_marginTop="@dimen/s_spacing"
+            app:defaultImage="@{@drawable/ic_launcher_background}"
+            app:imageUrl="@{item.photo}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:srcCompat="@tools:sample/avatars" />
@@ -23,9 +32,11 @@
             android:id="@+id/pager_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/m_spacing"
-            android:layout_marginTop="@dimen/m_spacing"
-            android:text="@string/store_name"
+            android:layout_marginStart="@dimen/s_spacing"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@{item.name}"
+            tools:text="お店の名前"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             app:layout_constraintStart_toEndOf="@+id/pager_image"
             app:layout_constraintTop_toTopOf="@id/pager_image" />
@@ -36,7 +47,9 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/m_spacing"
             android:layout_marginBottom="@dimen/s_spacing"
-            android:text="@string/store_charge"
+            android:maxLength="20"
+            android:text="@{item.budget}"
+            tools:text="平均：3000円"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             app:layout_constraintBottom_toBottomOf="@+id/pager_image"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -46,7 +59,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/s_spacing"
-            android:text="@string/store_genre"
+            android:text="@{item.genre}"
+            tools:text="ジャンル"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             app:layout_constraintBottom_toTopOf="@+id/pager_charge"
             app:layout_constraintEnd_toEndOf="@+id/pager_charge" />

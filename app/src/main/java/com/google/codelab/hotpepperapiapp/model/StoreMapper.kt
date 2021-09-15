@@ -1,8 +1,7 @@
-package com.google.codelab.hotpepperapiapp
+package com.google.codelab.hotpepperapiapp.model
 
-import com.google.codelab.hotpepperapiapp.model.Store
-import com.google.codelab.hotpepperapiapp.model.StoreModel
 import io.realm.RealmResults
+import java.util.*
 
 object StoreMapper {
     // RealmのStoreからdata classのStoreModelに変換を行う
@@ -13,13 +12,6 @@ object StoreMapper {
             storeModel.add(
                 StoreModel(
                     storeId = store.storeId,
-                    image = store.image,
-                    name = store.name,
-                    price = store.price,
-                    lat = store.lat,
-                    lng = store.lng,
-                    genre = store.genre,
-                    url = store.url
                 )
             )
         }

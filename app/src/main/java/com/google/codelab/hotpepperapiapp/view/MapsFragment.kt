@@ -2,44 +2,57 @@ package com.google.codelab.hotpepperapiapp.view
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.snackbar.Snackbar
 import com.google.codelab.hotpepperapiapp.R
 import com.google.codelab.hotpepperapiapp.databinding.FragmentMapsBinding
-import com.google.codelab.hotpepperapiapp.util.MapUtils
 import com.google.codelab.hotpepperapiapp.ext.showFragment
-import com.google.codelab.hotpepperapiapp.model.StoreModel
-import com.google.codelab.hotpepperapiapp.view.StoreListFragment.Companion.createTestData
-import kotlin.random.Random
+import com.google.codelab.hotpepperapiapp.model.response.NearStore
+import com.google.codelab.hotpepperapiapp.model.businessmodel.Store
+import com.google.codelab.hotpepperapiapp.util.MapUtils
+import com.google.codelab.hotpepperapiapp.util.MapUtils.addMarker
+import com.google.codelab.hotpepperapiapp.viewModel.MapsViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.addTo
+import io.reactivex.rxjava3.kotlin.subscribeBy
 
+@AndroidEntryPoint
 class MapsFragment : Fragment(), OnMapReadyCallback {
     private val MY_PERMISSION_REQUEST_ACCESS_FINE_LOCATION = 1
     private var locationCallback: LocationCallback? = null
-    private val storeList: List<StoreModel> = createTestData()
+    private val storeList: MutableList<Store> = ArrayList()
+    private val disposables = CompositeDisposable()
 
     // マーカーとViewPagerを紐づけるための変数
     private var mapMarkerPosition = 0
 
     private lateinit var binding: FragmentMapsBinding
+    private val viewModel: MapsViewModel by viewModels()
     private lateinit var map: GoogleMap
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private lateinit var currentLocation: Location
+
+    companion object {
+        fun newInstance(): MapsFragment {
+            return MapsFragment()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,7 +60,10 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMapsBinding.inflate(layoutInflater)
+        binding.viewModel = viewModel
+
         requireActivity().setTitle(R.string.view_map)
+        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
 
         return binding.root
     }
@@ -65,17 +81,32 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 val position = binding.storePager.currentItem
 
                 StoreWebViewFragment.newInstance(
-                    storeList[position].storeId,
-                    storeList[position].name,
-                    storeList[position].url,
-                    storeList[position].price,
+                    storeList[position].id,
+                    storeList[position].urls
                 ).showFragment(parentFragmentManager)
             }
 
+        // APIから店舗情報を取得したら地図にマッピングする
+        viewModel.storesList
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy {
+                it.store.map { store ->
+                    mapMarkerPosition = addMarker(map, store, mapMarkerPosition)
+                    storeList.add(store)
+                }
+                binding.storePager.adapter?.notifyDataSetChanged()
+            }.addTo(disposables)
+
+        viewModel.errorStream
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy { failure ->
+                Snackbar.make(view, failure.message.message, Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.retry) {
+                        failure.retry
+                    }.show()
+            }.addTo(disposables)
 
         binding.storePager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-
-        Toast.makeText(requireContext(), "現在地周辺のお店${storeList.size}件", Toast.LENGTH_SHORT).show()
 
     }
 
@@ -99,7 +130,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 val selectedStoreLatLng = LatLng(storeList[position].lat, storeList[position].lng)
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedStoreLatLng, 16.0f))
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedStoreLatLng, 18.0f))
             }
         })
     }
@@ -116,7 +147,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                     // 許可された
                     enableMyLocation()
                 } else {
-                    Toast.makeText(context, R.string.no_locations, Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, R.string.no_locations_message, Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -136,11 +167,13 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 override fun onLocationResult(locationResult: LocationResult?) {
                     super.onLocationResult(locationResult)
                     locationResult?.lastLocation?.let { lastLocation ->
-                        currentLocation = lastLocation
                         val currentLatLng =
-                            LatLng(currentLocation.latitude, currentLocation.longitude)
-                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 14.0f))
-                        mapStore()
+                            LatLng(lastLocation.latitude, lastLocation.longitude)
+                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 18.0f))
+
+                        viewModel.saveLocation(lastLocation.latitude, lastLocation.longitude)
+                        // APIからお店の情報を取得する
+                        viewModel.fetchStores()
                     }
                 }
             }
@@ -152,26 +185,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun mapStore() {
-        map.clear()
-
-        // テストように適当に現在地付近にマーカーを設定
-        storeList.forEach { store ->
-            store.lat = currentLocation.latitude.plus(Random.nextDouble(-9.0, 9.0) / 1000)
-            store.lng = currentLocation.longitude.plus(Random.nextDouble(-9.0, 9.0) / 1000)
-            addMarker(store)
-        }
-    }
-
-    private fun addMarker(store: StoreModel) {
-        val pin: Marker = map.addMarker(
-            MarkerOptions()
-                .position(LatLng(store.lat, store.lng))
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-        )
-
-        pin.tag = mapMarkerPosition
-        pin.showInfoWindow()
-        mapMarkerPosition += 1
+    override fun onDestroyView() {
+        super.onDestroyView()
+        disposables.clear()
     }
 }

@@ -1,25 +1,28 @@
 package com.google.codelab.hotpepperapiapp.view
 
+import android.content.Context
 import android.view.View
 import com.google.codelab.hotpepperapiapp.R
-import com.google.codelab.hotpepperapiapp.model.Store
 import com.google.codelab.hotpepperapiapp.databinding.CellStoreBinding
-import com.google.codelab.hotpepperapiapp.model.StoreModel
+import com.google.codelab.hotpepperapiapp.model.response.NearStore
+import com.google.codelab.hotpepperapiapp.model.businessmodel.Store
+import com.xwray.groupie.Item
 import com.xwray.groupie.viewbinding.BindableItem
 
-class StoreItem(private val store: StoreModel) : BindableItem<CellStoreBinding>() {
+class StoreItem(private val store: Store, val context: Context) :
+    BindableItem<CellStoreBinding>() {
     override fun getLayout() = R.layout.cell_store
 
     override fun bind(viewBinding: CellStoreBinding, position: Int) {
-        viewBinding.storeImage.setImageResource(R.drawable.store_image)
-        viewBinding.storeName.text = store.name
-        viewBinding.storePrice.text = store.price
-        viewBinding.storeGenre.text = store.genre
+        viewBinding.item = store
     }
 
     override fun initializeViewBinding(view: View): CellStoreBinding {
         return CellStoreBinding.bind(view)
     }
+
+    override fun isSameAs(other: Item<*>): Boolean =
+        (other as? StoreItem)?.store?.id == store.id
 }
 
 
